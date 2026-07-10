@@ -1,0 +1,1876 @@
+/* =============================================================
+   POOL PARTY - PAGE PRODUIT
+   Styles spécifiques à la fiche annonce, calés sur la maquette
+   Figma (frame Page produit - Maquette). Les composants (carte
+   caractéristique, note par critère, carte savoir, carte produit,
+   barres de progression, pop-up, calendrier) viennent de
+   global.css ; cette feuille gère la mise en page et les blocs
+   propres à la page. Mobile-first : base 393px, puis tablette
+   (768px) et desktop (1024px).
+   ============================================================= */
+
+/* =============================================================
+   BLOC 1 : FIL D'ARIANE + EN-TÊTE DE L'ANNONCE
+   Mobile, maquette applicative : la galerie passe avant l'en-tête,
+   le fil d'Ariane laisse place à la flèche retour de la galerie et
+   l'en-tête forme une carte blanche arrondie qui chevauche la photo.
+   Tablette et desktop : fil d'Ariane, titre, ligne note + actions.
+   ============================================================= */
+main {
+    display: flex;
+    flex-direction: column;
+}
+
+.galerie {
+    order: -1;
+}
+
+.produit-intro {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    margin-top: -20px;
+    background: var(--color-white);
+    border-radius: var(--radius-r1) var(--radius-r1) 0 0;
+    padding: var(--padding-p1) var(--padding-page-mobile) 0;
+}
+
+/* Mobile : pas de fil d'Ariane sur la fiche (maquette), la flèche
+   retour de la barre galerie joue ce rôle */
+.produit-intro nav {
+    display: none;
+}
+
+/* Titre réduit en mobile, la taille Figma (40px) revient en tablette */
+.produit-entete h1 {
+    font-size: 32px;
+}
+
+/* Mobile : les infos sont empilées les unes sous les autres (maquette) */
+.produit-entete__ligne {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--padding-p3);
+    margin-top: var(--padding-p4);
+}
+
+/* Infos de l'en-tête : lieu, hôte vérifiée, capacité (icône + texte) */
+.produit-entete__info {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.produit-entete__info svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--color-dark-green-blue);
+}
+
+/* Actions Partager et Favori : liens soulignés avec icône.
+   Mobile : masquées, la barre de la galerie porte ces actions */
+.produit-entete__actions {
+    display: none;
+    align-items: center;
+    gap: var(--padding-p2);
+    margin-left: auto;
+}
+
+.produit-action {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.produit-action:hover {
+    color: var(--color-dark-green-blue);
+}
+
+.produit-action svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* Coeur rempli quand l'annonce est en favori (état géré en JS) */
+.produit-action--fav.is-active {
+    color: var(--color-corail);
+}
+
+.produit-action--fav.is-active svg {
+    fill: currentColor;
+}
+
+/* =============================================================
+   BLOC 2 : GALERIE PHOTOS
+   Mobile : barre retour / partager / favori, puis carrousel plein
+   écran avec points de position et compteur (maquette applicative).
+   Tablette : grande photo et rangée de vignettes cliquables.
+   Desktop : mosaïque Figma, une grande photo à gauche et quatre
+   photos sur deux colonnes à droite. Le bouton Afficher toutes
+   les photos est posé sur le coin bas droit de la mosaïque.
+   ============================================================= */
+.galerie {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+    padding: 0;
+}
+
+/* Barre d'actions mobile au-dessus de la photo */
+.galerie__barre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--padding-p4) var(--padding-page-mobile) var(--padding-p3);
+}
+
+.galerie__retour {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-dark-green-blue);
+}
+
+.galerie__retour svg {
+    width: 24px;
+    height: 24px;
+}
+
+.galerie__barre-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p2);
+}
+
+.galerie__barre .produit-action svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* Retour visuel bref quand le lien vient d'être copié (JS) */
+.produit-action.is-copie {
+    color: var(--color-corail);
+}
+
+/* Carrousel mobile : une photo par écran, défilement aimanté */
+.galerie__mobile {
+    position: relative;
+}
+
+.galerie__carrousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+
+.galerie__carrousel::-webkit-scrollbar {
+    display: none;
+}
+
+.galerie__diapo {
+    flex: 0 0 100%;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+    scroll-snap-align: start;
+}
+
+.galerie__diapo img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 5 / 4;
+    object-fit: cover;
+}
+
+/* Points de position, au-dessus du bord arrondi de la carte titre */
+.galerie__points {
+    position: absolute;
+    left: 50%;
+    bottom: 36px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: var(--padding-p4);
+}
+
+.galerie__point {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--color-white);
+    opacity: 0.55;
+}
+
+.galerie__point.is-active {
+    opacity: 1;
+}
+
+/* Compteur 1 / 5 : badge sombre, ouvre la galerie complète */
+.galerie__compteur {
+    position: absolute;
+    right: var(--padding-p2-2);
+    bottom: 32px;
+    padding: var(--padding-p4) var(--padding-p3);
+    background: var(--color-voile-photo);
+    border-radius: var(--radius-r3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-white);
+    cursor: pointer;
+}
+
+/* Mobile : la mosaïque et ses vignettes laissent place au carrousel,
+   chaque règle porte son display rétabli en tablette */
+.galerie__principale {
+    display: none;
+    margin: 0;
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius-r1);
+    overflow: hidden;
+    box-shadow: var(--shadow-search-small);
+}
+
+.galerie__principale img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.galerie__vignettes {
+    display: none;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--padding-p4);
+}
+
+.galerie__vignette {
+    padding: 0;
+    background: none;
+    aspect-ratio: 4 / 3;
+    border: 2px solid transparent;
+    border-radius: var(--radius-r2);
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+.galerie__vignette img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.galerie__vignette:hover {
+    border-color: var(--color-dark-green-blue);
+}
+
+/* Bouton Afficher toutes les photos : pilule blanche sur la photo,
+   affiché seulement en tablette et desktop */
+.galerie__toutes {
+    display: none;
+    position: absolute;
+    right: calc(var(--padding-page-mobile) + var(--padding-p2-2));
+    bottom: var(--padding-p2-2);
+    align-items: center;
+    gap: var(--padding-p4);
+    padding: var(--padding-p4) var(--padding-p3);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r2);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    box-shadow: var(--shadow-search-small);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.galerie__toutes:hover {
+    background: var(--color-beige);
+}
+
+.galerie__toutes svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* Pop-up de la galerie complète : photos empilées */
+.galerie-popup__liste {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2-2);
+}
+
+.galerie-popup__liste img {
+    width: 100%;
+    border-radius: var(--radius-r2);
+}
+
+/* =============================================================
+   BLOC 3 : CONTENU + PANNEAU DE RÉSERVATION
+   Mobile : tout empilé, le panneau de réservation vient après le
+   contenu. Desktop : deux colonnes, panneau collant à droite.
+   ============================================================= */
+.produit-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p1);
+    padding: var(--padding-p1) var(--padding-page-mobile);
+}
+
+.produit-contenu {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* Sections de la colonne de contenu. Le modificateur --filet
+   ajoute le trait de séparation présent sur la maquette. */
+.produit-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--padding-p2);
+    padding: var(--padding-p2) 0;
+    width: 100%;
+}
+
+.produit-section--filet {
+    border-top: 1px solid var(--color-grey-border-2);
+    padding-top: var(--padding-p1);
+    margin-top: var(--padding-p4);
+}
+
+/* Titres de section plus compacts que le H2 générique */
+.produit-contenu h2 {
+    font-size: var(--fs-h3);
+}
+
+.produit-section p {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    line-height: 1.6;
+    color: var(--color-grey-font-1);
+}
+
+/* Lire la suite : lien souligné qui déplie le reste du texte */
+.description__toggle {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.description__toggle:hover {
+    color: var(--color-dark-green-blue);
+}
+
+/* HÔTE : photo de l'hôte + nom + expérience, filet en dessous */
+.hote {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p3);
+    padding-bottom: var(--padding-p2);
+    border-bottom: 1px solid var(--color-grey-border-2);
+}
+
+.hote__avatar {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.hote__nom {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+}
+
+.hote__infos {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+/* CARACTÉRISTIQUES : cartes en rangée, deux par ligne en mobile.
+   La maquette mobile ne montre que Dimensions et Profondeur, les
+   autres cartes se déplient avec le bouton Voir plus */
+.caracs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--padding-p2-2);
+    width: 100%;
+}
+
+.caracs .card-carac {
+    width: calc(50% - var(--padding-p4));
+}
+
+.caracs:not(.is-ouvert) .card-carac:nth-child(n+3) {
+    display: none;
+}
+
+.caracs__toggle {
+    align-self: flex-end;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.caracs__toggle:hover {
+    color: var(--color-dark-green-blue);
+}
+
+/* ÉQUIPEMENTS : liste icône + libellé */
+.equipements {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--padding-p3);
+    width: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.equipements li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.equipements svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--color-dark-green-blue);
+}
+
+/* SÉCURITÉ : carte blanche bordée, badge bouclier corail */
+.securite {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2-2);
+    width: 100%;
+    padding: var(--padding-p2);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    background: var(--color-white);
+}
+
+.securite__entete {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p3);
+}
+
+.securite__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--color-corail);
+    color: var(--color-white);
+}
+
+.securite__badge svg {
+    width: 22px;
+    height: 22px;
+}
+
+.securite__titre {
+    font-size: var(--fs-h4);
+    color: var(--color-dark-green-blue);
+}
+
+.securite__liste {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--padding-p3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.securite__liste li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.securite__liste svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--color-dark-green-blue);
+}
+
+.securite__texte {
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+/* RÈGLEMENT INTÉRIEUR : carte beige, deux colonnes */
+.reglement {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--padding-p2);
+    width: 100%;
+    padding: var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+}
+
+.reglement__titre {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p4);
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    margin-bottom: var(--padding-p3);
+}
+
+.reglement__titre svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.reglement__titre--oui {
+    color: var(--color-dark-green-blue);
+}
+
+.reglement__titre--non {
+    color: var(--color-corail);
+}
+
+.reglement ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   AVIS : note globale, répartition, critères puis commentaires
+   ============================================================= */
+.avis-stats {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    width: 100%;
+}
+
+/* Fiche : note globale centrée (score + « X commentaires ») au-dessus
+   des jauges. Ne concerne que la fiche : la pop-up a son propre
+   conteneur (.avis-popup__resume). */
+.avis-note {
+    text-align: center;
+}
+
+/* Note globale : étoile + score en Garamond (maquette Figma : Cormorant
+   Garamond Bold 40px, couleur grey-font-1). Sélecteur préfixé par
+   .produit-section pour passer DEVANT « .produit-section p » qui, sinon,
+   forçait la note en Inter 16px (mauvaise typo). */
+.produit-section .avis-note__score {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p4);
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-h1);
+    color: var(--color-grey-font-1);
+    line-height: 1;
+}
+
+/* Étoile pleine devant le score (même dessin que le composant rating) */
+.avis-note__score::before {
+    content: "";
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    background-color: var(--color-dark-green-blue);
+    -webkit-mask: var(--icon-star) center / contain no-repeat;
+    mask: var(--icon-star) center / contain no-repeat;
+}
+
+.avis-note__total {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+    margin-top: var(--padding-p5);
+}
+
+/* Répartition des notes : libellé + barre + compte */
+.avis-note__repartition {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+    list-style: none;
+    margin: var(--padding-p3) auto 0; /* auto : jauges centrées sous la note */
+    padding: 0;
+    width: 100%;
+    max-width: 260px;
+    text-align: left; /* les libellés/comptes des jauges restent alignés */
+}
+
+.avis-note__repartition li {
+    display: grid;
+    /* barre : mini 100px (maquette) pour ne pas s'écraser en « point »
+       quand la note passe à gauche en grand écran (colonne étroite) */
+    grid-template-columns: 64px minmax(100px, 1fr) 32px;
+    align-items: center;
+    gap: var(--padding-p4);
+}
+
+.avis-note__label,
+.avis-note__compte {
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-1);
+    white-space: nowrap;
+}
+
+/* Critères : tuiles à TAILLE FIXE, collées à gauche les unes à la suite
+   des autres. Quand la largeur manque, elles passent à la ligne (jamais
+   elles ne se chevauchent ni ne s'étirent), et restent alignées en BAS
+   pour suivre la maquette Figma. Colonnes fixes (pas de 1fr) + justify
+   start : pas d'espaces qui s'étalent. */
+.avis-criteres {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 128px);
+    justify-content: start;
+    align-items: end;
+    gap: var(--padding-p2-2) 0;
+    width: 100%;
+}
+
+.avis-criteres .rating-critere {
+    min-width: 0;
+}
+
+/* Commentaires : entête auteur + note, puis citation */
+.commentaires {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--padding-p1) var(--padding-p1);
+    width: 100%;
+    margin-top: var(--padding-p2);
+}
+
+.commentaire__entete {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--padding-p3);
+}
+
+.commentaire__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--color-dark-green-blue);
+    font-family: var(--font-body);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-white);
+}
+
+.commentaire__nom {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-h4);
+    color: var(--color-black);
+}
+
+.commentaire__depuis {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.commentaire__note {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--padding-p5);
+    margin-left: auto;
+}
+
+/* Rangée d'étoiles : pleines en vert bleuté, vides en gris */
+.commentaire__stars {
+    display: flex;
+    gap: 2px;
+}
+
+.commentaire__stars span {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    background-color: var(--color-dark-green-blue);
+    -webkit-mask: var(--icon-star) center / contain no-repeat;
+    mask: var(--icon-star) center / contain no-repeat;
+}
+
+.commentaire__stars span.is-off {
+    background-color: var(--color-grey-border-2);
+}
+
+.commentaire__date {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.commentaire__texte {
+    margin-top: var(--padding-p3);
+    font-size: var(--fs-p3);
+}
+
+/* POP-UP « TOUS LES AVIS » (maquette Figma)
+   Carte blanche arrondie (même composant que les autres pop-up du site),
+   en-tête CENTRÉ (note + nombre + jauges), rangée de 6 critères, filet,
+   tri, puis les avis sur UNE colonne. Seule la carte défile ; la croix
+   reste collée en haut. Aucun défilement horizontal. */
+.avis-popup {
+    width: min(680px, 100%);
+}
+
+.avis-popup__card {
+    max-height: 90vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    gap: var(--padding-p2);
+    padding: var(--padding-p1);
+    /* Scrollbar masquée : elle débordait du coin arrondi (visuel moche).
+       Le contenu reste défilable. */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.avis-popup__card::-webkit-scrollbar {
+    display: none;
+}
+
+/* Barre du haut : simple ligne avec la croix à droite (comme la
+   maquette). Pas de fond blanc ni de collage : la bande blanche
+   recouvrait/coupait le texte au défilement. */
+.avis-popup__head {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* En-tête résumé centré : étoile + note, nombre, jauges */
+.avis-popup__resume {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p3);
+}
+
+.avis-popup__score {
+    margin: 0;
+}
+
+.avis-popup__total {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+/* Jauges centrées et compactes (barre de 100px comme la maquette) */
+.avis-popup__repartition {
+    max-width: none;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.avis-popup__repartition li {
+    grid-template-columns: 56px 100px 28px;
+    gap: var(--padding-p3);
+}
+
+/* Rangée des 6 critères sur une ligne, colonnes égales, icônes alignées
+   en haut (les libellés longs passent sur deux lignes, comme la maquette) */
+.avis-popup__criteres {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    align-items: start;
+    width: 100%;
+}
+
+.avis-popup__criteres .rating-critere {
+    min-width: 0;
+}
+
+/* Filet de séparation sous les critères */
+.avis-popup__filet {
+    width: 100%;
+    height: 0;
+    border: none;
+    border-top: 1px solid var(--color-grey-border-2);
+    margin: 0;
+}
+
+/* Barre de tri, alignée à droite */
+.avis-popup__barre {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Pastille de tri « Les plus pertinents » (style select du site) */
+.avis-tri {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p3);
+    padding: var(--padding-p4) var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+}
+
+.avis-tri svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+/* Avis : UNE seule colonne (deux classes pour passer devant la règle
+   2 colonnes de .commentaires en desktop) */
+.avis-popup__card .avis-popup__liste {
+    grid-template-columns: 1fr;
+    min-width: 0;
+    margin: 0;
+    gap: var(--padding-p1);
+}
+
+/* Empêche le contenu large des avis (nom + étoiles, texte) de forcer une
+   largeur > carte et de déborder (min-width auto des enfants grille/flex). */
+.avis-popup__liste .commentaire,
+.avis-popup__liste .commentaire__auteur {
+    min-width: 0;
+}
+
+/* Texte écrêté à 4 lignes ; « Lire la suite » l'ouvre (activé en JS
+   uniquement quand le texte dépasse). */
+.avis-popup__liste .commentaire__texte {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.avis-popup__liste .commentaire__texte.is-ouvert {
+    -webkit-line-clamp: unset;
+    overflow: visible;
+}
+
+.commentaire__lire {
+    margin-top: var(--padding-p4);
+    padding: 0;
+    background: none;
+    border: none;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.commentaire__lire[hidden] {
+    display: none;
+}
+
+/* Bouton du bas centré */
+.avis-popup__plus {
+    align-self: center;
+    margin-top: var(--padding-p2);
+}
+
+/* Mobile : la pop-up occupe TOUT l'écran (pattern courant, évite tout
+   débordement horizontal). Padding réduit, jauges/critères adaptés ; les
+   6 critères passent sur 2 lignes de 3 (tuiles lisibles). */
+@media (max-width: 767px) {
+    #avis-popup.popup-overlay {
+        padding: 0;
+        overflow: hidden;
+    }
+
+    #avis-popup .avis-popup {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+    }
+
+    #avis-popup .avis-popup__card {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        box-sizing: border-box;
+        border-radius: 0;
+        padding: var(--padding-p2);
+    }
+
+    /* Sécurité : aucun enfant ne dépasse la largeur de la carte */
+    #avis-popup .avis-popup__card > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .avis-popup__head {
+        margin: calc(-1 * var(--padding-p2)) calc(-1 * var(--padding-p2)) 0;
+        padding: var(--padding-p3) var(--padding-p2) 0;
+    }
+
+    .avis-popup__criteres {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        row-gap: var(--padding-p2);
+    }
+
+    /* Les tuiles de la 1re colonne de chaque rangée gardent leur trait,
+       on retire seulement celui de la 3e (fin de rangée) */
+    .avis-popup__criteres .rating-critere:nth-child(3n) {
+        border-right: none;
+    }
+
+    .avis-popup__repartition li {
+        grid-template-columns: 56px 1fr 28px;
+    }
+}
+
+/* LOCALISATION : fond de carte arrondi avec pin centré */
+.localisation__adresse {
+    font-size: var(--fs-p3);
+}
+
+.localisation__carte {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-r1);
+    overflow: hidden;
+    box-shadow: var(--shadow-search-small);
+}
+
+.localisation__carte > img:first-child {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.localisation__pin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* La pointe du pin marque le centre de la carte */
+    transform: translate(-50%, -100%);
+}
+
+/* ACCÈS : carte bordée avec icône de transport */
+.acces-carte {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p3);
+    width: 100%;
+    padding: var(--padding-p3) var(--padding-p2);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r2);
+    background: var(--color-white);
+}
+
+.acces-carte svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--color-dark-green-blue);
+}
+
+.acces-carte__ligne {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+}
+
+.acces-carte__detail {
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+/* =============================================================
+   CARTE HÔTE : profil à gauche, extras et contact à droite
+   ============================================================= */
+.hote-carte {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p1);
+    width: 100%;
+    padding: var(--padding-p2);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    background: var(--color-white);
+}
+
+.hote-carte__titre {
+    margin-bottom: var(--padding-p2);
+}
+
+.hote-carte__identite {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p3);
+    margin-bottom: var(--padding-p2);
+}
+
+.hote-carte__avatar {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.hote-carte__nom {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+}
+
+.hote-carte__depuis {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.hote-carte__sous-titre {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-h4);
+    color: var(--color-grey-font-1);
+    margin-bottom: var(--padding-p4);
+}
+
+.hote-carte__infos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p5);
+    list-style: none;
+    margin: 0 0 var(--padding-p3);
+    padding: 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.hote-carte__bio {
+    font-size: var(--fs-p3);
+}
+
+.hote-carte__extras {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--padding-p3);
+}
+
+/* Extras en liste à puces alignée (2 colonnes) */
+.hote-carte__extras-liste {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--padding-p4) var(--padding-p3);
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p3);
+    color: var(--color-black);
+}
+
+.hote-carte__extras-liste li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--padding-p4);
+}
+
+.hote-carte__extras-liste li::before {
+    content: "\2022";
+    flex: none;
+    color: var(--color-grey-font-2);
+}
+
+.hote-carte__mention {
+    font-style: italic;
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+.hote-carte__cta {
+    align-self: center;
+}
+
+/* Pop-up « Écrire à l'hôte » (fond de la pop-up de connexion) : le
+   formulaire est plus haut que celui de connexion et peut dépasser
+   90vh sur les petits écrans. On masque la barre de défilement, qui
+   débordait sur les coins arrondis de la carte ; le défilement reste
+   possible. */
+#message-hote-popup .login-popup__card {
+    scrollbar-width: none;      /* Firefox */
+    -ms-overflow-style: none;   /* anciens Edge/IE */
+}
+
+#message-hote-popup .login-popup__card::-webkit-scrollbar {
+    display: none;              /* Chrome, Safari, Edge */
+}
+
+/* Le formulaire compte un champ de plus que la connexion (message) : on
+   resserre les espacements, on réduit les libellés et la hauteur de la
+   zone de texte pour que le bouton Envoyer reste visible sans défilement. */
+#message-hote-popup .login-popup__form {
+    gap: var(--padding-p2-2);
+    padding-top: var(--padding-p2-2);
+}
+
+#message-hote-popup .login-popup__fields {
+    gap: var(--padding-p3);
+}
+
+#message-hote-popup .form-field {
+    gap: 4px;
+}
+
+#message-hote-popup .form-field__label {
+    font-size: var(--fs-p3);
+}
+
+#message-hote-popup textarea.form-field__input {
+    min-height: 84px;
+}
+
+/* À SAVOIR : cartes en grille, deux colonnes dès le mobile */
+.savoir-grille {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--padding-p1) var(--padding-p2);
+    width: 100%;
+}
+
+.savoir-grille .card-savoir {
+    max-width: none;
+}
+
+/* =============================================================
+   PANNEAU DE RÉSERVATION
+   Carte blanche arrondie : montant minimum, formules, champs
+   Date et Créneau, compteurs de voyageurs, récapitulatif TTC,
+   bouton Réserver. Le lien de signalement est sous la carte.
+   ============================================================= */
+.resa-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+}
+
+.resa {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    padding: var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    box-shadow: var(--shadow-2);
+}
+
+.resa__prix {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-h2);
+    color: var(--color-dark-green-blue);
+}
+
+.resa__prix-note {
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-1);
+    margin-top: var(--padding-p5);
+}
+
+/* Formules : trois cartes, la sélection porte un contour appuyé
+   et le badge Populaire est posé à cheval sur la carte du milieu */
+.resa__formules {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--padding-p4);
+    padding-top: var(--padding-p4);
+}
+
+.resa-formule {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: var(--padding-p3) var(--padding-p4);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r2);
+    font-family: var(--font-input);
+    text-align: center;
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+.resa-formule:hover {
+    border-color: var(--color-dark-green-blue-2);
+}
+
+.resa-formule.is-active {
+    border: 2px solid var(--color-dark-green-blue);
+}
+
+.resa-formule__nom {
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p3);
+    color: var(--color-black);
+}
+
+.resa-formule__detail {
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+.resa-formule__prix {
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p3);
+    color: var(--color-dark-green-blue);
+}
+
+.resa-formule__badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 2px var(--padding-p4);
+    background: var(--color-dark-green-blue);
+    border-radius: var(--radius-pill);
+    font-size: 10px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-white);
+    white-space: nowrap;
+}
+
+/* Champs Date et Créneau : boîte bordée, libellé au-dessus de la
+   valeur, icône calée à droite */
+.resa__champ {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--padding-p4) 44px var(--padding-p4) var(--padding-p3);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r2);
+    background: var(--color-white);
+}
+
+.resa__champ-label {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p4);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+}
+
+.resa__champ-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-black);
+    cursor: pointer;
+}
+
+.resa__champ-icone {
+    position: absolute;
+    top: 50%;
+    right: var(--padding-p3);
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    color: var(--color-grey-font-1);
+    pointer-events: none;
+}
+
+/* Le calendrier partagé prend la largeur du panneau */
+.resa-field .calendar {
+    width: 100%;
+}
+
+/* Liste des créneaux sous le champ */
+.resa__creneau-liste[hidden] {
+    display: none;
+}
+
+.resa__creneau-liste {
+    position: absolute;
+    top: calc(100% + var(--padding-p5));
+    left: 0;
+    right: 0;
+    z-index: 20;
+    list-style: none;
+    margin: 0;
+    padding: var(--padding-p4);
+    display: flex;
+    flex-direction: column;
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r2);
+    box-shadow: var(--shadow-2);
+}
+
+/* Compteurs de voyageurs */
+.resa__voyageurs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2-2);
+    padding-top: var(--padding-p4);
+}
+
+.resa-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p2);
+}
+
+.resa-stepper__nom {
+    display: block;
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p3);
+    color: var(--color-black);
+}
+
+.resa-stepper__detail {
+    display: block;
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+.resa-stepper__controles {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p3);
+}
+
+.resa-stepper__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: 50%;
+    background: var(--color-white);
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.resa-stepper__btn:hover {
+    border-color: var(--color-dark-green-blue);
+    color: var(--color-dark-green-blue);
+}
+
+.resa-stepper__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.resa-stepper__btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.resa-stepper__valeur {
+    min-width: 16px;
+    text-align: center;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+}
+
+/* Récapitulatif : lignes libellé / montant, total souligné */
+.resa__recap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+    margin: 0;
+    padding-top: var(--padding-p2-2);
+    border-top: 1px solid var(--color-grey-border-2);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.resa__ligne {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--padding-p4);
+}
+
+.resa__ligne--total {
+    padding-top: var(--padding-p3);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+}
+
+.resa__ligne--total dd {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.resa__ecolo {
+    font-family: var(--font-input);
+    font-style: italic;
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+.resa__submit {
+    width: 100%;
+}
+
+.resa__note,
+.resa__confirmation {
+    font-family: var(--font-input);
+    font-style: italic;
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+    text-align: center;
+}
+
+.resa__confirmation {
+    font-style: normal;
+    font-size: var(--fs-p3);
+    color: var(--color-dark-green-blue);
+    font-weight: var(--fw-semibold);
+}
+
+/* Signalement sous le panneau : drapeau + texte souligné */
+.resa__signaler {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding-p4);
+    align-self: center;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.resa__signaler:hover {
+    color: var(--color-dark-green-blue);
+}
+
+.resa__signaler svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* =============================================================
+   BLOC 4 : ESPACES SIMILAIRES
+   Bande beige pleine largeur, cartes produit et bouton Explorer.
+   Mobile : rangée qui défile horizontalement (maquette).
+   ============================================================= */
+.similaires {
+    background: var(--color-beige);
+    padding: var(--padding-p1) 0;
+}
+
+.similaires__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    padding: 0 var(--padding-page-mobile);
+}
+
+.similaires-grille {
+    display: flex;
+    gap: var(--padding-p2-2);
+    overflow-x: auto;
+    /* laisse la place aux tags posés à cheval sur les cartes */
+    padding-top: 12px;
+    padding-bottom: var(--padding-p4);
+}
+
+.similaires-grille .card-product {
+    flex: 0 0 200px;
+}
+
+.similaires__explorer {
+    align-self: flex-end;
+}
+
+/* =============================================================
+   BARRE DE RÉSERVATION MOBILE
+   Fixée en bas de l'écran (maquette mobile) : total TTC à gauche,
+   bouton Réserver à droite. Elle garde la réservation sous la main
+   pendant tout le défilement, comme le panneau collant des grands
+   écrans. Masquée dès la tablette.
+   ============================================================= */
+.resa-barre {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* sous le header collant (100), les pop-ups et le bandeau cookies */
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p3);
+    padding: var(--padding-p3) var(--padding-page-mobile);
+    background: var(--color-white);
+    border-top: 1px solid var(--color-grey-border);
+}
+
+.resa-barre__total {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-black);
+}
+
+/* Montant : même traitement que le total du panneau, souligné */
+.resa-barre__total strong {
+    margin-left: var(--padding-p5);
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-semibold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* La fin de page (footer) reste lisible au-dessus de la barre fixe :
+   dégagement égal à la hauteur de la barre (bouton 46px + marges) */
+body {
+    padding-bottom: 76px;
+}
+
+/* =============================================================
+   TABLETTE (à partir de 768px)
+   ============================================================= */
+@media (min-width: 768px) {
+
+    /* Retour à l'ordre du document : en-tête avant la galerie */
+    main {
+        display: block;
+    }
+
+    /* Le panneau collant remplace la barre de réservation mobile */
+    .resa-barre {
+        display: none;
+    }
+
+    body {
+        padding-bottom: 0;
+    }
+
+    .produit-intro,
+    .galerie,
+    .produit-layout,
+    .similaires__inner {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    /* L'en-tête retrouve sa place au-dessus de la galerie */
+    .produit-intro {
+        margin-top: 0;
+        border-radius: 0;
+        padding-top: var(--padding-p2);
+    }
+
+    .produit-intro nav {
+        display: block;
+    }
+
+    .produit-entete__ligne {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--padding-p4) var(--padding-p2);
+    }
+
+    .produit-entete__actions {
+        display: flex;
+    }
+
+    /* La galerie reprend la mosaïque : le carrousel mobile disparaît */
+    .galerie {
+        gap: var(--padding-p4);
+        padding-top: var(--padding-p2);
+    }
+
+    .galerie__barre,
+    .galerie__mobile {
+        display: none;
+    }
+
+    .galerie__principale {
+        display: block;
+    }
+
+    .galerie__vignettes {
+        display: grid;
+    }
+
+    .galerie__toutes {
+        display: inline-flex;
+        right: calc(var(--padding-page-tablet) + var(--padding-p2-2));
+    }
+
+    .produit-entete h1 {
+        font-size: var(--fs-h1);
+    }
+
+    /* Toutes les cartes caractéristiques sont visibles, sans Voir plus */
+    .caracs:not(.is-ouvert) .card-carac:nth-child(n+3) {
+        display: flex;
+    }
+
+    .caracs__toggle {
+        display: none;
+    }
+
+    .caracs .card-carac {
+        width: 160px; /* largeur Figma de la carte Dimensions */
+    }
+
+    .equipements,
+    .securite__liste {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .similaires-grille .card-product {
+        flex: 0 0 220px;
+    }
+
+    /* Contenu à gauche, panneau de réservation en colonne droite (maquette tablette) */
+    .produit-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: var(--padding-p1) var(--padding-p2);
+        align-items: start;
+    }
+
+    /* Panneau fixé dans le flux : il défile normalement avec la page.
+       Le sticky est retiré car le panneau est plus haut que l'écran,
+       ce qui provoquait un saut et rendait son bas inaccessible. */
+    .resa-panel {
+        position: static;
+    }
+}
+
+/* =============================================================
+   DESKTOP (à partir de 1024px)
+   Mosaïque photos, contenu à gauche, panneau collant à droite.
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    /* Galerie : mosaïque Figma. Le conteneur de vignettes disparaît
+       de la grille (display contents), chaque photo devient un item */
+    .galerie {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-rows: repeat(2, 240px);
+        gap: var(--padding-p4);
+    }
+
+    .galerie__principale {
+        grid-column: 1;
+        grid-row: 1 / 3;
+        aspect-ratio: auto;
+        height: 100%;
+    }
+
+    .galerie__vignettes {
+        display: contents;
+    }
+
+    .galerie__vignette {
+        aspect-ratio: auto;
+        height: 100%;
+        width: 100%;
+        border-radius: var(--radius-r1);
+    }
+
+    /* Colonne de réservation plus large que sur tablette */
+    .produit-layout {
+        grid-template-columns: minmax(0, 1fr) 380px;
+        gap: var(--padding-p1) 40px;
+    }
+
+    .commentaires {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .equipements {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    /* Les six cartes caractéristiques se partagent la rangée (Figma) */
+    .caracs {
+        flex-wrap: nowrap;
+    }
+
+    .caracs .card-carac {
+        width: auto;
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    /* La carte reprend le format panoramique de la maquette */
+    .localisation__carte {
+        aspect-ratio: 1760 / 480;
+    }
+
+    .savoir-grille {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    /* Carte hôte : profil et extras côte à côte */
+    .hote-carte {
+        flex-direction: row;
+        gap: var(--padding-p1);
+    }
+
+    .hote-carte__profil,
+    .hote-carte__extras {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    /* Similaires : grille de cinq cartes sans défilement */
+    .similaires-grille {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        overflow-x: visible;
+    }
+
+    .similaires-grille .card-product {
+        flex: initial;
+    }
+}
+
+/* =============================================================
+   GRAND ÉCRAN (à partir de 1440px)
+   Gouttières Figma et colonne de réservation un peu plus large.
+   ============================================================= */
+@media (min-width: 1440px) {
+
+    .produit-intro,
+    .galerie,
+    .produit-layout,
+    .similaires__inner {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .galerie__toutes {
+        right: calc(var(--padding-page-desktop) + var(--padding-p2-2));
+    }
+
+    .galerie {
+        grid-template-rows: repeat(2, 280px);
+    }
+
+    .produit-layout {
+        grid-template-columns: minmax(0, 1fr) 420px;
+        column-gap: 64px;
+    }
+}
+
+/* =============================================================
+   AVIS EN TRÈS GRAND ÉCRAN (à partir de 1560px)
+   La colonne de contenu est enfin assez large : la note globale passe
+   à GAUCHE et les critères à sa droite (tuiles fixes qui restent sur
+   une ligne, ou passent sur deux si besoin). En dessous de cette
+   largeur, la note reste AU-DESSUS, pleine largeur, ce qui laisse toute
+   la place aux critères pour se remettre en ligne.
+   ============================================================= */
+@media (min-width: 1560px) {
+
+    .avis-stats {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: var(--padding-p1);
+    }
+
+    .avis-note {
+        flex: 0 0 auto;
+    }
+
+    .avis-criteres {
+        flex: 1 1 auto;
+    }
+}

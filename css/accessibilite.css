@@ -1,0 +1,317 @@
+/* =============================================================
+   POOL PARTY - PAGE ACCESSIBILITÉ
+   Styles spécifiques à la page accessibilite.html. Mobile-first :
+   base 393px, puis tablette (768px) et desktop (1024px).
+   Les composants (fil d'Ariane, cartes protection, barre de
+   progression, boutons) viennent de global.css ; cette feuille
+   ne gère que la mise en page et les blocs propres à la page.
+   ============================================================= */
+
+/* =============================================================
+   BLOC 1 : FIL D'ARIANE
+   ============================================================= */
+.access-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile);
+}
+
+/* =============================================================
+   BLOC 2 : EN-TÊTE DE PAGE
+   Bandeau beige pleine largeur, titre et chapô centrés
+   (même gabarit que l'en-tête de la page contact).
+   ============================================================= */
+.access-hero {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    background: var(--color-beige);
+    text-align: center;
+}
+
+/* Titre réduit en mobile, la taille Figma (40px) revient en tablette */
+.access-hero h1 {
+    font-size: 32px;
+}
+
+.access-hero p {
+    max-width: 720px;
+    margin: var(--padding-p4) auto 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   BLOC 3 : NOS ENGAGEMENTS
+   Quatre cartes protection (composant global) centrées, en
+   colonne sur mobile puis en grille 2 et 4 colonnes.
+   ============================================================= */
+.access-piliers {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    text-align: center;
+}
+
+.access-piliers__sub {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.access-piliers__liste {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p1);
+    margin-top: var(--padding-p1);
+}
+
+/* Les pictogrammes des cartes sont carrés ici (48px), plus
+   petits que les 53x60 des pictos de réassurance de l'accueil */
+.access-piliers .card-protection svg {
+    width: 48px;
+    height: 48px;
+}
+
+/* =============================================================
+   BLOC 4 : DÉCLARATION D'ACCESSIBILITÉ
+   Texte de référence sur colonne de lecture confortable, avec
+   une carte beige pour l'état de conformité et sa barre de
+   progression.
+   ============================================================= */
+.access-declaration {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
+}
+
+.access-declaration p {
+    margin-top: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.access-declaration h3 {
+    margin-top: var(--padding-p1);
+}
+
+/* Carte de l'état de conformité : fond beige arrondi */
+.access-conformite {
+    margin-top: var(--padding-p1);
+    padding: var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+}
+
+.access-conformite h3 {
+    margin-top: 0;
+}
+
+.access-conformite__score {
+    margin-top: var(--padding-p2);
+}
+
+.access-conformite__valeur {
+    margin-bottom: var(--padding-p4);
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-dark-green-blue);
+}
+
+/* Date de mise à jour : discret, en italique */
+.access-declaration__date {
+    font-style: italic;
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+/* Listes à puces des sections texte (non-conformités, recours) */
+.access-liste {
+    margin-top: var(--padding-p3);
+    padding-left: var(--padding-p2);
+    list-style: disc;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.access-liste a {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.access-liste a:hover {
+    color: var(--color-dark-green-blue-2);
+}
+
+/* =============================================================
+   BLOC 5 : AIDES À LA NAVIGATION
+   Bandeau beige pleine largeur ; chaque aide est une carte
+   blanche icône + texte, empilées puis en grille 2 colonnes.
+   ============================================================= */
+.access-aides {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    background: var(--color-beige);
+}
+
+.access-aides__sub {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.access-aides__liste {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p1);
+}
+
+.access-aide {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--padding-p3);
+    padding: var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    box-shadow: var(--shadow-3);
+}
+
+.access-aide svg {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    color: var(--color-dark-green-blue);
+}
+
+.access-aide__titre {
+    font-size: var(--fs-h4);
+}
+
+.access-aide p {
+    margin-top: var(--padding-p5);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   BLOC 6 : SIGNALEMENT ET VOIES DE RECOURS
+   CTA centré (même gabarit que le CTA final de contact) suivi
+   du bloc texte des voies de recours.
+   ============================================================= */
+.access-contact {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+}
+
+.access-contact__cta {
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    box-shadow: var(--shadow-2);
+    text-align: center;
+}
+
+.access-contact__cta p {
+    max-width: 620px;
+    margin: var(--padding-p2) auto 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.access-contact__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p1);
+}
+
+/* Les deux boutons restent lisibles sur petit écran : l'adresse
+   mail peut être longue, on autorise le retour à la ligne */
+.access-contact__actions .btn {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.access-recours {
+    max-width: 820px;
+    margin: var(--padding-p1) auto 0;
+}
+
+.access-recours p {
+    margin-top: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   TABLETTE (à partir de 768px)
+   Gouttières 32px, titre à sa taille Figma, cartes engagement
+   et aides sur deux colonnes.
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .access-intro,
+    .access-hero,
+    .access-piliers,
+    .access-declaration,
+    .access-aides,
+    .access-contact {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .access-hero h1 {
+        font-size: var(--fs-h1);
+    }
+
+    .access-hero p {
+        font-size: var(--fs-p2);
+    }
+
+    .access-piliers__liste {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        justify-items: center;
+        align-items: start;
+    }
+
+    .access-aides__liste {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
+    }
+}
+
+/* =============================================================
+   DESKTOP (à partir de 1024px)
+   Gouttières 80px, les quatre engagements sur une ligne.
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .access-intro,
+    .access-hero,
+    .access-piliers,
+    .access-aides,
+    .access-contact {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .access-piliers__liste {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .access-contact__cta {
+        padding: 48px var(--padding-p1);
+    }
+}

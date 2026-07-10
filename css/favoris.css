@@ -1,0 +1,142 @@
+/* =============================================================
+   POOL PARTY - PAGE MES FAVORIS (favoris.html)
+   Page hors maquette Figma, composée avec les composants du site :
+   fil d'Ariane, cartes annonce de global.css, grille de la page
+   catégorie. La grille est remplie par main.js depuis le
+   localStorage ; deux états pleine page l'accompagnent (visiteur
+   invité à se connecter, liste vide), inspirés de la page
+   favoris d'Etsy.
+   Mobile-first : base 393px, tablette 768px, desktop 1024px.
+   ============================================================= */
+
+/* =============================================================
+   INTRO : fil d'Ariane, titre et compteur d'espaces
+   ============================================================= */
+.favoris-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile) 0;
+}
+
+.favoris-intro h1 {
+    margin-top: var(--padding-p2);
+}
+
+.favoris-intro__sub {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   ÉTATS PLEINE PAGE
+   Panneau beige centré : coeur, titre, texte puis action.
+   favoris-etat--connexion s'affiche pour les visiteurs,
+   favoris-etat--vide pour un compte sans favori.
+   ============================================================= */
+/* Les display flex et grid ci-dessous repassent derrière le reset
+   dans la cascade : on redonne la main à l'attribut hidden, qui
+   bascule les trois états de la page (géré en JS) */
+.favoris-etat[hidden],
+.favoris-grid[hidden] {
+    display: none;
+}
+
+.favoris-etat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p2-2);
+    margin: var(--padding-p1) var(--padding-page-mobile);
+    padding: calc(2 * var(--padding-p1)) var(--padding-p2);
+    background-color: var(--color-beige);
+    border-radius: var(--radius-r1);
+    text-align: center;
+}
+
+.favoris-etat__coeur {
+    width: 56px;
+    height: 56px;
+    color: var(--color-corail);
+}
+
+.favoris-etat p {
+    max-width: 52ch;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.favoris-etat__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--padding-p2-2);
+    margin-top: var(--padding-p4);
+}
+
+/* =============================================================
+   GRILLE DES FAVORIS
+   Mêmes colonnes que la grille de résultats de la page catégorie.
+   ============================================================= */
+.favoris-liste {
+    padding: 0 var(--padding-page-mobile) var(--padding-p1);
+}
+
+.favoris-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--padding-p1) var(--padding-p2-2);
+    /* laisse la place aux tags posés à cheval sur les cartes */
+    padding-top: 12px;
+}
+
+/* =============================================================
+   TABLETTE (à partir de 768px)
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .favoris-intro {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .favoris-etat {
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+    }
+
+    .favoris-liste {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .favoris-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--padding-p2) var(--padding-p2-2);
+    }
+}
+
+/* =============================================================
+   ORDINATEUR (à partir de 1024px)
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .favoris-intro {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .favoris-etat {
+        margin-left: var(--padding-page-desktop);
+        margin-right: var(--padding-page-desktop);
+    }
+
+    .favoris-liste {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .favoris-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}

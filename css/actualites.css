@@ -1,0 +1,499 @@
+/* =============================================================
+   POOL PARTY - PAGE ACTUALITÉS (actualites.html)
+   Journal grand public : fil d'Ariane, en-tête, article à la une,
+   grille d'articles et newsletter. Mise en page hors maquette
+   Figma, bâtie sur les composants de global.css et les tokens de
+   variables.css. Approche mobile-first.
+   ============================================================= */
+
+/* FIL D'ARIANE */
+.actus-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile) 0;
+}
+
+/* EN-TÊTE DE PAGE */
+.actus-hero {
+    padding: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
+}
+
+.actus-hero__surtitre {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-corail);
+    margin-bottom: var(--padding-p4);
+}
+
+.actus-hero h1 {
+    margin-bottom: var(--padding-p3);
+}
+
+.actus-hero p {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    line-height: 1.6;
+    color: var(--color-grey-font-1);
+    /* largeur de lecture confortable ; posée sur le texte et non sur
+       la section pour ne pas entrer en conflit avec la gouttière de
+       page (qui grandit sur très grand écran) */
+    max-width: 65ch;
+}
+
+/* ENTÊTE DE CARTE : rubrique + date (partagé une et grille) */
+.actus-card__entete {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p3);
+}
+
+.actus-card__date {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+/* ARTICLE À LA UNE */
+.actus-featured {
+    padding: 0 var(--padding-page-mobile) var(--padding-p1);
+}
+
+.actus-une {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    overflow: hidden;
+    box-shadow: var(--shadow-3);
+}
+
+.actus-une__media {
+    display: block;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+}
+
+.actus-une__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+}
+
+.actus-une:hover .actus-une__media img {
+    transform: scale(1.04);
+}
+
+.actus-une__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+    padding: var(--padding-p2);
+}
+
+.actus-une__titre {
+    font-size: var(--fs-h2);
+    line-height: 1.2;
+}
+
+.actus-une__titre a {
+    color: var(--color-dark-green-blue);
+}
+
+.actus-une__titre a:hover {
+    color: var(--color-corail);
+}
+
+.actus-une__resume {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    line-height: 1.6;
+    color: var(--color-grey-font-1);
+}
+
+/* GRILLE D'ARTICLES */
+.actus-liste {
+    padding: 0 var(--padding-page-mobile) var(--padding-p1);
+}
+
+.actus-liste > h2 {
+    margin-bottom: var(--padding-p2);
+}
+
+.actus-grille {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--padding-p2);
+}
+
+/* CARTE ARTICLE */
+.actus-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    overflow: hidden;
+    box-shadow: var(--shadow-3);
+    transition: box-shadow var(--transition-medium), transform var(--transition-medium);
+}
+
+.actus-card:hover,
+.actus-card:focus-within {
+    box-shadow: var(--shadow-2);
+    transform: translateY(-4px);
+}
+
+.actus-card__media {
+    display: block;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+}
+
+.actus-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+}
+
+.actus-card:hover .actus-card__media img {
+    transform: scale(1.04);
+}
+
+.actus-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+    padding: var(--padding-p2);
+    /* pousse le lien Lire l'article en bas quelle que soit la
+       longueur du résumé, pour aligner les cartes de la rangée */
+    flex: 1 0 auto;
+}
+
+.actus-card__titre {
+    font-size: var(--fs-h3);
+    line-height: 1.25;
+}
+
+.actus-card__titre a {
+    color: var(--color-dark-green-blue);
+}
+
+.actus-card__titre a:hover {
+    color: var(--color-corail);
+}
+
+.actus-card__resume {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 1.6;
+    color: var(--color-grey-font-1);
+}
+
+/* Le lien Lire l'article se cale en bas de la carte */
+.actus-card__body .btn-link {
+    margin-top: auto;
+}
+
+/* =============================================================
+   NEWSLETTER
+   Reprise du composant de l'accueil (classes .newsletter*) pour
+   que le hook de main.js fonctionne ; styles recopiés ici car la
+   page ne charge pas accueil.css.
+   ============================================================= */
+.newsletter {
+    padding: var(--padding-p1) var(--padding-page-mobile) 48px;
+}
+
+.newsletter__box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+    padding: var(--padding-p1) var(--padding-p2);
+    text-align: center;
+}
+
+.newsletter__text {
+    font-family: var(--font-input);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+    max-width: 75ch;
+}
+
+.newsletter__form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--padding-p2);
+    width: 100%;
+    max-width: 620px;
+}
+
+.newsletter__form input {
+    flex: 1 1 260px;
+    height: 40px;
+    padding: var(--padding-p4) var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-search-small);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.newsletter__form input::placeholder {
+    color: var(--color-grey-font-2);
+    opacity: 1;
+}
+
+.newsletter__form input:hover,
+.newsletter__form input:focus {
+    border-color: var(--color-dark-green-blue-2);
+    outline: none;
+}
+
+.newsletter__rgpd {
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+    max-width: 620px;
+}
+
+.newsletter__rgpd a {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+}
+
+/* =============================================================
+   TABLETTE (à partir de 768px)
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .actus-intro {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .actus-hero {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .actus-featured,
+    .actus-liste {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    /* Article à la une : photo et texte côte à côte */
+    .actus-une {
+        flex-direction: row;
+        align-items: stretch;
+    }
+
+    .actus-une__media {
+        flex: 1 1 50%;
+        aspect-ratio: auto;
+    }
+
+    .actus-une__body {
+        flex: 1 1 50%;
+        justify-content: center;
+        padding: var(--padding-p1);
+    }
+
+    /* Grille : deux colonnes */
+    .actus-grille {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .newsletter {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+}
+
+/* =============================================================
+   DESKTOP (à partir de 1024px)
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .actus-intro {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .actus-hero {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+        padding-top: var(--padding-p1);
+    }
+
+    .actus-featured,
+    .actus-liste {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .actus-une__titre {
+        font-size: var(--fs-h1);
+    }
+
+    /* Grille : trois colonnes */
+    .actus-grille {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--padding-p1);
+    }
+
+    .newsletter {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+}
+
+/* =============================================================
+   PAGE D'UN ARTICLE (single.php, WordPress)
+   Colonne de lecture centrée. Règle anti-bug : la gouttière de
+   page est portée par .article (jamais de max-width dessus), la
+   largeur de lecture par les éléments internes (jamais de
+   gouttière dessus), pour ne pas reproduire l'écrasement du
+   contenu sur très grand écran.
+   ============================================================= */
+.article {
+    padding: 0 var(--padding-page-mobile) var(--padding-p1);
+}
+
+.article-header,
+.article-hero,
+.article-body,
+.article-back {
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.article-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+    padding-top: var(--padding-p2);
+}
+
+.article-titre {
+    font-size: var(--fs-h1);
+    line-height: 1.15;
+    color: var(--color-dark-green-blue);
+}
+
+.article-hero {
+    margin-top: var(--padding-p2);
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-r1);
+    overflow: hidden;
+    box-shadow: var(--shadow-3);
+}
+
+.article-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.article-body {
+    margin-top: var(--padding-p2);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    line-height: 1.7;
+    color: var(--color-grey-font-1);
+}
+
+.article-body p {
+    margin-bottom: var(--padding-p2);
+}
+
+.article-body p:last-child {
+    margin-bottom: 0;
+}
+
+/* Sous-titres et listes éventuels saisis dans l'éditeur WordPress */
+.article-body h2 {
+    font-size: var(--fs-h3);
+    color: var(--color-dark-green-blue);
+    margin: var(--padding-p2) 0 var(--padding-p4);
+}
+
+.article-body ul,
+.article-body ol {
+    margin: 0 0 var(--padding-p2) var(--padding-p2);
+}
+
+.article-body li {
+    margin-bottom: var(--padding-p5);
+}
+
+.article-back {
+    margin-top: var(--padding-p1);
+}
+
+/* Lien de retour : chevron orienté vers la gauche */
+.article-back__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p4);
+    font-family: var(--font-body);
+    font-weight: var(--fw-medium);
+    font-size: var(--fs-p2);
+    color: var(--color-dark-green-blue);
+}
+
+.article-back__link::before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    background-color: currentColor;
+    -webkit-mask: var(--icon-chevron-right) center / contain no-repeat;
+    mask: var(--icon-chevron-right) center / contain no-repeat;
+    transform: rotate(180deg);
+    transition: transform var(--transition-fast);
+}
+
+.article-back__link:hover {
+    color: var(--color-corail);
+}
+
+.article-back__link:hover::before {
+    transform: rotate(180deg) translateX(3px);
+}
+
+@media (min-width: 768px) {
+
+    .article {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .article-hero {
+        margin-top: var(--padding-p1);
+    }
+}
+
+@media (min-width: 1024px) {
+
+    .article {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+}

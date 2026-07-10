@@ -1,0 +1,18 @@
+/*
+Theme Name: PoolParty_G4
+Theme URI: https://poolparty-dsp-ddm-f25a-o24b-g4.fr
+Author: Audrey Garoscio
+Author URI: https://portfolio-garoscio.vercel.app/
+Description: Thème sur-mesure pour Pool Party, marketplace de location de piscines, jacuzzis et spas entre particuliers. Direction Art nouveau et design organique, aux formes fluides. Palette de bleu/vert pour l'eau des callanques et l'écologie, réchauffée de sable et de corail pour le soleil et la détente du spa. Typographies Cormorant Garamond, Inter et Poppins.
+Version: 1.0
+Requires at least: 6.0
+Requires PHP: 7.4
+Text Domain: poolparty-g4
+*/
+
+/* ------------------------------------------------------------------
+   Ce fichier n'existe que pour l'en-tête de thème lu par WordPress.
+   Les styles réels du site restent dans css/ (reset, variables,
+   global, une feuille par page) et sont chargés par functions.php
+   avec wp_enqueue_style(). Ne PAS coller tout le CSS ici.
+   ------------------------------------------------------------------ */

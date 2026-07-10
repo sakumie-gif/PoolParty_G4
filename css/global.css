@@ -1,0 +1,4477 @@
+/* =============================================================
+   POOL PARTY - STYLES GLOBAUX
+   Typographie de base, header, footer, boutons, composants 
+   réutilisables sur l'ensemble du site.
+   Approche mobile-first.
+   ============================================================= */
+
+/* BASE */
+body {
+    font-family: var(--font-body);
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-regular);
+    color: var(--color-black);
+    background-color: var(--color-white);
+    /* Footer collant : la page fait au moins la hauteur de l'écran,
+       le contenu central grandit pour pousser le footer tout en bas. */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+.site-footer {
+    flex-shrink: 0;
+}
+
+/* TITRES */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-semibold);
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: var(--fs-h1);
+    color: var(--color-dark-green-blue);
+}
+
+h2 {
+    font-size: var(--fs-h2);
+    color: var(--color-dark-green-blue);
+}
+
+h3 {
+    font-size: var(--fs-h3);
+    color: var(--color-dark-green-blue);
+}
+
+h4 {
+    font-size: var(--fs-h4);
+    color: var(--color-dark-green-blue);
+}
+
+/* LIENS */
+a {
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--color-corail);
+}
+
+/* ANCRES ET HEADER COLLANT
+   Le header sticky recouvre le haut des sections ciblées par une
+   ancre (#kit-presse, #candidature...) : le scroll-margin réserve
+   sa hauteur pour que le titre reste visible à l'arrivée.
+   Le header mesure 133px en desktop et 143px en mobile (logo et
+   recherche sur deux rangées) : 160px laissent un peu d'air. */
+[id] {
+    scroll-margin-top: 160px;
+}
+
+/* CONTAINER UTILITAIRE */
+.container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--padding-page-mobile);
+}
+
+/* TEXTE POUR LECTEURS D'ÉCRAN UNIQUEMENT
+   Masque visuellement un élément tout en le laissant accessible
+   aux technologies d'assistance (titres de sections, labels). */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* LIEN D'ÉVITEMENT (accessibilité clavier)
+   Premier élément focusable de chaque page : masqué hors focus,
+   il apparaît au-dessus du header quand on tabule dessus et
+   envoie directement au contenu principal. */
+.skip-link {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 1200; /* au-dessus du header, des pop-ups et du bandeau cookies */
+    padding: var(--padding-p3) var(--padding-p2);
+    background-color: var(--color-dark-green-blue);
+    color: var(--color-white);
+    font-family: var(--font-body);
+    font-size: var(--fs-p3);
+    border-radius: var(--radius-r2);
+    transform: translateY(-250%);
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+    color: var(--color-white);
+}
+
+/* =============================================================
+   BOUTONS GÉNÉRIQUES
+   Système complet calé sur la planche de composants Figma :
+   primary (default / hover), secondary (corail), tertiary
+   (contour), état désactivé, trois tailles et liens chevron.
+   Les variantes avec icône n'ont besoin d'aucune classe en
+   plus : l'icône se place dans le bouton, le gap fait le reste.
+   ============================================================= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* valeur Figma */
+    font-family: var(--font-body);
+    font-weight: var(--fw-regular);
+    font-size: var(--fs-p2);
+    padding: var(--padding-p4) var(--padding-p2);
+    border-radius: 30px; /* valeur Figma */
+    transition: all var(--transition-medium);
+    cursor: pointer;
+    box-shadow: var(--shadow-btn);
+}
+
+/* PRIMARY : fond vert bleuté foncé, survol vert pâle */
+.btn-primary {
+    background-color: var(--color-dark-green-blue);
+    color: var(--color-white);
+}
+
+/* La couleur du texte est redéclarée au survol : les boutons posés
+   sur des liens <a> ne doivent pas hériter du corail du a:hover global */
+.btn-primary:hover {
+    background-color: var(--color-green);
+    color: var(--color-white);
+}
+
+/* SECONDARY : fond corail, survol corail assombri */
+.btn-secondary {
+    background-color: var(--color-corail);
+    color: var(--color-white);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-corail-hover);
+    color: var(--color-white);
+}
+
+/* TERTIARY : contour fin, texte Accent Bleu Green,
+   survol contour épais + texte gras (valeurs Figma) */
+.btn-tertiary {
+    background-color: transparent;
+    color: var(--color-accent-bleu-green);
+    border: 1px solid var(--color-dark-green-blue);
+    box-shadow: var(--shadow-btn-outline);
+}
+
+.btn-tertiary:hover {
+    /* Anneau intérieur : la bordure paraît 2px sans changer la taille */
+    box-shadow: var(--shadow-btn-outline), inset 0 0 0 1px var(--color-dark-green-blue);
+    /* Faux gras : épaissit le trait sans élargir le texte */
+    text-shadow: 0 0 0.6px currentColor, 0 0 0.6px currentColor;
+    color: var(--color-accent-bleu-green);
+}
+
+/* ÉTAT DÉSACTIVÉ : commun à toutes les variantes.
+   Figma : fond Disable, l'ombre portée reste visible. */
+.btn:disabled,
+.btn.is-disabled {
+    background-color: var(--color-disable);
+    color: var(--color-white);
+    border: none;
+    box-shadow: var(--shadow-btn);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* TAILLES (Figma : Petit 36px / Moyen 48px / Grand 60px de haut,
+   texte 16px dans les trois cas). .btn seul correspond au bouton
+   standard de 40px utilisé dans les pages. */
+.btn-small {
+    padding: 6px var(--padding-p2-2);
+}
+
+.btn-medium {
+    padding: 12px var(--padding-p2);
+}
+
+.btn-large {
+    padding: 18px var(--padding-p1);
+}
+
+/* LIEN CHEVRON : texte suivi d'un chevron (Figma : Default >) */
+.btn-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px; /* valeur Figma */
+    font-family: var(--font-body);
+    font-weight: var(--fw-medium); /* Figma : Poppins Medium */
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+/* Chevron 24px identique à celui du lien de signalement */
+.btn-link::after {
+    content: "";
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    background-color: var(--color-dark-green-blue);
+    -webkit-mask: var(--icon-chevron-right) center / contain no-repeat;
+    mask: var(--icon-chevron-right) center / contain no-repeat;
+    transition: transform var(--transition-fast);
+}
+
+/* Le survol reste dark green (annule le corail du a:hover global) */
+.btn-link:hover {
+    color: var(--color-dark-green-blue);
+}
+
+.btn-link:hover::after {
+    transform: translateX(3px);
+}
+
+/* LIEN SIGNALEMENT : chevron avant + texte souligné
+   (Figma : Button / Underline, node 126:64767)
+   Icône 24px, gap 10px, texte Inter 14 en grey-font-1. */
+.link-signal {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px; /* valeur Figma */
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+/* Chevron 24px en masque SVG : aucun texte, donc jamais souligné,
+   et le flex du parent centre naturellement toute la ligne */
+.link-signal::before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    background-color: var(--color-grey-font-1);
+    -webkit-mask: var(--icon-chevron-right) center / contain no-repeat;
+    mask: var(--icon-chevron-right) center / contain no-repeat;
+}
+
+/* Survol Figma : la couleur reste identique, le soulignement s'épaissit */
+.link-signal:hover {
+    color: var(--color-grey-font-1);
+    text-decoration-thickness: 1.5px;
+}
+
+/* CONTRÔLES DE CARROUSEL : pastilles rondes avec chevron blanc
+   (Figma : Button / Chevron, node 111:9571) */
+.carousel-control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-pill);
+    background: var(--color-dark-green-blue);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.carousel-control:hover {
+    background: var(--color-dark-green-blue-2);
+}
+
+.carousel-control::before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    background-color: var(--color-white);
+    -webkit-mask: var(--icon-chevron-right) center / contain no-repeat;
+    mask: var(--icon-chevron-right) center / contain no-repeat;
+}
+
+/* Le chevron précédent est le même dessin retourné */
+.carousel-control--prev::before {
+    transform: rotate(180deg);
+}
+
+/* ITEM DE MENU : déclencheur de liste déroulante
+   (Figma : Menu item, node 96:12958)
+   Icône 24px + libellé Inter 16 + chevron, contour arrondi R2.
+   Padding 8px et gap 14px : valeurs exactes du Dev Mode.
+   Variantes : hover rempli, is-active / is-open en gras,
+   menu-item--collapsed pour la version icône seule. */
+.menu-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p3);
+    padding: var(--padding-p4);
+    border: 1px solid var(--color-dark-green-blue);
+    border-radius: var(--radius-r2);
+    background: var(--color-white);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-dark-green-blue);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+/* Survol : fond vert bleuté plein, contenu en blanc */
+.menu-item:hover {
+    background: var(--color-dark-green-blue);
+    color: var(--color-white);
+}
+
+/* Item courant ou menu déroulé : libellé en gras, fond inchangé */
+.menu-item.is-active,
+.menu-item.is-open {
+    font-weight: var(--fw-semibold);
+}
+
+/* Icônes : utiliser des SVG inline avec stroke ou fill="currentColor"
+   pour qu'elles passent en blanc au survol */
+.menu-item img,
+.menu-item svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+/* Chevron d'ouverture en fin d'item (même dessin, pivoté vers le bas) */
+.menu-item::after {
+    content: "";
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    background-color: currentColor;
+    -webkit-mask: var(--icon-chevron-right) center / contain no-repeat;
+    mask: var(--icon-chevron-right) center / contain no-repeat;
+    transform: rotate(90deg);
+    transition: transform var(--transition-fast);
+}
+
+.menu-item.is-open::after {
+    transform: rotate(-90deg);
+}
+
+/* VARIANTE REPLIÉE (Collapsed=Yes) : icône seule dans un carré
+   arrondi de 40px, sans contour ni chevron */
+.menu-item--collapsed {
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.menu-item--collapsed::after {
+    display: none;
+}
+
+.menu-item--collapsed:hover {
+    background: var(--color-dark-green-blue);
+}
+
+/* =============================================================
+   CARTE CARACTÉRISTIQUE
+   (Figma : carte Dimensions, variante tablette)
+   Icône + libellé + valeur en gras, empilés et centrés.
+   Valeurs Dev Mode : largeur 160, padding 16, gap 8, radius 12.
+   Usage : <div class="card-carac">
+             <svg ...></svg>
+             <span class="card-carac__label">Dimensions</span>
+             <span class="card-carac__value">8 x 4m</span>
+           </div>
+   ============================================================= */
+.card-carac {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding-p4);
+    width: 160px;
+    padding: var(--padding-p2-2);
+    border: 1px solid var(--color-grey-border);
+    border-radius: 12px; /* valeur Figma, entre R1 et R2 */
+    background: var(--color-white);
+    font-family: var(--font-input);
+    text-align: center;
+}
+
+.card-carac img,
+.card-carac svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--color-dark-green-blue);
+}
+
+.card-carac__label {
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-2);
+}
+
+.card-carac__value {
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-semibold);
+    color: var(--color-black);
+}
+
+/* =============================================================
+   NOTE ET AVIS (rating)
+   (Figma : étoile + note, deux variantes)
+   Étoile 24px vert bleuté + note ; le nombre d'avis est soit
+   entre parenthèses en gris (.rating__count), soit un lien
+   souligné précédé d'un point (.rating__link).
+   Valeurs Dev Mode : padding 0 2px, gap 4px (variante lien : 8px).
+   ============================================================= */
+.rating {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p5);
+    padding: 0 2px;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+}
+
+/* Étoile en masque SVG, colorée en vert bleuté */
+.rating::before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    background-color: var(--color-dark-green-blue);
+    -webkit-mask: var(--icon-star) center / contain no-repeat;
+    mask: var(--icon-star) center / contain no-repeat;
+}
+
+/* Variante lien : espacement un peu plus large */
+.rating:has(.rating__link) {
+    gap: var(--padding-p4);
+}
+
+/* Nombre d'avis entre parenthèses : gris */
+.rating__count {
+    color: var(--color-grey-font-1);
+}
+
+/* Nombre d'avis cliquable : souligné, précédé d'un point médian */
+.rating__link {
+    color: var(--color-black);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.rating__link::before {
+    content: "\2022";
+    display: inline-block; /* soustrait le point au soulignement */
+    margin-right: var(--padding-p4);
+    color: var(--color-black);
+}
+
+.rating__link:hover {
+    color: var(--color-dark-green-blue);
+}
+
+/* =============================================================
+   BARRES DE PROGRESSION
+   (Figma : planche progress bars)
+   Piste grise arrondie, remplissage vert bleuté ; variante
+   corail via .progress--corail. La largeur du remplissage se
+   pilote avec l'attribut data-value (0 à 100) lu par main.js,
+   pour respecter l'interdiction des styles inline.
+   Usage : <div class="progress" data-value="60" role="progressbar"
+                aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+             <span class="progress__bar"></span>
+           </div>
+   ============================================================= */
+.progress {
+    display: block;
+    width: 100%;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--color-grey-border-2);
+    overflow: hidden;
+}
+
+.progress__bar {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: var(--radius-pill);
+    background: var(--color-dark-green-blue);
+    transition: width var(--transition-slow);
+}
+
+.progress--corail .progress__bar {
+    background: var(--color-corail);
+}
+
+/* =============================================================
+   TAGS / BADGES D'ANNONCE
+   (Figma : planche Tag)
+   Pastille arrondie, texte blanc. Chaque statut d'annonce a sa
+   couleur de la charte : blue-grey pour victime de son succès,
+   corail pour promo, jaune pour top vente, vert d'eau pour
+   nouveau, gris pour le plus proche.
+   Usage : <span class="tag tag--promo">Promo</span>
+   ============================================================= */
+.tag {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--padding-p5) var(--padding-p3);
+    border-radius: var(--padding-p4); /* Figma : radius 8px */
+    font-family: var(--font-body);
+    font-size: var(--fs-p3);
+    line-height: 20px; /* valeur Figma */
+    color: var(--color-white);
+    background: var(--color-grey-font-2);
+    box-shadow: 0 4px 3px rgba(0, 0, 0, 0.10), 0 2px 2px rgba(0, 0, 0, 0.10); /* ombre Figma */
+    white-space: nowrap;
+}
+
+.tag--succes {
+    background: var(--color-blue-grey-font);
+}
+
+.tag--promo {
+    background: var(--color-corail);
+}
+
+.tag--top-vente {
+    background: var(--color-yellow-tag);
+}
+
+.tag--nouveau {
+    background: var(--color-dark-green-blue-2);
+}
+
+.tag--proche {
+    background: var(--color-grey-font-2);
+}
+
+/* =============================================================
+   ICÔNES
+   Les icônes du kit Figma vivent en SVG dans assets/icons/.
+   La classe .icon normalise la taille et la couleur ; les SVG
+   inline avec stroke ou fill="currentColor" héritent de la
+   couleur du texte parent.
+   ============================================================= */
+.icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--color-dark-green-blue);
+}
+
+.icon--small {
+    width: 18px;
+    height: 18px;
+}
+
+.icon--large {
+    width: 32px;
+    height: 32px;
+}
+
+/* =============================================================
+   POINTEUR DE CARTE
+   Pin SVG (assets/icons/pin-map.svg) : goutte vert bleuté avec
+   maison blanche, posée sur la carte de la page catégorie.
+   Usage : <img class="map-pin" src="assets/icons/pin-map.svg" alt="">
+   ============================================================= */
+.map-pin {
+    width: 32px;
+    height: 40px;
+    display: block;
+    /* Légère ombre pour détacher le pin du fond de carte */
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+}
+
+/* =============================================================
+   FIL D'ARIANE (breadcrumb)
+   Liste horizontale : icône maison + pages séparées par des
+   chevrons. Le dernier élément (page courante) est en gras.
+   Version repliée : remplacer les pages du milieu par un <li>
+   contenant trois points dans le HTML.
+   ============================================================= */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--padding-p4);
+    font-family: var(--font-body);
+    font-size: var(--fs-p2); /* Figma : 16px */
+    color: var(--color-grey-font-1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.breadcrumb li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p4);
+}
+
+/* Chevron séparateur entre chaque élément (sauf le premier) :
+   même icône 24px que dans la maquette, en masque colorable */
+.breadcrumb li + li::before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    background-color: var(--color-grey-font-1);
+    -webkit-mask: var(--icon-chevron-right) center / contain no-repeat;
+    mask: var(--icon-chevron-right) center / contain no-repeat;
+}
+
+/* inline-flex : le reset passe les svg en display block, sans
+   cela l'icône maison rejette le libellé à la ligne */
+.breadcrumb a {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-grey-font-1);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+}
+
+/* Page courante : dernier élément en gras */
+.breadcrumb .is-current {
+    font-weight: var(--fw-semibold);
+    color: var(--color-dark-green-blue);
+}
+
+/* Icône maison en tête du fil (Figma : 24px, gap 14px avec le libellé) */
+.breadcrumb__home-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-right: 6px; /* complète le gap de 8px pour atteindre les 14px Figma */
+}
+
+/* =============================================================
+   CASES À COCHER (checkbox)
+   Input natif restylé : carré arrondi, coche blanche dessinée
+   en CSS sur fond vert bleuté quand la case est cochée.
+   Usage : <label class="checkbox"><input type="checkbox"> Texte</label>
+   ============================================================= */
+.checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px; /* valeur Figma */
+    font-family: var(--font-input); /* Figma : Inter */
+    font-size: var(--fs-p2);
+    line-height: 1.5;
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+}
+
+.checkbox input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+    width: 24px; /* valeur Figma */
+    height: 24px;
+    flex-shrink: 0;
+    border: 2px solid var(--color-grey-font-2);
+    border-radius: var(--radius-r3);
+    background: var(--color-white);
+    cursor: pointer;
+    position: relative;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+/* Case cochée : Accent Bleu Green (Figma) */
+.checkbox input[type="checkbox"]:checked {
+    background: var(--color-accent-bleu-green);
+    border-color: var(--color-accent-bleu-green);
+}
+
+/* Coche dessinée avec deux bordures pivotées, centrée dans les 24px */
+.checkbox input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 2px;
+    width: 6px;
+    height: 12px;
+    border: solid var(--color-white);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkbox input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--color-dark-green-blue-2);
+    outline-offset: 2px;
+}
+
+/* =============================================================
+   BOUTONS RADIO
+   Cercle gris au repos ; coché : anneau et pastille vert bleuté.
+   Usage : <label class="radio"><input type="radio" name="x"> Texte</label>
+   ============================================================= */
+.radio {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px; /* valeur Figma */
+    font-family: var(--font-body);
+    font-weight: var(--fw-medium); /* Figma : Poppins Medium */
+    font-size: var(--fs-p2);
+    line-height: 1.5;
+    color: var(--color-blue-grey-font);
+    cursor: pointer;
+}
+
+/* Libellé en noir quand le bouton est sélectionné (Figma) */
+.radio:has(input:checked) {
+    color: var(--color-black);
+}
+
+.radio input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+    width: 24px; /* valeur Figma */
+    height: 24px;
+    flex-shrink: 0;
+    border: 2px solid var(--color-grey-font-2);
+    border-radius: 50%;
+    background: var(--color-white);
+    cursor: pointer;
+    position: relative;
+    transition: border-color var(--transition-fast);
+}
+
+.radio input[type="radio"]:checked {
+    border-color: var(--color-dark-green-blue);
+}
+
+/* Pastille centrale de 12px quand le bouton est sélectionné */
+.radio input[type="radio"]:checked::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: var(--color-dark-green-blue);
+}
+
+.radio input[type="radio"]:focus-visible {
+    outline: 2px solid var(--color-dark-green-blue-2);
+    outline-offset: 2px;
+}
+
+/* =============================================================
+   INTERRUPTEURS (toggle)
+   Checkbox restylée en interrupteur : piste grise au repos,
+   verte quand actif, bouton blanc qui glisse. L'état désactivé
+   passe l'ensemble en gris clair.
+   Usage : <label class="toggle">
+             <input type="checkbox"><span class="toggle__track"></span> Texte
+           </label>
+   ============================================================= */
+.toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p2); /* Figma : 20px entre libellé et piste */
+    font-family: var(--font-input); /* Figma : Inter */
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+}
+
+.toggle input[type="checkbox"] {
+    /* L'input reste accessible mais invisible, la piste fait le visuel */
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Piste 56 x 32 (valeurs Figma) */
+.toggle__track {
+    width: 56px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-grey-font-2);
+    position: relative;
+    transition: background-color var(--transition-medium);
+}
+
+/* Bouton circulaire de 24px qui glisse sur la piste, avec ombre Figma */
+.toggle__track::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--color-white);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.10), 0 2px 4px rgba(0, 0, 0, 0.10);
+    transition: transform var(--transition-medium);
+}
+
+.toggle input[type="checkbox"]:checked + .toggle__track {
+    background: var(--color-accent-bleu-green);
+}
+
+.toggle input[type="checkbox"]:checked + .toggle__track::after {
+    transform: translateX(24px);
+}
+
+.toggle input[type="checkbox"]:focus-visible + .toggle__track {
+    outline: 2px solid var(--color-dark-green-blue-2);
+    outline-offset: 2px;
+}
+
+/* État désactivé : tout le composant passe à 50 % d'opacité (Figma) */
+.toggle:has(input:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.toggle input[type="checkbox"]:disabled + .toggle__track {
+    cursor: not-allowed;
+}
+
+/* =============================================================
+   ITEMS DE LISTE DÉROULANTE
+   (Figma : Dropdown item)
+   Ligne Inter 16, padding 14, radius R2. Au survol : fond sable
+   translucide et texte semi-gras. Peut embarquer une icône de
+   16px (chevron) ou 24px devant le libellé, ou une checkbox.
+   Usage : <li><button class="dropdown-item">Lorem ipsum</button></li>
+   ============================================================= */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p4);
+    width: 100%;
+    padding: var(--padding-p3);
+    border-radius: var(--radius-r2);
+    background: transparent;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.dropdown-item:hover,
+.dropdown-item.is-active {
+    background: var(--color-hover-sable);
+    /* Faux gras : épaissit le trait sans décaler la mise en page */
+    text-shadow: 0 0 0.5px currentColor;
+}
+
+/* Variante libellé en semi-gras permanent (Figma : Content=Bold) */
+.dropdown-item--bold {
+    font-weight: var(--fw-semibold);
+}
+
+.dropdown-item img,
+.dropdown-item svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+/* =============================================================
+   ACCORDÉON FAQ
+   Composant partagé entre le bloc Questions fréquentes de la
+   page contact et la page FAQ. Cartes blanches bordées :
+   question sur toute la largeur avec chevron, réponse repliable
+   en dessous. L'ouverture se pilote dans main.js via
+   aria-expanded sur le bouton et hidden sur la réponse.
+   Usage : <li class="faq-item">
+             <h3 class="faq-item__question">
+               <button type="button" aria-expanded="false"
+                       aria-controls="faq-reponse-1">Question ?</button>
+             </h3>
+             <div class="faq-item__reponse" id="faq-reponse-1" hidden>
+               <p>Réponse.</p>
+             </div>
+           </li>
+   ============================================================= */
+.faq-liste {
+    list-style: none;
+    margin: var(--padding-p2) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+}
+
+.faq-item {
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r2);
+}
+
+/* Le h3 ne sert qu'à la structure : le bouton porte tout le style */
+.faq-item__question {
+    font-size: inherit;
+}
+
+.faq-item__question button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p2);
+    width: 100%;
+    padding: var(--padding-p2-2) var(--padding-p2);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-regular);
+    color: var(--color-grey-font-1);
+    text-align: left;
+    cursor: pointer;
+}
+
+/* Chevron 24px en masque, tourné vers le bas ; il se retourne
+   quand la question est ouverte */
+.faq-item__question button::after {
+    content: "";
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    background-color: currentColor;
+    -webkit-mask: var(--icon-chevron-right) center / contain no-repeat;
+    mask: var(--icon-chevron-right) center / contain no-repeat;
+    transform: rotate(90deg);
+    transition: transform var(--transition-fast);
+}
+
+.faq-item__question button[aria-expanded="true"] {
+    font-weight: var(--fw-semibold);
+    color: var(--color-dark-green-blue);
+}
+
+.faq-item__question button[aria-expanded="true"]::after {
+    transform: rotate(-90deg);
+}
+
+.faq-item__reponse {
+    padding: 0 var(--padding-p2) var(--padding-p2-2);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   CHAMPS DE FORMULAIRE
+   (Figma : planche Input, variantes Nom / Mail / Password)
+   Label Inter Bold 18 vert bleuté au-dessus d'un champ de 48px :
+   fond blanc, bordure grey-border, radius R2, ombre search.
+   Survol et focus : la bordure passe en dark-green-blue-2.
+   Usage : <div class="form-field">
+             <label class="form-field__label" for="nom">Nom</label>
+             <input class="form-field__input" id="nom" type="text"
+                    placeholder="Entrez votre nom">
+           </div>
+   ============================================================= */
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+    width: 100%;
+}
+
+.form-field__label {
+    font-family: var(--font-input);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-p1);
+    color: var(--color-dark-green-blue);
+    cursor: pointer;
+}
+
+/* Étoile des champs obligatoires : ajoutée au libellé par main.js à partir
+   de l'attribut required. Le corail la fait ressortir sans alourdir. */
+.form-field__requis {
+    margin-left: 3px;
+    color: var(--color-corail);
+    font-weight: var(--fw-bold);
+}
+
+.form-field__input {
+    width: 100%;
+    height: 48px;
+    padding: var(--padding-p3) var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r2);
+    box-shadow: var(--shadow-search);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+    transition: border-color var(--transition-fast);
+}
+
+.form-field__input::placeholder {
+    color: var(--color-grey-font-2);
+    opacity: 1;
+}
+
+.form-field__input:hover,
+.form-field__input:focus {
+    border-color: var(--color-dark-green-blue-2);
+    outline: none;
+}
+
+/* Champ verrouillé : valeur imposée, non modifiable ET non cliquable —
+   ex. le pays de l'annonce (Pool Party n'opère qu'en France). On le grise
+   pour signaler qu'il n'y a rien à saisir ni à choisir. À ne pas confondre
+   avec un simple readonly cliquable (ex. la date de réservation qui ouvre
+   un calendrier), qui garde l'apparence d'un champ actif. */
+.form-field__input--verrouille,
+.form-field__input--verrouille:hover,
+.form-field__input--verrouille:focus {
+    background: var(--color-grey-border);
+    border-color: var(--color-grey-border-2);
+    color: var(--color-grey-font-2);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Champ en erreur (ex. mot de passe trop court) : bordure corail
+   assortie au message qui liste ce qui manque */
+.form-field__input.has-error,
+.form-field__input.has-error:hover,
+.form-field__input.has-error:focus {
+    border-color: var(--color-corail);
+}
+
+/* Zone de texte multiligne : mêmes styles, hauteur libre */
+textarea.form-field__input {
+    height: auto;
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Champ avec bouton intégré (mot de passe : oeil d'affichage).
+   Le champ enveloppe l'input et le bouton icône. */
+.form-field__wrap {
+    position: relative;
+    width: 100%;
+}
+
+.form-field__wrap .form-field__input {
+    padding-right: 52px; /* laisse la place au bouton oeil */
+}
+
+.form-field__eye {
+    position: absolute;
+    top: 50%;
+    right: var(--padding-p3);
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--color-grey-font-2);
+    cursor: pointer;
+}
+
+/* Texte d'aide sous un champ (ex : rappel e-mail de confirmation) */
+.form-field__aide {
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+    margin-top: var(--padding-p5);
+}
+
+/* =============================================================
+   PILULE DE RECHERCHE / SELECT
+   (Figma : Input Search et Input Chevron, 448 x 56)
+   Pilule blanche : texte à gauche, action à droite. En variante
+   recherche, l'action est une pastille ronde vert bleuté avec
+   la loupe ; en variante select, un simple chevron vers le bas.
+   Usage : <form class="input-search">
+             <input type="search" placeholder="Recherche...">
+             <button class="input-search__submit" aria-label="Rechercher">
+               <svg class="icon">...</svg>
+             </button>
+           </form>
+   ============================================================= */
+.input-search {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* valeur Figma */
+    width: 100%;
+    padding: var(--padding-p4) var(--padding-p3) var(--padding-p4) var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-search-small);
+}
+
+.input-search input {
+    flex: 1 1 0;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.input-search input::placeholder {
+    color: var(--color-grey-font-2);
+    opacity: 1;
+}
+
+/* Pastille ronde de soumission : loupe blanche sur vert bleuté */
+.input-search__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    padding: var(--padding-p4);
+    background: var(--color-dark-green-blue);
+    color: var(--color-white);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-btn);
+    cursor: pointer;
+    transition: background-color var(--transition-medium);
+}
+
+.input-search__submit:hover {
+    background: var(--color-dark-green-blue-2);
+}
+
+.input-search__submit svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Variante select : chevron vers le bas sans pastille */
+.input-search__chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+}
+
+.input-search__chevron::before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    background-color: currentColor;
+    -webkit-mask: var(--icon-chevron-right) center / contain no-repeat;
+    mask: var(--icon-chevron-right) center / contain no-repeat;
+    transform: rotate(90deg);
+    transition: transform var(--transition-fast);
+}
+
+.input-search.is-open .input-search__chevron::before {
+    transform: rotate(-90deg);
+}
+
+/* =============================================================
+   CARTE AVIS
+   (Figma : composant Avis, 384 x 245)
+   Carte blanche arrondie : rangée de 5 étoiles, citation en
+   italique, puis auteur (pastille initiale + nom + rôle).
+   Usage : <article class="card-avis">
+             <div class="card-avis__stars" aria-label="5 sur 5">...</div>
+             <blockquote class="card-avis__quote">"..."</blockquote>
+             <footer class="card-avis__author">
+               <span class="card-avis__avatar">S</span>
+               <div>
+                 <p class="card-avis__name">Sophie Martin</p>
+                 <p class="card-avis__role">Cliente Pool Party</p>
+               </div>
+             </footer>
+           </article>
+   ============================================================= */
+.card-avis {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    max-width: 384px;
+    padding: var(--padding-p1);
+    background: var(--color-white);
+    border-radius: 24px; /* valeur Figma */
+    box-shadow: var(--shadow-btn);
+}
+
+/* Rangée d'étoiles : chaque étoile est un masque SVG de 20px */
+.card-avis__stars {
+    display: flex;
+    gap: var(--padding-p5);
+}
+
+.card-avis__stars span {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    background-color: var(--color-star);
+    -webkit-mask: var(--icon-star) center / contain no-repeat;
+    mask: var(--icon-star) center / contain no-repeat;
+}
+
+.card-avis__quote {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: var(--fs-p2);
+    line-height: 24px; /* valeur Figma */
+    color: var(--color-grey-quote);
+    margin: 0;
+}
+
+.card-avis__author {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* valeur Figma */
+}
+
+/* Pastille ronde avec l'initiale de l'auteur */
+.card-avis__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--color-dark-green-blue);
+    font-family: var(--font-body);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-white);
+}
+
+.card-avis__name {
+    font-family: var(--font-body);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    line-height: 24px;
+    color: var(--color-black);
+}
+
+.card-avis__role {
+    font-family: var(--font-body);
+    font-size: var(--fs-p3);
+    line-height: 20px;
+    color: var(--color-grey-quote);
+}
+
+/* =============================================================
+   CARTE PRODUIT (annonce)
+   (Figma : Product card, formats Desktop 422 / Tablette 238 /
+   Mobile 175, états Default et Hover)
+   La carte est fluide : sa largeur vient de la grille de la page.
+   Photo arrondie 20px avec coeur favori, tag posé à cheval sur le
+   coin haut gauche, puis titre + note, localisation, capacité et
+   prix. Au survol : fond blanc et contour vert bleuté.
+   Usage : <article class="card-product">
+             <div class="card-product__media">
+               <img src="..." alt="...">
+               <button class="card-product__fav" aria-label="Ajouter aux favoris">...</button>
+             </div>
+             <span class="tag tag--nouveau card-product__tag">Nouveau</span>
+             <div class="card-product__body">
+               <div class="card-product__head">
+                 <h3 class="card-product__title">Piscine</h3>
+                 <span class="rating rating--small">4,7 <span class="rating__count">(5 avis)</span></span>
+               </div>
+               <p class="card-product__meta"><span>5km</span><span>Torcy</span><span>France</span></p>
+               <p class="card-product__meta"><span>4-5 personnes</span></p>
+               <p class="card-product__price">23 €/ h</p>
+             </div>
+           </article>
+   ============================================================= */
+.card-product {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* height:auto (et non 100%) : dans le carrousel .products-track (flex),
+       un height:100% empêchait la carte de s'étirer à la hauteur de la plus
+       haute de la rangée, donc son prix (collé en bas) remontait et les prix
+       faisaient des vagues ; en auto la carte s'étire via align-items:stretch
+       et tous les prix se calent sur la même ligne */
+    height: auto;
+    padding-bottom: var(--padding-p5);
+    border-radius: 24px; /* valeur Figma */
+}
+
+/* Photo : ratio Figma 270/192, coins arrondis, ombre douce */
+.card-product__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 270 / 192;
+    border-radius: var(--padding-p2); /* Figma : radius 20px */
+    overflow: hidden;
+    box-shadow: var(--shadow-search-small);
+}
+
+.card-product__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Coeur favori posé sur la photo ; passe au-dessus du lien étendu
+   de la tuile pour rester cliquable indépendamment */
+.card-product__fav {
+    position: absolute;
+    top: var(--padding-p2-2);
+    right: var(--padding-p2-2);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--color-white);
+    cursor: pointer;
+}
+
+.card-product__fav svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Favori actif : le coeur se remplit (état géré en JS) */
+.card-product__fav.is-active svg {
+    fill: currentColor;
+}
+
+/* Tag à cheval sur le coin haut gauche de la carte */
+.card-product__tag {
+    position: absolute;
+    top: -7px;
+    left: -7px;
+    z-index: 1;
+}
+
+.card-product__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p5);
+    padding: var(--padding-p5) var(--padding-p4);
+    /* remplit la hauteur de la carte pour aligner le prix en bas
+       quel que soit le nombre de lignes du titre */
+    flex: 1 0 auto;
+}
+
+.card-product__head {
+    display: flex;
+    /* Sur une carte assez large (tablette, desktop) la note reste calée
+       À DROITE et le titre s'enroule sous elle sur deux lignes, comme
+       avant (« Piscine » / « enterrée » avec 4,9 à droite). Sur une carte
+       étroite (mobile) où le mot le plus long du titre ne tient plus à
+       côté de la note, celle-ci bascule SOUS le titre au lieu de le
+       heurter. flex-wrap + flex-basis 0 du titre font ce choix selon la
+       largeur réellement disponible, pas selon la longueur du nom. */
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p5) var(--padding-p4);
+}
+
+/* La note garde sa largeur naturelle et ne se casse jamais (nowrap,
+   flex-shrink:0) ; si elle ne tient plus à côté du titre elle bascule
+   dessous grâce au flex-wrap du conteneur, elle ne se comprime pas. */
+.card-product__head .rating {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.card-product__title {
+    /* flex-basis 0 + grow : le titre partage la ligne avec la note et
+       s'enroule sous elle tant que son mot le plus long tient à côté ;
+       PAS de min-width:0, on garde min-content comme plancher pour que
+       la note ne bascule dessous que si la carte devient trop étroite. */
+    flex: 1 1 0;
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-h2); /* Figma : Cormorant Garamond Bold 32 */
+    color: var(--color-black);
+    /* interligne resserré : sur deux lignes l'écart entre « Piscine »
+       et « enterrée » restait trop aéré à 1.2 */
+    line-height: 1.05;
+    /* réserve toujours deux lignes de titre : les noms courts (« Jacuzzi »,
+       « Sauna ») occupent la même hauteur que « Piscine enterrée » qui
+       s'enroule sur deux lignes, sinon le prix remontait d'une ligne et les
+       tuiles d'une rangée n'alignaient plus leurs prix (effet de vagues) */
+    min-height: 2.1em;
+}
+
+/* Le titre est un lien vers la fiche annonce : noir au repos (annule le
+   corail du a:hover global), il passe en vert bleuté quand la tuile est
+   survolée pour marquer discrètement l'annonce pointée. Le corail avait été
+   essayé pour éviter le ton sur ton, mais son contraste sur blanc (3,05:1)
+   était trop juste ; le vert bleuté est à 7,2:1 et la différence au survol
+   reste bien lisible */
+.card-product__title a {
+    color: inherit;
+    transition: color var(--transition-fast);
+}
+
+.card-product:hover .card-product__title a,
+.card-product:focus-within .card-product__title a {
+    color: var(--color-dark-green-blue);
+}
+
+/* Toute la tuile mène à la fiche annonce : le lien du titre
+   s'étend sur la carte entière via un pseudo-élément */
+.card-product__title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+/* Localisation et capacité : Inter 16 gris, points séparateurs.
+   La ligne se répartit : distance + ville sur la première ligne, le
+   pays bascule toujours sur la ligne du dessous (il était souvent
+   coupé quand tout tenait sur une seule ligne). */
+.card-product__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 10px; /* valeur Figma */
+    row-gap: 2px;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-2);
+}
+
+.card-product__meta span {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* la distance garde toujours sa largeur entière */
+.card-product__meta span:first-child {
+    flex: none;
+}
+
+/* la ville prend la place restante sur la première ligne (base 0 pour
+   ne jamais renvoyer la distance seule sur sa ligne) et se tronque en
+   « … » si trop longue */
+.card-product__meta span:nth-child(2) {
+    flex: 1 1 0;
+}
+
+/* le pays passe seul sur la ligne suivante, sans point séparateur */
+.card-product__meta span:nth-child(3) {
+    flex: 0 0 100%;
+}
+
+.card-product__meta span:nth-child(3)::before {
+    content: none;
+}
+
+.card-product__meta span + span::before {
+    content: "\2022";
+    margin-right: 10px;
+    font-size: 12px;
+}
+
+.card-product__price {
+    font-family: var(--font-body);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-h3); /* Figma : Poppins SemiBold 24 */
+    line-height: 32px;
+    color: var(--color-dark-green-blue);
+    padding: var(--padding-p5) 0;
+    /* colle le prix en bas de la carte pour aligner les tuiles d'une rangée */
+    margin-top: auto;
+}
+
+/* Ancien prix barré à côté du prix promo (Figma : carte Promo) */
+.card-product__price-old {
+    margin-left: var(--padding-p3);
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-regular);
+    color: var(--color-grey-font-2);
+    text-decoration: line-through;
+}
+
+/* Note compacte des cartes (Figma : texte 14px) */
+.rating--small {
+    font-size: var(--fs-p3);
+}
+
+/* =============================================================
+   CARTE ÉVÉNEMENT
+   (Figma : Card Event, photo pleine carte)
+   Photo plein cadre arrondie 20px, libellé Inter ExtraBold 24
+   blanc calé en bas à droite.
+   Usage : <a class="card-event" href="...">
+             <img src="..." alt="">
+             <span class="card-event__label">Anniversaire</span>
+           </a>
+   ============================================================= */
+.card-event {
+    position: relative;
+    display: block;
+    border-radius: var(--radius-r1);
+    overflow: hidden;
+    aspect-ratio: 282 / 417; /* ratio Figma desktop */
+}
+
+.card-event img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-event__label {
+    position: absolute;
+    right: var(--padding-p2-2);
+    bottom: var(--padding-p2-2);
+    font-family: var(--font-input);
+    font-weight: var(--fw-extrabold);
+    font-size: var(--fs-h3);
+    color: var(--color-white);
+    text-align: right;
+}
+
+/* =============================================================
+   CARTE TÉMOIGNAGE LOCATAIRE
+   (Figma : Card locataire, 296 x 200)
+   Fond corail, seuls les coins haut gauche et bas droit sont
+   arrondis. Citation puis photo ronde + nom + lieu/expérience.
+   Usage : <article class="card-temoignage">
+             <blockquote class="card-temoignage__quote">"..."</blockquote>
+             <footer class="card-temoignage__author">
+               <img class="card-temoignage__photo" src="..." alt="">
+               <div>
+                 <p class="card-temoignage__name">Lucie G.</p>
+                 <p class="card-temoignage__meta"><span>Paris</span><span>9 mois d'expérience</span></p>
+               </div>
+             </footer>
+           </article>
+   ============================================================= */
+.card-temoignage {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--padding-p2-2);
+    max-width: 296px;
+    min-height: 200px;
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-corail);
+    /* Figma : seuls les coins haut gauche et bas droit sont arrondis */
+    border-radius: var(--radius-r1) 0 var(--radius-r1) 0;
+    overflow: hidden;
+}
+
+.card-temoignage__quote {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+    margin: 0;
+}
+
+.card-temoignage__author {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--padding-p4);
+}
+
+.card-temoignage__photo {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: var(--shadow-search);
+}
+
+.card-temoignage__name {
+    font-family: var(--font-input);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-p1);
+    color: var(--color-black);
+    margin-bottom: var(--padding-p5);
+}
+
+.card-temoignage__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p5);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+}
+
+.card-temoignage__meta span + span::before {
+    content: "\2022";
+    margin-right: var(--padding-p5);
+    font-size: 10px;
+}
+
+/* =============================================================
+   CARTE HÔTE (témoignage propriétaire)
+   (Figma : Card Propriétaire, 222 x 248)
+   Fond beige, coins tl/br arrondis, contenu centré : photo ronde
+   cerclée de blanc, prénom Garamond, rôle, note étoile, citation.
+   ============================================================= */
+.card-hote {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p5);
+    max-width: 222px;
+    padding: var(--padding-p2-2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1) 0 var(--radius-r1) 0;
+    text-align: center;
+}
+
+.card-hote__photo {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--color-white);
+    box-shadow: var(--shadow-search);
+}
+
+.card-hote__name {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-h3);
+    color: var(--color-dark-green-blue);
+}
+
+.card-hote__role {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.card-hote__quote {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+    margin: 0;
+}
+
+/* =============================================================
+   CARTE PROTECTION (arguments de réassurance)
+   (Figma : Card Protection)
+   Pictogramme, titre Garamond vert bleuté, texte Inter 14 gris,
+   le tout centré.
+   ============================================================= */
+.card-protection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p3);
+    max-width: 233px;
+    text-align: center;
+}
+
+.card-protection img,
+.card-protection svg {
+    width: 53px;
+    height: 60px;
+    flex-shrink: 0;
+    color: var(--color-dark-green-blue);
+}
+
+.card-protection__title {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-h4);
+    color: var(--color-dark-green-blue);
+}
+
+.card-protection__text {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 20px;
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   CARTE SAVOIR (infos pratiques de la fiche annonce)
+   (Figma : Card Savoir, 289 de large)
+   Icône 30px, titre Garamond gris foncé, texte Inter 14, et
+   lien souligné optionnel en bas.
+   ============================================================= */
+.card-savoir {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--padding-p5);
+    max-width: 289px;
+    padding: var(--padding-p5);
+}
+
+.card-savoir img,
+.card-savoir svg {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    color: var(--color-dark-green-blue);
+}
+
+.card-savoir__title {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-h4);
+    color: var(--color-grey-font-1);
+}
+
+.card-savoir__text {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 20px;
+    color: var(--color-grey-font-1);
+}
+
+/* Lien souligné sans chevron (Figma : bouton Underline en gris) */
+.link-signal--simple {
+    color: var(--color-grey-font-2);
+}
+
+.link-signal--simple::before {
+    display: none;
+}
+
+/* =============================================================
+   CARTE PARCOURS (étapes "La simplicité avant tout")
+   (Figma : Card mobile version parcours, 285 x 255)
+   Badge décoratif : deux galets corail inclinés portant l'icône
+   blanche de l'étape, puis numéro + titre et description centrés.
+   Usage : <article class="card-parcours">
+             <div class="card-parcours__badge">
+               <svg ...>...</svg>
+             </div>
+             <p class="card-parcours__step">1. Explorez</p>
+             <p class="card-parcours__text">Parcourez des centaines...</p>
+           </article>
+   ============================================================= */
+.card-parcours {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding-p3);
+    max-width: 285px;
+    padding: var(--padding-p2) 0;
+    text-align: center;
+}
+
+/* Deux galets corail inclinés dessinés en pseudo-éléments */
+.card-parcours__badge {
+    position: relative;
+    width: 97px;
+    height: 94px;
+    flex-shrink: 0;
+}
+
+.card-parcours__badge::before,
+.card-parcours__badge::after {
+    content: "";
+    position: absolute;
+    border-radius: var(--radius-pill);
+    background: var(--color-corail);
+    transform: rotate(20deg);
+}
+
+.card-parcours__badge::before {
+    width: 48px;
+    height: 80px;
+    top: 6px;
+    left: 45px;
+}
+
+.card-parcours__badge::after {
+    width: 43px;
+    height: 72px;
+    top: 17px;
+    left: 15px;
+}
+
+/* Icône blanche de l'étape, centrée au-dessus des galets */
+.card-parcours__badge svg,
+.card-parcours__badge img {
+    position: absolute;
+    top: 30px;
+    left: 32px;
+    width: 46px;
+    height: 46px;
+    color: var(--color-white);
+    z-index: 1;
+}
+
+.card-parcours__step {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-h3-inter);
+    color: var(--color-black);
+}
+
+.card-parcours__text {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+}
+
+/* =============================================================
+   NOTE PAR CRITÈRE (bloc "Ratting" de la fiche annonce)
+   (Figma : Ratting, 211 de large, filet séparateur à droite)
+   Icône 40px, note Inter SemiBold, critère en Garamond.
+   Usage : <div class="rating-critere">
+             <svg ...>...</svg>
+             <p class="rating-critere__score">6,4</p>
+             <p class="rating-critere__label">Propreté</p>
+           </div>
+   ============================================================= */
+.rating-critere {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--padding-p5);
+    padding: var(--padding-p5);
+    border-right: 1px solid var(--color-grey-border-2);
+}
+
+.rating-critere:last-child {
+    border-right: none;
+}
+
+.rating-critere img,
+.rating-critere svg {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    color: var(--color-dark-green-blue);
+}
+
+/* Icônes des critères : masque SVG du kit Figma, coloré à la charte.
+   La classe __icon donne le gabarit, le modificateur choisit l'icône. */
+.rating-critere__icon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    background-color: var(--color-dark-green-blue);
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+
+.rating-critere__icon--proprete {
+    -webkit-mask-image: var(--icon-vacuum);
+    mask-image: var(--icon-vacuum);
+}
+
+.rating-critere__icon--precision {
+    -webkit-mask-image: var(--icon-search);
+    mask-image: var(--icon-search);
+}
+
+.rating-critere__icon--arrivee {
+    -webkit-mask-image: var(--icon-key);
+    mask-image: var(--icon-key);
+}
+
+.rating-critere__icon--contact {
+    -webkit-mask-image: var(--icon-message);
+    mask-image: var(--icon-message);
+}
+
+.rating-critere__icon--emplacement {
+    -webkit-mask-image: var(--icon-map);
+    mask-image: var(--icon-map);
+}
+
+.rating-critere__icon--qualite {
+    -webkit-mask-image: var(--icon-tags);
+    mask-image: var(--icon-tags);
+}
+
+.rating-critere__score {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+    padding: 0 var(--padding-p5);
+}
+
+.rating-critere__label {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-h4);
+    color: var(--color-grey-font-1);
+    padding: 0 var(--padding-p5);
+}
+
+/* =============================================================
+   POP-UP (fenêtre modale)
+   (Figma : composant Pop up, 713 x 618)
+   Voile sombre plein écran + carte blanche très arrondie avec
+   bouton de fermeture turquoise à cheval sur le coin haut droit.
+   Les actions se rangent en bas, centrées. L'affichage se pilote
+   en JS avec la classe is-visible sur l'overlay.
+   Usage : <div class="popup-overlay" hidden>
+             <div class="popup" role="dialog" aria-modal="true">
+               <button class="popup__close" aria-label="Fermer"></button>
+               <h2 class="popup__title">Login</h2>
+               <div class="popup__body">...</div>
+               <div class="popup__actions">...boutons...</div>
+             </div>
+           </div>
+   ============================================================= */
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--padding-page-mobile);
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+}
+
+.popup-overlay[hidden] {
+    display: none;
+}
+
+.popup {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2-2);
+    width: 100%;
+    max-width: 713px; /* valeur Figma */
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: var(--padding-p1);
+    background: var(--color-white);
+    border-radius: 45px; /* valeur Figma */
+    box-shadow: var(--shadow-popup);
+}
+
+.popup__title {
+    font-family: var(--font-body);
+    font-weight: var(--fw-medium);
+    font-size: var(--fs-h3-inter);
+    line-height: 30px;
+    color: var(--color-grey-dark);
+    text-align: center;
+}
+
+/* Bouton de fermeture : croix simple grise placée À L'INTÉRIEUR du coin
+   (comme la pop-up de connexion). Plus de rond turquoise, et plus de
+   débordement à droite qui provoquait une scrollbar horizontale. */
+.popup__close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.popup__close:hover {
+    color: var(--color-black);
+}
+
+.popup__close::before,
+.popup__close::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 2px;
+    border-radius: var(--radius-pill);
+    background: currentColor;
+}
+
+.popup__close::before {
+    transform: rotate(45deg);
+}
+
+.popup__close::after {
+    transform: rotate(-45deg);
+}
+
+.popup__body {
+    flex: 1 1 auto;
+}
+
+/* Actions en bas du pop-up : boutons centrés */
+.popup__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding-p2-2);
+    padding-top: var(--padding-p2-2);
+    margin-top: auto;
+}
+
+/* =============================================================
+   MODALE — base réutilisable
+   (modèle Figma « pop up vierge », node 51-16240 :
+    figma.com/design/51lR3cAd90PGBAabfFH5ON/PoolParty?node-id=51-16240)
+   Base de référence pour TOUTE nouvelle pop-up : carte blanche
+   arrondie (radius 45), contour gris fin, ombre douce ; en-tête
+   avec titre à gauche + croix, zone de contenu centrée, bouton
+   .btn en pied. Les blocs .popup / .login-popup ci-dessus restent
+   réservés aux écrans déjà en place.
+   Affichage piloté en JS via l'attribut hidden sur l'overlay.
+   Usage : <div class="modale-overlay" hidden>
+             <div class="modale" role="dialog" aria-modal="true" aria-labelledby="ma-modale-titre">
+               <div class="modale__entete">
+                 <h2 class="modale__titre" id="ma-modale-titre">Titre</h2>
+                 <button class="modale__fermer" type="button" aria-label="Fermer"></button>
+               </div>
+               <div class="modale__corps">…contenu…</div>
+               <div class="modale__pied">
+                 <button class="btn btn-primary" type="button">Action</button>
+               </div>
+             </div>
+           </div>
+   ============================================================= */
+.modale-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--padding-page-mobile);
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+}
+
+.modale-overlay[hidden] {
+    display: none;
+}
+
+.modale {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 713px; /* valeur Figma */
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: var(--padding-p1); /* 32px */
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: 45px; /* valeur Figma */
+    box-shadow: var(--shadow-search-small); /* 3px 2px 3.5px rgba(0,0,0,0.36), valeur Figma */
+}
+
+/* En-tête : titre à gauche, croix à droite (Figma : Heading 3) */
+.modale__entete {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p2-2);
+}
+
+.modale__titre {
+    font-family: var(--font-input); /* Inter */
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-h3-inter); /* 20px */
+    line-height: normal;
+    color: var(--color-dark-green-blue);
+}
+
+/* Croix de fermeture : simple X gris, à l'intérieur du coin,
+   comme la pop-up de connexion (jamais le rond turquoise). */
+.modale__fermer {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.modale__fermer:hover {
+    color: var(--color-black);
+}
+
+.modale__fermer::before,
+.modale__fermer::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 2px;
+    border-radius: var(--radius-pill);
+    background: currentColor;
+}
+
+.modale__fermer::before {
+    transform: rotate(45deg);
+}
+
+.modale__fermer::after {
+    transform: rotate(-45deg);
+}
+
+/* Zone de contenu : centrée, respiration verticale (Figma : Container) */
+.modale__corps {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding-p4); /* 8px */
+    padding: 48px 0; /* valeur Figma */
+}
+
+/* Pied : bouton(s) d'action centré(s) */
+.modale__pied {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding-p2-2);
+}
+
+/* =============================================================
+   POP-UP DE CONNEXION
+   (Figma : Pop up login, 681px, radius 45)
+   Carte blanche très arrondie ; en desktop, une seconde carte
+   texturée eau dépasse derrière, décalée en bas à gauche.
+   Titre Inter SemiBold 20 vert bleuté + croix de fermeture,
+   champs du composant form-field, bouton Continuer désactivé
+   tant que les deux champs sont vides.
+   Mobile-first : carte compacte par défaut, puis on remonte
+   progressivement vers les valeurs Figma en desktop.
+   ============================================================= */
+.login-popup {
+    position: relative;
+    width: min(440px, 100%);
+}
+
+.login-popup__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-white);
+    border-radius: 28px;
+    padding: var(--padding-p2);
+    box-shadow: var(--shadow-search-small);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.login-popup__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p2);
+}
+
+.login-popup__title {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-h3-inter);
+    color: var(--color-dark-green-blue);
+}
+
+/* Croix de fermeture : simple icône de 30px (Figma) */
+.login-popup__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.login-popup__close:hover {
+    color: var(--color-black);
+}
+
+.login-popup__close svg {
+    width: 26px;
+    height: 26px;
+}
+
+/* Corps du formulaire (Figma : py 48, gap 32, largeur 515) */
+.login-popup__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p2);
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--padding-p1) 0 var(--padding-p2-2);
+}
+
+.login-popup__fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    width: 100%;
+}
+
+.login-popup__forgot {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.login-popup__forgot:hover {
+    color: var(--color-dark-green-blue-2);
+}
+
+.login-popup__submit {
+    width: 100%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.login-popup__signup {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-2);
+    text-align: center;
+}
+
+.login-popup__signup a {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.login-popup__signup a:hover {
+    color: var(--color-dark-green-blue-2);
+}
+
+/* Écran « Mot de passe oublié » : même disposition que le formulaire de
+   connexion. Les deux écrans étant en display:flex, on rétablit
+   explicitement display:none quand l'attribut hidden est posé (sinon la
+   règle de classe l'emporte sur le comportement natif de hidden). */
+.login-popup__form[hidden] {
+    display: none;
+}
+
+.login-popup__reset {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p2);
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--padding-p1) 0 var(--padding-p2-2);
+}
+
+.login-popup__reset[hidden] {
+    display: none;
+}
+
+.login-popup__reset-titre {
+    font-family: var(--font-title);
+    font-size: var(--fs-p1);
+    color: var(--color-dark-green-blue);
+    text-align: center;
+    margin: 0;
+}
+
+.login-popup__reset-intro {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-2);
+    text-align: center;
+    margin: 0;
+}
+
+.login-popup__reset-submit {
+    width: 100%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.login-popup__reset-confirmation {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-dark-green-blue);
+    background: var(--color-beige);
+    border-radius: 12px;
+    padding: 12px 16px;
+    text-align: center;
+    margin: 0;
+    width: 100%;
+}
+
+.login-popup__reset-confirmation[hidden] {
+    display: none;
+}
+
+.login-popup__reset-retour {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.login-popup__reset-retour:hover {
+    color: var(--color-dark-green-blue-2);
+}
+
+/* Tablette : la carte s'élargit légèrement */
+@media (min-width: 768px) {
+
+    .login-popup {
+        width: min(500px, 100%);
+    }
+
+    .login-popup__card {
+        border-radius: 36px;
+        padding: var(--padding-p1);
+    }
+
+    .login-popup__form {
+        width: min(420px, 100%);
+    }
+}
+
+/* Desktop : format intermédiaire, toujours contenu.
+   La carte texture eau apparaît dès ce breakpoint, décalée en
+   bas à gauche derrière la carte blanche (Figma : -83px / +47px),
+   pour rester visible sur les écrans 14 pouces (1280 à 1366px). */
+@media (min-width: 1024px) {
+
+    .login-popup {
+        width: min(560px, 100%);
+    }
+
+    .login-popup::before {
+        content: "";
+        position: absolute;
+        inset: 47px 83px -47px -83px;
+        border-radius: 36px;
+        background: url("../assets/images/popup/texture-eau.jpg") center / cover no-repeat;
+        box-shadow: var(--shadow-search);
+    }
+
+    .login-popup__form {
+        width: min(460px, 100%);
+        gap: var(--padding-p1);
+    }
+}
+
+/* Grand écran : valeurs Figma (681px, radius 45, formulaire 515,
+   py 48) */
+@media (min-width: 1440px) {
+
+    .login-popup {
+        width: min(681px, 100%);
+    }
+
+    .login-popup::before {
+        border-radius: 45px; /* valeur Figma */
+    }
+
+    .login-popup__card {
+        border-radius: 45px; /* valeur Figma */
+    }
+
+    .login-popup__form {
+        width: min(515px, 100%);
+        padding-top: 48px;
+    }
+}
+
+/* =============================================================
+   CALENDRIER (sélecteur de date)
+   (Figma : calendar, 364px, radius R1, padding 14)
+   Panneau blanc attaché sous le champ Date des barres de
+   recherche : en-tête mois + année (listes déroulantes) et lien
+   Aujourd'hui, rangée des jours en vert bleuté clair, grille de
+   dates ; le jour choisi est entouré d'un cercle vert bleuté.
+   Le contenu est généré par main.js.
+   ============================================================= */
+/* =============================================================
+   SÉLECTEUR D'INVITÉS DES BARRES DE RECHERCHE
+   Champ « Invités » en lecture seule (résumé « 2 adultes, 1 enfant »)
+   et petit panneau compteur Adultes / Enfants ancré dessous, généré
+   par main.js (construireCompteurInvites). Même principe de stepper
+   que la fiche produit, mais autonome (styles ici, pas dans produit.css
+   qui n'est chargé que sur la fiche produit).
+   ============================================================= */
+.search-field--invites {
+    flex: 0 0 170px; /* de quoi afficher "2 adultes, 1 enfant" sans coupure */
+}
+
+.search-field--invites input {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.invites-pop {
+    position: absolute;
+    top: calc(100% + var(--padding-p4));
+    right: 0;
+    width: 288px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2-2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r1);
+    padding: var(--padding-p2);
+    box-shadow: var(--shadow-search);
+    z-index: 300;
+}
+
+.invites-pop[hidden] {
+    display: none;
+}
+
+.invites-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p2);
+}
+
+.invites-stepper__nom {
+    display: block;
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p3);
+    color: var(--color-black);
+}
+
+.invites-stepper__detail {
+    display: block;
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+.invites-stepper__controles {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p3);
+}
+
+.invites-stepper__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: 50%;
+    background: var(--color-white);
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.invites-stepper__btn:hover {
+    border-color: var(--color-dark-green-blue);
+    color: var(--color-dark-green-blue);
+}
+
+.invites-stepper__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.invites-stepper__btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.invites-stepper__valeur {
+    min-width: 16px;
+    text-align: center;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+}
+
+/* =============================================================
+   LISTE « QUOI » DES BARRES DE RECHERCHE
+   Le champ « Quoi » ouvre la liste des types de biens louables
+   (Piscine, Jacuzzi, Spa, Sauna, Hammam) au lieu d'une saisie
+   libre ; panneau généré par main.js (construireListeQuoi),
+   items réutilisant le composant .dropdown-item.
+   ============================================================= */
+.search-field--quoi input {
+    cursor: pointer;
+}
+
+.quoi-pop {
+    position: absolute;
+    top: calc(100% + var(--padding-p4));
+    left: 0;
+    width: 240px;
+    max-width: 88vw;
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r1);
+    padding: var(--padding-p4);
+    box-shadow: var(--shadow-search);
+    z-index: 300;
+}
+
+.quoi-pop[hidden] {
+    display: none;
+}
+
+.quoi-pop ul {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.calendar {
+    position: absolute;
+    top: calc(100% + var(--padding-p4));
+    left: 0;
+    width: 364px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* valeur Figma */
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r1);
+    padding: var(--padding-p3);
+    box-shadow: var(--shadow-search);
+    font-family: var(--font-input);
+    z-index: 300;
+}
+
+.calendar[hidden] {
+    display: none;
+}
+
+.calendar__header {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p3);
+    padding: 0 var(--padding-p3);
+}
+
+/* Sélecteurs Mois et Année : libellé + chevron vers le bas */
+.calendar__picker {
+    position: relative;
+}
+
+.calendar__picker-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p4);
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+}
+
+.calendar__picker-btn::after {
+    content: "";
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    background-color: currentColor;
+    -webkit-mask: var(--icon-chevron-right) center / contain no-repeat;
+    mask: var(--icon-chevron-right) center / contain no-repeat;
+    transform: rotate(90deg);
+}
+
+/* Liste déroulante des mois / années */
+.calendar__picker-list {
+    position: absolute;
+    top: calc(100% + var(--padding-p5));
+    left: 0;
+    min-width: 140px;
+    max-height: 240px;
+    overflow-y: auto;
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r2);
+    box-shadow: var(--shadow-search-small);
+    padding: var(--padding-p5);
+    z-index: 10;
+}
+
+.calendar__picker-list[hidden] {
+    display: none;
+}
+
+.calendar__today {
+    margin-left: auto;
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-blue-grey-font);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+/* Rangée des initiales de jours (Figma : L M M J V S D) */
+.calendar__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    text-align: center;
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-dark-green-blue-2);
+}
+
+.calendar__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--padding-p4) 10px;
+}
+
+/* Une date : bouton rond de 30px centré dans sa cellule */
+.calendar__day {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    margin: 0 auto;
+    border-radius: 50%;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.calendar__day:hover {
+    background: var(--color-hover-sable);
+}
+
+/* Jours passés : grisés et non cliquables */
+.calendar__day:disabled {
+    color: var(--color-grey-font-2);
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: none;
+}
+
+/* Jour sélectionné : cercle vert bleuté, chiffre blanc (Figma) */
+.calendar__day.is-selected {
+    background: var(--color-dark-green-blue-2);
+    color: var(--color-white);
+    font-weight: var(--fw-semibold);
+}
+
+/* Ligne des horaires : filet, libellé puis pastilles d'heures.
+   Même langage visuel que la grille : pilule au survol sable,
+   sélection en vert bleuté plein. */
+.calendar__sep {
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--color-grey-border-2);
+    margin: 0;
+}
+
+.calendar__label {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+    padding: 0 var(--padding-p3);
+}
+
+/* Créneau affiché sous le libellé Horaire (Figma : "9h - 12h") */
+.calendar__range-value,
+.range-double__value {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    padding: 0 var(--padding-p3);
+}
+
+/* Double curseur : piste grise pleine largeur, segment vert bleuté
+   entre deux poignées rondes de 20px (Figma).
+   Deux input range superposés : seule leur poignée est cliquable,
+   la piste et le segment sont dessinés par le conteneur.
+   Les classes range-double en font un composant réutilisable hors
+   du calendrier (fourchette de prix des filtres, etc.) ; le JS
+   positionne le segment via left / width. */
+.calendar__range,
+.range-double {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 20px;
+    margin: 0 var(--padding-p5);
+}
+
+/* Piste grise */
+.calendar__range::before,
+.range-double::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--color-light-grey);
+}
+
+/* Segment sélectionné, positionné par main.js */
+.calendar__range-fill,
+.range-double__fill {
+    position: absolute;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--color-dark-green-blue);
+}
+
+.calendar__range-input,
+.range-double__input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    margin: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    /* La piste ne capte pas les clics : seules les poignées comptent */
+    pointer-events: none;
+}
+
+.calendar__range-input::-webkit-slider-thumb,
+.range-double__input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-dark-green-blue);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: background-color var(--transition-fast);
+}
+
+.calendar__range-input::-moz-range-thumb,
+.range-double__input::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-dark-green-blue);
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.calendar__range-input::-webkit-slider-thumb:hover,
+.range-double__input::-webkit-slider-thumb:hover {
+    background: var(--color-dark-green-blue-2);
+}
+
+.calendar__range-input:focus-visible,
+.range-double__input:focus-visible {
+    outline: none;
+}
+
+.calendar__range-input:focus-visible::-webkit-slider-thumb,
+.range-double__input:focus-visible::-webkit-slider-thumb {
+    outline: 2px solid var(--color-dark-green-blue-2);
+    outline-offset: 2px;
+}
+
+.calendar__range-input:focus-visible::-moz-range-thumb,
+.range-double__input:focus-visible::-moz-range-thumb {
+    outline: 2px solid var(--color-dark-green-blue-2);
+    outline-offset: 2px;
+}
+
+/* =============================================================
+   RÉCAPITULATIF DE PRIX
+   Lignes libellé / montant terminées par un total en gras.
+   Utilisé par le panneau de réservation (page produit) et le
+   panneau récapitulatif de la page réservation.
+   Usage : <dl class="resa__recap">
+             <div class="resa__ligne"><dt>23 € x 3 h</dt><dd>69 €</dd></div>
+             <div class="resa__ligne resa__ligne--total">
+               <dt>Total</dt><dd>76 €</dd>
+             </div>
+           </dl>
+   ============================================================= */
+.resa__recap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+    margin: 0;
+    padding-top: var(--padding-p2-2);
+    border-top: 1px solid var(--color-grey-border-2);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.resa__ligne {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--padding-p4);
+}
+
+.resa__ligne[hidden] {
+    display: none;
+}
+
+.resa__ligne--total {
+    padding-top: var(--padding-p3);
+    border-top: 1px solid var(--color-grey-border-2);
+    font-weight: var(--fw-semibold);
+    color: var(--color-black);
+}
+
+/* =============================================================
+   COMPTEURS (moins / valeur / plus)
+   Lignes libellé + compteur rond, séparées par des filets.
+   Utilisé par le parcours Proposer mon espace et par la pop-up
+   Invités de la page réservation.
+   Usage : <li class="compteur-ligne">
+             <span class="compteur-ligne__label">Adultes</span>
+             <div class="compteur" data-compteur="adultes"
+                  data-min="1" data-max="5">
+               <button class="compteur__btn" data-action="moins">-</button>
+               <span class="compteur__valeur">2</span>
+               <button class="compteur__btn" data-action="plus">+</button>
+             </div>
+           </li>
+   ============================================================= */
+.compteur-liste {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.compteur-ligne {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p2);
+    padding: var(--padding-p2) 0;
+    border-bottom: 1px solid var(--color-grey-border);
+}
+
+.compteur-ligne:last-child {
+    border-bottom: none;
+}
+
+.compteur-ligne__label {
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+/* Précision affichée sous le libellé ("18 ans et plus") */
+.compteur-ligne__aide {
+    display: block;
+    margin-top: var(--padding-p5);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.compteur {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p2-2);
+}
+
+.compteur__btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-white);
+    color: var(--color-grey-font-2);
+    font-size: var(--fs-p1);
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.compteur__btn:hover {
+    border-color: var(--color-dark-green-blue);
+    color: var(--color-dark-green-blue);
+}
+
+.compteur__btn:disabled {
+    border-color: var(--color-grey-border);
+    color: var(--color-disable);
+    cursor: not-allowed;
+}
+
+.compteur__valeur {
+    min-width: 24px;
+    text-align: center;
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-medium);
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   RÉASSURANCE (liste icône + texte)
+   Lignes courtes type panneau de réservation : paiement
+   sécurisé, annulation gratuite, confirmation rapide.
+   Usage : <ul class="reassurance-list">
+             <li class="reassurance-item"><img ...> Texte</li>
+           </ul>
+   ============================================================= */
+.reassurance-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.reassurance-item {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p4);
+    font-family: var(--font-body);
+    font-size: var(--fs-p3);
+    color: var(--color-blue-grey-font);
+}
+
+.reassurance-item img,
+.reassurance-item svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* =============================================================
+   HEADER
+   Mobile-first. Sur petit écran : logo en icône + bouton Menu.
+   À partir de 1280px : logo complet + barre de recherche + nav.
+   Valeurs calées sur le composant Figma (HomePage Default / Mobile).
+   ============================================================= */
+
+.site-header {
+    background: var(--color-white);
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* La recherche simple passe sur sa propre rangée en mobile */
+    flex-wrap: wrap;
+    width: 100%;
+    /* Header pleine largeur (fill). Gouttière mobile 16px. */
+    padding: var(--padding-p3) var(--padding-page-mobile) var(--padding-p4);
+}
+
+/* LOGO */
+.header-logo {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.header-logo img {
+    height: 70px;
+    width: auto;
+}
+
+.header-logo-full {
+    display: none; /* masqué en mobile */
+}
+
+.header-logo-icon {
+    display: block; /* visible en mobile */
+}
+
+/* BARRE DE RECHERCHE COMPLÈTE : masquée en mobile, elle apparaît
+   dès la tablette (768px) en perdant ses champs les moins
+   importants quand la place manque (voir la bascule plus bas). */
+.header-search {
+    display: none;
+}
+
+/* RECHERCHE SIMPLE : pilule "Trouver un espace" du composant
+   Input Search, sur sa propre rangée sous le logo et le menu.
+   Visible jusqu'à 767px ; la barre complète prend le relais. */
+.header-search-simple {
+    order: 10;
+    flex: 1 1 100%;
+    margin-top: var(--padding-p4);
+}
+
+/* NAVIGATION */
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    /* Contexte de positionnement du menu déroulant : il s'ancre sous le
+       burger (1re rangée) et passe par-dessus la barre de recherche. */
+    position: relative;
+}
+
+/* Liens Explorer et CTA : cachés en mobile, ils passent dans le menu déroulant */
+.header-explorer,
+.header-cta {
+    display: none;
+}
+
+/* Bouton Menu (burger) : composant Button Tertiary du Figma,
+   porté par les classes btn btn-tertiary dans le HTML.
+   Seule la taille de l'icône est réglée ici. */
+.header-burger svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+/* MENU DÉROULANT
+   (Figma : panneau blanc 280px, radius R1, padding 32, ombre
+   search-small ; items Dropdown de 14px de padding, séparés par
+   des filets ; "Proposer votre espace" en semi-gras.) */
+.main-menu {
+    position: absolute;
+    /* Ancré sur .header-nav : juste sous le burger, aligné à son bord droit */
+    top: calc(100% + 8px);
+    right: 0;
+    width: 280px;
+    background: var(--color-white);
+    /* Contour gris de la maquette : sans lui la pop-up se confond avec la page */
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r1);
+    box-shadow: var(--shadow-search-small);
+    padding: var(--padding-p1);
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+    z-index: 200;
+}
+
+.main-menu[hidden] {
+    display: none;
+}
+
+.main-menu__section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Filet séparateur entre les groupes de liens */
+.main-menu__sep {
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--color-grey-border-2);
+    margin: 0;
+}
+
+/* Item du menu : composant Dropdown item Figma (Inter 16,
+   padding 14, radius R2, survol sable translucide) */
+.main-menu a {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+    padding: var(--padding-p3);
+    border-radius: var(--radius-r2);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.main-menu a:hover {
+    background: var(--color-hover-sable);
+    color: var(--color-grey-font-1);
+}
+
+/* "Proposer votre espace" : libellé en semi-gras (Figma) */
+.main-menu .main-menu__strong {
+    font-weight: var(--fw-semibold);
+}
+
+/* Item du menu correspondant à la page affichée : repère « vous êtes
+   ici » (fond sable persistant + semi-gras), posé par le walker WordPress
+   via la classe .is-current et l'attribut aria-current. */
+.main-menu a.is-current,
+.main-menu a[aria-current="page"] {
+    background: var(--color-hover-sable);
+    color: var(--color-grey-font-1);
+    font-weight: var(--fw-semibold);
+}
+
+/* Lien Aide : icône point d'interrogation devant le libellé (Figma) */
+.main-menu__aide {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.main-menu__aide svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* CONNEXION SIMULÉE
+   La classe is-connected posée sur body par le JS bascule le menu
+   de l'état visiteur (Connexion, Inscription) à l'état connecté
+   (raccourcis du compte et lien Déconnexion). Le modèle visuel
+   reste celui du menu Figma : mêmes items, mêmes filets. */
+.main-menu__section--connecte,
+.main-menu__deconnexion {
+    display: none;
+}
+
+.is-connected .main-menu__section--visiteur {
+    display: none;
+}
+
+.is-connected .main-menu__section--connecte {
+    display: flex;
+}
+
+.is-connected .main-menu__deconnexion {
+    display: block;
+}
+
+/* =============================================================
+   HEADER - TABLETTE & ORDINATEUR (à partir de 768px)
+   Grille 3 colonnes : logo collé à gauche, barre de recherche
+   centrée, navigation collée à droite. Header pleine largeur.
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .header-inner {
+        display: grid;
+        grid-template-columns: minmax(max-content, 1fr) minmax(0, 766px) minmax(max-content, 1fr);
+        align-items: center;
+        gap: var(--padding-p2-2);
+        padding: var(--padding-p3) var(--padding-page-tablet) var(--padding-p4);
+    }
+
+    .header-logo {
+        justify-self: start;
+    }
+
+    .header-nav {
+        justify-self: end;
+    }
+
+    /* La recherche simple occupe la colonne centrale de la grille
+       (l'order mobile est annulé, sinon elle passerait après le menu) */
+    .header-search-simple {
+        order: 0;
+        margin-top: 0;
+        justify-self: center;
+        width: 100%;
+    }
+    /* Le menu s'ancre désormais sur .header-nav (right: 0), pas besoin
+       de décaler sa position par breakpoint. */
+}
+
+/* =============================================================
+   HEADER - Logo complet (icône + nom) à partir du desktop (1024px).
+   En dessous (tablette et mobile), on garde l'icône seule.
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .header-logo-full {
+        display: block;
+    }
+
+    .header-logo-icon {
+        display: none;
+    }
+}
+
+/* =============================================================
+   HEADER - Barre de recherche complète
+   Les styles internes (champs, séparateurs, bouton) sont définis
+   dès 768px car la barre du hero les réutilise. Dans le header,
+   la barre s'affiche dès 768px mais en version allégée : ses
+   champs reviennent un à un quand la largeur le permet (voir la
+   bascule des recherches plus bas).
+   ============================================================= */
+@media (min-width: 768px) {
+
+    /* Centrée, remplit la colonne du milieu */
+    .header-search {
+        align-items: center;
+        justify-self: center;
+        width: 100%;
+        background: var(--color-white);
+        border: 1px solid var(--color-grey-border);
+        border-radius: var(--radius-pill);
+        box-shadow: var(--shadow-search-small);
+        /* Figma : py 14px, pr 20px, pl 32px */
+        padding: var(--padding-p3) var(--padding-p2) var(--padding-p3) var(--padding-p1);
+        gap: 14px;
+    }
+
+    .search-field {
+        display: flex;
+        flex-direction: column;
+        gap: var(--padding-p5);
+        flex: 1 1 0;
+        min-width: 0;
+        /* point d'ancrage du calendrier attaché au champ Date */
+        position: relative;
+    }
+
+    .search-field--small {
+        flex: 0 1 98px; /* largeur Figma des champs Date et Invités */
+    }
+
+    .search-field label {
+        font-family: var(--font-input);
+        font-weight: var(--fw-semibold);
+        font-size: var(--fs-p2);
+        line-height: 1;
+        color: var(--color-dark-green-blue);
+        cursor: pointer;
+    }
+
+    .search-field input {
+        border: none;
+        outline: none;
+        background: transparent;
+        font-family: var(--font-input);
+        font-weight: var(--fw-regular);
+        font-size: var(--fs-p2);
+        line-height: 1;
+        color: var(--color-grey-font-2);
+        width: 100%;
+        /* Texte (ou placeholder) trop long : coupé avec des points de suspension */
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .search-field input::placeholder {
+        color: var(--color-grey-font-2);
+        opacity: 1;
+    }
+
+    .search-divider {
+        width: 1px;
+        height: 30px;
+        background: var(--color-grey-border-2);
+        flex-shrink: 0;
+    }
+
+    .search-submit {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 40px; /* valeur Figma : icône 24 + padding 8 */
+        height: 40px;
+        padding: var(--padding-p4);
+        background: var(--color-dark-green-blue);
+        color: var(--color-white);
+        border-radius: var(--radius-pill);
+        box-shadow: var(--shadow-btn);
+        transition: background-color var(--transition-medium), transform var(--transition-fast);
+    }
+
+    .search-submit svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .search-submit:hover {
+        background: var(--color-dark-green-blue-2);
+        transform: scale(1.05);
+    }
+
+    /* Explorer : bouton texte sur fond blanc, sans équivalent dans
+       la planche de boutons Figma, il garde ses styles propres */
+    .header-explorer {
+        align-items: center;
+        justify-content: center;
+        padding: var(--padding-p4) var(--padding-p2);
+        border-radius: 30px;
+        font-family: var(--font-body);
+        font-size: var(--fs-p2);
+        white-space: nowrap;
+        background: var(--color-white);
+        font-weight: var(--fw-medium);
+        color: var(--color-dark-green-blue);
+        transition: background-color var(--transition-medium), color var(--transition-medium), transform var(--transition-fast);
+    }
+
+    /* Survol : faux gras, la couleur verte reste celle de la maquette
+       (redéclarée pour annuler le corail du a:hover global) */
+    .header-explorer:hover {
+        color: var(--color-dark-green-blue);
+        text-shadow: 0 0 0.6px currentColor, 0 0 0.6px currentColor;
+    }
+
+    /* CTA : composant Button Secondary du Figma, porté par les
+       classes btn btn-secondary dans le HTML. On empêche juste
+       le libellé de passer à la ligne. */
+    .header-cta {
+        white-space: nowrap;
+    }
+}
+
+/* =============================================================
+   HEADER - BASCULE DES RECHERCHES
+   La barre complète remplace la recherche simple dès 768px, mais
+   perd ses champs du moins important au plus important quand la
+   largeur diminue :
+   - 1200px et plus : Quoi, Adresse, Date, Invités
+   - 1024px à 1199px : Quoi, Adresse, Date
+   - 768px à 1023px : Quoi, Adresse
+   - en dessous de 768px : recherche simple seule
+   Dans .header-search, les champs sont les div (1 Quoi, 2 Adresse,
+   3 Date, 4 Invités) et les séparateurs les span, d'où les
+   sélecteurs nth-of-type ci-dessous.
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .header-search {
+        display: flex;
+    }
+
+    .header-search-simple {
+        display: none;
+    }
+}
+
+/* Invités et son séparateur disparaissent en premier */
+@media (min-width: 768px) and (max-width: 1199px) {
+
+    .header-search .search-field:nth-of-type(4),
+    .header-search .search-divider:nth-of-type(3) {
+        display: none;
+    }
+}
+
+/* Date et son séparateur disparaissent aussi sur tablette */
+@media (min-width: 768px) and (max-width: 1023px) {
+
+    .header-search .search-field:nth-of-type(3),
+    .header-search .search-divider:nth-of-type(2) {
+        display: none;
+    }
+}
+
+/* =============================================================
+   HEADER - GRAND ÉCRAN (à partir de 1024px)
+   Le header suit exactement le même layout guide que le footer :
+   gouttière --padding-page-desktop (80px, puis contenu plafonné
+   à 1766px et centré au-delà), au même point de rupture 1024px.
+   Écart assumé vs Figma (qui donne 60px au header, 80px au footer)
+   pour aligner le début latéral du header et du footer, comme sur
+   la maquette. */
+@media (min-width: 1024px) {
+
+    .header-inner {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+}
+
+/* =============================================================
+   HEADER - TRÈS GRAND ÉCRAN (à partir de 1600px)
+   Il y a assez de place pour sortir Explorer et le CTA du burger
+   sans décentrer la barre de recherche.
+   ============================================================= */
+@media (min-width: 1600px) {
+
+    .header-explorer,
+    .header-cta {
+        display: inline-flex;
+    }
+}
+
+/* =============================================================
+   HEADER - PAGE INDEX UNIQUEMENT
+   La recherche est sur la photo du hero, donc masquée dans le
+   header en haut de page. Elle apparaît en fondu au scroll, une
+   fois qu'on a dépassé le hero (classe is-search-visible ajoutée
+   par le JS).
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .site-header--hero .header-search,
+    .site-header--hero .header-search-simple {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-6px);
+        pointer-events: none;
+        transition: opacity var(--transition-medium), transform var(--transition-medium), visibility var(--transition-medium);
+    }
+
+    .site-header--hero.is-search-visible .header-search,
+    .site-header--hero.is-search-visible .header-search-simple {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+}
+
+/* =============================================================
+   FOOTER
+   Pleine largeur, fond bleu canard. Mobile-first : tout empilé,
+   puis grille multi-colonnes à partir de 768px.
+   ============================================================= */
+.site-footer {
+    background: var(--color-dark-green-blue);
+    color: var(--color-white);
+    width: 100%;
+}
+
+.footer-main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p1);
+    /* Gouttière latérale alignée sur le header et le contenu
+       (--padding-page-mobile, 16px) ; haut 32, bas 20 comme Figma. */
+    padding: var(--padding-p1) var(--padding-page-mobile) var(--padding-p2);
+}
+
+/* Marque : sur mobile la maquette la place après les colonnes */
+.footer-brand {
+    order: 10;
+}
+
+.footer-logo {
+    height: 118px; /* valeur Figma (logo blanc complet) */
+    width: auto;
+    margin-bottom: var(--padding-p2-2);
+}
+
+.footer-desc {
+    font-family: var(--font-input); /* Figma : Inter */
+    font-size: var(--fs-p2);
+    line-height: 1.5;
+    color: var(--color-white);
+    max-width: 305px; /* valeur Figma */
+    margin-bottom: var(--padding-p2-2);
+}
+
+.footer-social {
+    display: flex;
+    gap: var(--padding-p2-2);
+}
+
+/* Pastilles rondes pleines (Figma : 40px, fond GreenGrey Light RS) */
+.footer-social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-pill);
+    background: var(--color-greengrey-light-rs);
+    color: var(--color-white);
+    transition: background-color var(--transition-medium), color var(--transition-medium), transform var(--transition-fast);
+}
+
+.footer-social svg {
+    width: 20px;
+    height: 20px;
+}
+
+.footer-social a:hover {
+    background: var(--color-white);
+    color: var(--color-dark-green-blue);
+    transform: translateY(-2px);
+}
+
+/* Colonnes de liens (Figma : titre Inter Bold 18, liens Inter 16) */
+.footer-title {
+    font-family: var(--font-input);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-p1);
+    color: var(--color-white);
+    margin-bottom: var(--padding-p2-2);
+}
+
+.footer-col ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4); /* Figma mobile : 8px */
+}
+
+.footer-col li {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    line-height: 1.5;
+    color: var(--color-white);
+}
+
+.footer-col a {
+    color: var(--color-white);
+    transition: color var(--transition-fast);
+}
+
+.footer-col a:hover {
+    color: var(--color-sable);
+}
+
+/* Barre du bas (Figma : filet blanc fin, texte Inter italique 14) */
+.footer-bottom {
+    width: 100%;
+    border-top: 1px solid rgba(255, 255, 255, 0.65);
+    padding: var(--padding-p2-2) var(--padding-page-mobile);
+}
+
+.footer-bottom p {
+    font-family: var(--font-input);
+    font-style: italic;
+    font-size: var(--fs-p3);
+    color: var(--color-white);
+    text-align: left;
+}
+
+/* TABLETTE : grille 2 colonnes */
+@media (min-width: 768px) {
+
+    .footer-main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--padding-p1);
+        padding: var(--padding-p1) var(--padding-page-tablet);
+    }
+
+    .footer-brand {
+        grid-column: 1 / -1;
+    }
+
+    .footer-bottom {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .footer-bottom p {
+        text-align: left;
+    }
+}
+
+/* ORDINATEUR : marque + 4 colonnes sur une ligne
+   (Figma : gouttière 80px, pt 32, pb 20, liens espacés de 12px) */
+@media (min-width: 1024px) {
+
+    .footer-main {
+        grid-template-columns: 1.2fr 1fr 1.1fr 1.1fr 1.1fr;
+        gap: var(--padding-p1);
+        padding: var(--padding-p1) var(--padding-page-desktop) var(--padding-p2);
+        align-items: start;
+    }
+
+    /* La marque reprend sa place en tête de ligne */
+    .footer-brand {
+        grid-column: auto;
+        order: initial;
+    }
+
+    .footer-col ul {
+        gap: 12px; /* valeur Figma desktop */
+    }
+
+    .footer-bottom {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+}
+/* =============================================================
+   BANDEAU COOKIES
+   Bandeau fixé en bas d'écran, construit par main.js dans le
+   conteneur vide #cookies-banner présent sur chaque page.
+   Conforme CNIL : Tout accepter et Tout refuser partagent le
+   même style plein, Personnaliser ouvre le choix par catégorie.
+   ============================================================= */
+.cookies-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--color-dark-green-blue);
+    color: var(--color-white);
+    padding: var(--padding-p2) var(--padding-page-mobile);
+    z-index: 1000;
+    display: none; /* affiché via JS si aucun choix mémorisé */
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.18);
+    max-height: 85vh; /* le bandeau défile plutôt que déborder sur petit écran */
+    overflow-y: auto;
+}
+
+.cookies-banner.is-visible {
+    display: block;
+}
+
+.cookies-banner__inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2-2);
+}
+
+/* Titre volontairement plus discret que les H2 de page :
+   couleur et taille redéclarées pour ce contexte sombre */
+.cookies-banner__titre {
+    font-family: var(--font-heading);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-semibold);
+    color: var(--color-white);
+    outline: none; /* reçoit le focus à la réouverture, sans halo */
+}
+
+.cookies-banner__texte p {
+    font-size: var(--fs-p3);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 75ch;
+    margin-top: var(--padding-p5);
+}
+
+.cookies-banner__texte a {
+    color: var(--color-white);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color var(--transition-fast);
+}
+
+.cookies-banner__texte a:hover {
+    color: var(--color-sable);
+}
+
+/* L'attribut hidden doit garder la main sur les display posés
+   ci-dessous (flex du panneau, inline-flex hérité de .btn) */
+.cookies-banner__prefs[hidden],
+.cookies-banner__btn[hidden] {
+    display: none;
+}
+
+/* Panneau de personnalisation : une ligne par catégorie */
+.cookies-banner__prefs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-r2);
+    padding: var(--padding-p2-2);
+}
+
+.cookies-banner__prefs legend {
+    padding: 0 var(--padding-p5);
+    font-size: var(--fs-p3);
+    font-weight: var(--fw-semibold);
+}
+
+.cookies-banner__categorie {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--padding-p3);
+    cursor: pointer;
+}
+
+.cookies-banner__categorie input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    accent-color: var(--color-corail);
+    cursor: pointer;
+}
+
+.cookies-banner__categorie input:disabled {
+    cursor: default;
+}
+
+.cookies-banner__categorie span {
+    font-size: var(--fs-p3);
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.cookies-banner__categorie strong {
+    display: block;
+    color: var(--color-white);
+    font-weight: var(--fw-semibold);
+}
+
+/* Boutons : pleine largeur en mobile, en ligne dès la tablette */
+.cookies-banner__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+}
+
+.cookies-banner__btn {
+    width: 100%;
+}
+
+/* Accepter et refuser : même style plein, même niveau (CNIL) */
+.cookies-banner__btn--plein {
+    background-color: var(--color-white);
+    color: var(--color-dark-green-blue);
+}
+
+.cookies-banner__btn--plein:hover {
+    background-color: var(--color-beige);
+    color: var(--color-dark-green-blue);
+}
+
+/* Personnaliser et Enregistrer : contour blanc sur fond sombre */
+.cookies-banner__btn--contour {
+    background-color: transparent;
+    color: var(--color-white);
+    border: 1px solid var(--color-white);
+    box-shadow: none;
+}
+
+.cookies-banner__btn--contour:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--color-white);
+}
+
+/* Bouton "Gérer mes cookies" injecté par main.js dans le pied de
+   page : même apparence que les liens voisins du footer */
+.footer-cookies-btn {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    line-height: 1.5;
+    color: var(--color-white);
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.footer-cookies-btn:hover {
+    color: var(--color-sable);
+}
+
+/* TABLETTE : boutons en ligne, alignés à droite */
+@media (min-width: 768px) {
+
+    .cookies-banner {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .cookies-banner__actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .cookies-banner__btn {
+        width: auto;
+    }
+}
+
+/* ORDINATEUR : marges de page desktop */
+@media (min-width: 1024px) {
+
+    .cookies-banner {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .cookies-banner__inner {
+        max-width: none;
+    }
+}
+
+/* =============================================================
+   TOAST FAVORIS
+   Confirmation discrète affichée en bas à gauche quand une
+   annonce entre ou sort des favoris (construite par main.js).
+   Le lien Voir mes favoris ouvre favoris.html.
+   Usage : <div class="fav-toast is-visible" role="status">
+             <span class="fav-toast__texte">Annonce enregistrée...</span>
+             <a class="fav-toast__lien" href="favoris.html">Voir mes favoris</a>
+           </div>
+   ============================================================= */
+.fav-toast {
+    position: fixed;
+    left: var(--padding-page-mobile);
+    right: var(--padding-page-mobile);
+    bottom: var(--padding-p2);
+    z-index: 1100; /* au-dessus des pop-ups et du bandeau cookies */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p2);
+    padding: var(--padding-p3) var(--padding-p2);
+    background-color: var(--color-dark-green-blue);
+    color: var(--color-white);
+    border-radius: var(--radius-r1);
+    box-shadow: var(--shadow-2);
+    font-family: var(--font-body);
+    font-size: var(--fs-p3);
+    opacity: 0;
+    transform: translateY(12px);
+    visibility: hidden;
+    transition: opacity var(--transition-medium), transform var(--transition-medium), visibility var(--transition-medium);
+}
+
+.fav-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+.fav-toast__lien {
+    flex-shrink: 0;
+    color: var(--color-white);
+    font-weight: var(--fw-semibold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.fav-toast__lien:hover {
+    color: var(--color-sable);
+}
+
+/* TABLETTE ET PLUS : le toast se cale en bas à gauche (Etsy) */
+@media (min-width: 768px) {
+
+    .fav-toast {
+        right: auto;
+        left: var(--padding-page-tablet);
+        bottom: var(--padding-p1);
+        max-width: 420px;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    .fav-toast {
+        left: 80px;
+    }
+}
+
+/* =============================================================
+   RÉDUCTION DES ANIMATIONS
+   Respecte le réglage système "Réduire les animations" :
+   les transitions et défilements décoratifs sont neutralisés
+   pour les personnes sensibles aux mouvements (RGAA 13.8).
+   ============================================================= */
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto !important;
+    }
+
+    /* !important obligatoire : le sélecteur * a une spécificité nulle,
+       sans lui chaque transition déclarée sur une classe garde sa durée */
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+
+
+
+/* =============================================================
+   WIDGET ACCESSIBILITÉ (Paramètres d'accessibilité)
+   Panneau flottant présent sur toutes les pages, injecté par
+   js/main.js. Le bouton (API popover) et le panneau (élément
+   dialog) sont rendus dans la "top layer" du navigateur : ils
+   restent fixes et cliquables même si une extension ou un script
+   pose un transform sur la page (cas Google Translate) qui
+   piégerait un simple position:fixed, et passent au-dessus de la
+   barre d'administration WordPress.
+   Les classes de réglage sont posées sur <html> mais ciblent body,
+   pour ne jamais dégrader l'outil lui-même.
+   Conformité RGAA / WCAG : cibles de 44px minimum, dialogue modal
+   natif (focus piégé + Échap gérés par le navigateur), focus
+   visible, respect de prefers-reduced-motion.
+   ============================================================= */
+
+/* ---- Bouton flottant d'ouverture (popover, coin bas droit) ---- */
+.pp-a11y-fab {
+    position: fixed;
+    inset: auto;
+    right: 20px;
+    bottom: 20px;
+    margin: 0;
+    width: 54px;
+    height: 54px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-dark-green-blue);
+    color: var(--color-white);
+    border: 2px solid var(--color-white);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-1);
+    cursor: pointer;
+    overflow: visible;
+    transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.pp-a11y-fab:hover {
+    background: var(--color-dark-green-blue-2);
+    transform: scale(1.06);
+}
+
+.pp-a11y-fab svg {
+    width: 30px;
+    height: 30px;
+    display: block;
+}
+
+.pp-a11y-fab:focus-visible {
+    outline: 3px solid var(--color-yellow-tag);
+    outline-offset: 3px;
+}
+
+/* ---- Panneau : élément dialog ancré en bas à droite ---- */
+.pp-a11y-panel {
+    position: fixed;
+    inset: auto;
+    right: 20px;
+    bottom: 90px;
+    margin: 0;
+    padding: 0;
+    width: min(400px, calc(100vw - 40px));
+    max-width: min(400px, calc(100vw - 40px));
+    max-height: calc(100vh - 140px);
+    display: flex;
+    flex-direction: column;
+    background: var(--color-white);
+    border: 2px solid var(--color-accent-blue);
+    border-radius: var(--radius-r1);
+    box-shadow: var(--shadow-4);
+    overflow: hidden;
+    font-family: var(--font-body);
+    color: var(--color-grey-font-1);
+}
+
+/* Fond sombre du dialogue modal (couvre aussi la barre d'admin) */
+.pp-a11y-panel::backdrop {
+    background: rgba(38, 38, 38, 0.6);
+}
+
+/* dialog fermé : masqué (comportement natif rappelé pour clarté) */
+.pp-a11y-panel:not([open]) {
+    display: none;
+}
+
+/* ---- En-tête du panneau ---- */
+.pp-a11y-head {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p3);
+    padding: var(--padding-p2) var(--padding-p2) var(--padding-p3);
+    border-bottom: 1px solid var(--color-grey-border);
+}
+
+.pp-a11y-head__icon {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent-blue);
+}
+
+.pp-a11y-head__icon svg {
+    width: 30px;
+    height: 30px;
+}
+
+.pp-a11y-title {
+    flex: 1 1 auto;
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--fs-h3-inter);
+    font-weight: var(--fw-semibold);
+    line-height: 1.15;
+    color: var(--color-dark-green-blue);
+}
+
+.pp-a11y-close {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-r2);
+    color: var(--color-grey-font-2);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.pp-a11y-close:hover {
+    background: var(--color-beige);
+    color: var(--color-grey-font-1);
+}
+
+.pp-a11y-close svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* ---- Corps défilant ---- */
+.pp-a11y-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: var(--padding-p3) var(--padding-p2) var(--padding-p2);
+}
+
+.pp-a11y-group {
+    margin: 0 0 var(--padding-p2);
+    padding: 0;
+    border: 0;
+}
+
+.pp-a11y-group:last-child {
+    margin-bottom: 0;
+}
+
+.pp-a11y-group__legend {
+    padding: 0;
+    margin: 0 0 var(--padding-p4);
+    font-size: var(--fs-p4);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-grey-font-2);
+}
+
+/* ---- Sélecteur de taille de texte ---- */
+.pp-a11y-sizes {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p3);
+    margin-bottom: var(--padding-p4);
+}
+
+.pp-a11y-sizes__icon {
+    flex: 0 0 auto;
+    width: 26px;
+    height: 26px;
+    color: var(--color-dark-green-blue);
+}
+
+.pp-a11y-sizes__icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+.pp-a11y-sizes__label {
+    flex: 1 1 auto;
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-medium);
+    color: var(--color-grey-font-1);
+}
+
+.pp-a11y-sizes__set {
+    flex: 0 0 auto;
+    display: flex;
+    gap: var(--padding-p5);
+}
+
+.pp-a11y-size-btn {
+    min-width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-white);
+    border: 2px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r2);
+    color: var(--color-grey-font-1);
+    font-family: var(--font-body);
+    font-weight: var(--fw-semibold);
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.pp-a11y-size-btn:nth-child(1) { font-size: 14px; }
+.pp-a11y-size-btn:nth-child(2) { font-size: 18px; }
+.pp-a11y-size-btn:nth-child(3) { font-size: 22px; }
+
+.pp-a11y-size-btn:hover {
+    border-color: var(--color-dark-green-blue);
+}
+
+.pp-a11y-size-btn[aria-pressed="true"] {
+    background: var(--color-dark-green-blue);
+    border-color: var(--color-dark-green-blue);
+    color: var(--color-white);
+}
+
+/* ---- Interrupteurs (toggles) ---- */
+.pp-a11y-toggle {
+    width: 100%;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p3);
+    padding: var(--padding-p4) var(--padding-p4);
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-r2);
+    text-align: left;
+    cursor: pointer;
+    color: var(--color-grey-font-1);
+    transition: background-color var(--transition-fast);
+}
+
+.pp-a11y-toggle:hover {
+    background: var(--color-beige);
+}
+
+.pp-a11y-toggle__icon {
+    flex: 0 0 auto;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-dark-green-blue);
+}
+
+.pp-a11y-toggle__icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.pp-a11y-toggle__label {
+    flex: 1 1 auto;
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-medium);
+    line-height: 1.25;
+}
+
+.pp-a11y-toggle[aria-checked="true"] .pp-a11y-toggle__label {
+    font-weight: var(--fw-semibold);
+    color: var(--color-dark-green-blue);
+}
+
+.pp-a11y-switch {
+    flex: 0 0 auto;
+    position: relative;
+    width: 46px;
+    height: 26px;
+    border-radius: var(--radius-pill);
+    background: var(--color-grey-border-2);
+    transition: background-color var(--transition-fast);
+}
+
+.pp-a11y-switch::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--color-white);
+    box-shadow: var(--shadow-3);
+    transition: transform var(--transition-fast);
+}
+
+.pp-a11y-toggle[aria-checked="true"] .pp-a11y-switch {
+    background: var(--color-dark-green-blue);
+}
+
+.pp-a11y-toggle[aria-checked="true"] .pp-a11y-switch::after {
+    transform: translateX(20px);
+}
+
+.pp-a11y-toggle:focus-visible,
+.pp-a11y-size-btn:focus-visible,
+.pp-a11y-close:focus-visible,
+.pp-a11y-btn:focus-visible {
+    outline: 3px solid var(--color-yellow-tag);
+    outline-offset: 2px;
+}
+
+/* ---- Pied : réinitialiser / fermer ---- */
+.pp-a11y-foot {
+    flex: 0 0 auto;
+    display: flex;
+    gap: var(--padding-p3);
+    padding: var(--padding-p3) var(--padding-p2);
+    border-top: 1px solid var(--color-grey-border);
+}
+
+.pp-a11y-btn {
+    flex: 1 1 0;
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding-p5);
+    padding: 0 var(--padding-p3);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.pp-a11y-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.pp-a11y-btn--reset {
+    background: var(--color-white);
+    border: 2px solid var(--color-dark-green-blue);
+    color: var(--color-dark-green-blue);
+}
+
+.pp-a11y-btn--reset:hover {
+    background: var(--color-beige);
+}
+
+/* Bouton principal : vert bleuté plein + texte blanc.
+   La maquette montrait un cyan clair (--color-accent-blue) mais
+   son ratio avec du texte blanc tombe sous 4.5:1 ; le panneau
+   d'accessibilité se doit d'être exemplaire, on garde donc le
+   vert bleuté (ratio 6:1). Écart assumé et documenté. */
+.pp-a11y-btn--done {
+    background: var(--color-dark-green-blue);
+    border: 2px solid var(--color-dark-green-blue);
+    color: var(--color-white);
+}
+
+.pp-a11y-btn--done:hover {
+    background: var(--color-dark-green-blue-2);
+    border-color: var(--color-dark-green-blue-2);
+}
+
+/* ---- Guide de lecture (règle horizontale suivant la souris) ---- */
+.pp-a11y-guidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 46px;
+    background: rgba(48, 94, 99, 0.10);
+    border-top: 2px solid rgba(48, 94, 99, 0.85);
+    border-bottom: 2px solid rgba(48, 94, 99, 0.85);
+    pointer-events: none;
+    z-index: 99998;
+    will-change: transform;
+}
+
+.pp-a11y-guidebar[hidden] {
+    display: none;
+}
+
+/* Blocage du défilement de fond quand le panneau est ouvert */
+.pp-a11y-lock {
+    overflow: hidden;
+}
+
+/* Panneau en feuille basse sur mobile */
+@media (max-width: 599px) {
+
+    .pp-a11y-panel {
+        right: 8px;
+        bottom: 8px;
+        width: calc(100vw - 16px);
+        max-width: calc(100vw - 16px);
+        max-height: 86vh;
+    }
+
+    .pp-a11y-fab {
+        right: 14px;
+        bottom: 16px;
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* Ouverture en douceur, sauf réglage système "moins d'animations" */
+@media (prefers-reduced-motion: no-preference) {
+
+    .pp-a11y-panel[open] {
+        animation: pp-a11y-in 0.22s ease;
+    }
+}
+
+@keyframes pp-a11y-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================================================
+   RÉGLAGES APPLIQUÉS AU CONTENU
+   Classes posées sur <html>, ciblant body (le bouton et le
+   panneau, hors body, ne sont jamais dégradés). Seuls les niveaux
+   de gris portent sur <html> entier, car un filtre sur body
+   casserait le header collant et les éléments fixes.
+   ============================================================= */
+
+/* Taille du texte : zoom du contenu, comme un zoom navigateur. */
+html.pp-a11y-size-1 body { zoom: 1.18; }
+html.pp-a11y-size-2 body { zoom: 1.40; }
+
+/* Espacement du texte (WCAG 1.4.12) */
+html.pp-a11y-spacing body p,
+html.pp-a11y-spacing body li,
+html.pp-a11y-spacing body a,
+html.pp-a11y-spacing body span,
+html.pp-a11y-spacing body h1,
+html.pp-a11y-spacing body h2,
+html.pp-a11y-spacing body h3,
+html.pp-a11y-spacing body h4,
+html.pp-a11y-spacing body h5,
+html.pp-a11y-spacing body h6,
+html.pp-a11y-spacing body label,
+html.pp-a11y-spacing body button,
+html.pp-a11y-spacing body input,
+html.pp-a11y-spacing body td,
+html.pp-a11y-spacing body th,
+html.pp-a11y-spacing body dd,
+html.pp-a11y-spacing body dt,
+html.pp-a11y-spacing body blockquote,
+html.pp-a11y-spacing body figcaption {
+    line-height: 1.8 !important;
+    letter-spacing: 0.12em !important;
+    word-spacing: 0.16em !important;
+}
+
+/* Police plus lisible (aide à la dyslexie), pile système, aucun
+   téléchargement externe (respect RGPD, polices auto-hébergées) */
+html.pp-a11y-legible body,
+html.pp-a11y-legible body * {
+    font-family: Verdana, Tahoma, "Trebuchet MS", Arial, sans-serif !important;
+}
+
+/* Contraste renforcé : on assombrit les variables de texte et de
+   bordure (le site lit toujours ces variables), sans toucher aux
+   fonds vert bleuté déjà très contrastés. */
+html.pp-a11y-contrast body {
+    --color-grey-font-1: #141414;
+    --color-grey-font-2: #333333;
+    --color-blue-grey-font: #0f1620;
+    --color-grey-quote: #2f2f2f;
+    --color-grey-dark: #333333;
+    --color-dark-green: #263a3a;
+    --color-green: #45605b;
+    --color-grey-border: #6a6a6a;
+    --color-grey-border-2: #5c5c5c;
+    background: var(--color-white);
+}
+
+html.pp-a11y-contrast body a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/* Niveaux de gris (sur html entier pour préserver les positions
+   fixes ; le panneau vire au gris aussi mais reste contrasté) */
+html.pp-a11y-grayscale {
+    filter: grayscale(1);
+}
+
+/* Souligner les liens (ne pas se fier à la seule couleur, WCAG 1.4.1) */
+html.pp-a11y-links body a {
+    text-decoration: underline !important;
+    text-underline-offset: 2px;
+}
+
+/* Grand curseur */
+html.pp-a11y-cursor body,
+html.pp-a11y-cursor body * {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M8 4l0 34 9-9 6 13 6-3-6-12 12-1z' fill='white' stroke='black' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E") 6 4, auto !important;
+}
+
+/* Masquer les images (mode lecture sans distraction) */
+html.pp-a11y-noimg body img,
+html.pp-a11y-noimg body picture,
+html.pp-a11y-noimg body video {
+    display: none !important;
+}
+
+/* Désactiver les animations (RGAA 13.8) */
+html.pp-a11y-noanim body *,
+html.pp-a11y-noanim body *::before,
+html.pp-a11y-noanim body *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+}

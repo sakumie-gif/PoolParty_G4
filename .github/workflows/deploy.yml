@@ -1,0 +1,36 @@
+name: Deploiement du theme sur o2switch
+
+# A chaque envoi (push) sur la branche principale, le theme part sur o2switch.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # bouton "Run workflow" pour lancer un envoi a la main si besoin
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le code du depot
+        uses: actions/checkout@v4
+
+      - name: Envoyer le theme par FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.O2SWITCH_FTP_SERVER }}
+          username: ${{ secrets.O2SWITCH_FTP_USER }}
+          password: ${{ secrets.O2SWITCH_FTP_PASSWORD }}
+          protocol: ftps
+          server-dir: ${{ secrets.O2SWITCH_THEME_DIR }}
+          local-dir: ./
+          # On n'envoie pas ces fichiers (inutiles sur le serveur)
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/node_modules/**
+            **/vendor/**
+            **/*.map
+            **/Thumbs.db
+            **/Desktop.ini
+            **/.DS_Store

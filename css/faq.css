@@ -1,0 +1,259 @@
+/* =============================================================
+   POOL PARTY - PAGE FAQ
+   Styles spécifiques à la page des questions fréquentes.
+   Mobile-first : base 393px, puis tablette (768px) et desktop
+   (1024px). Les composants (fil d'Ariane, accordéon faq-item,
+   pilule de recherche input-search, boutons) viennent de
+   global.css ; cette feuille ne gère que la mise en page.
+   Mise en page inspirée des centres d'aide type Swimmy ou
+   Airbnb : recherche en tête, thèmes cliquables, puis une
+   colonne de lecture centrée. Aucune maquette Figma pour cette
+   page : tout est construit avec les tokens du design system.
+   ============================================================= */
+
+/* =============================================================
+   BLOC 1 : FIL D'ARIANE
+   ============================================================= */
+.faq-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile);
+}
+
+/* =============================================================
+   BLOC 2 : EN-TÊTE DE PAGE + RECHERCHE
+   Bandeau beige pleine largeur : titre, sous-titre et pilule
+   de recherche centrés (composant input-search de global.css).
+   ============================================================= */
+.faq-hero {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    background: var(--color-beige);
+    text-align: center;
+}
+
+/* Titre réduit en mobile, la taille de la charte revient en tablette */
+.faq-hero h1 {
+    font-size: 32px;
+}
+
+.faq-hero p {
+    max-width: 660px;
+    margin: var(--padding-p4) auto 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.faq-hero__recherche {
+    max-width: 560px;
+    margin: var(--padding-p2) auto 0;
+}
+
+/* =============================================================
+   BLOC 3 : NAVIGATION PAR THÈME
+   Rangée de pilules blanches avec icône, en défilement
+   horizontal sur mobile puis centrées à partir de la tablette.
+   ============================================================= */
+.faq-themes {
+    padding: var(--padding-p2) var(--padding-page-mobile) 0;
+}
+
+.faq-themes ul {
+    display: flex;
+    gap: var(--padding-p3);
+    list-style: none;
+    margin: 0;
+    padding: 0 0 var(--padding-p4);
+    overflow-x: auto;
+}
+
+.faq-themes li {
+    flex-shrink: 0;
+}
+
+.faq-themes__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p4);
+    padding: var(--padding-p4) var(--padding-p2-2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-search-small);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    white-space: nowrap;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.faq-themes__pill svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--color-dark-green-blue);
+}
+
+/* Survol : pilule remplie en vert bleuté, icône et texte en blanc */
+.faq-themes__pill:hover {
+    background: var(--color-dark-green-blue);
+    color: var(--color-white);
+}
+
+.faq-themes__pill:hover svg {
+    color: var(--color-white);
+}
+
+/* =============================================================
+   MESSAGE RECHERCHE SANS RÉSULTAT (affiché en JS)
+   ============================================================= */
+.faq-vide {
+    margin: var(--padding-p1) var(--padding-page-mobile) 0;
+    padding: var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r2);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+    text-align: center;
+}
+
+.faq-vide a {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* =============================================================
+   BLOC 4 : SECTIONS DE QUESTIONS
+   Une colonne de lecture, chaque thème garde son titre Garamond.
+   Le saut d'ancre sous le header collant est géré par le
+   scroll-margin global de global.css.
+   ============================================================= */
+.faq-contenu {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p1);
+    padding: var(--padding-p1) var(--padding-page-mobile);
+}
+
+/* =============================================================
+   BLOC 5 : CTA VERS LE CONTACT
+   Bandeau beige arrondi, titre Garamond et deux boutons,
+   même construction que le CTA final de la page contact.
+   ============================================================= */
+.faq-cta {
+    margin: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+    text-align: center;
+}
+
+.faq-cta p {
+    margin-top: var(--padding-p2);
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.faq-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p1);
+}
+
+/* =============================================================
+   TABLETTE (à partir de 768px)
+   Gouttières 32px, titre à sa taille de charte, pilules de
+   thème centrées sur deux lignes au besoin.
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .faq-intro {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .faq-hero {
+        padding: 48px var(--padding-page-tablet);
+    }
+
+    .faq-hero h1 {
+        font-size: var(--fs-h1);
+    }
+
+    .faq-hero p {
+        font-size: var(--fs-p2);
+    }
+
+    .faq-themes {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .faq-themes ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        overflow-x: visible;
+    }
+
+    .faq-vide {
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+    }
+
+    .faq-contenu {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .faq-cta {
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+    }
+}
+
+/* =============================================================
+   DESKTOP (à partir de 1024px)
+   Gouttières 80px ; la colonne de questions se limite à une
+   largeur de lecture confortable et se centre, comme sur les
+   centres d'aide de référence.
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .faq-intro {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .faq-hero {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .faq-themes {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .faq-vide {
+        max-width: 880px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .faq-contenu {
+        max-width: 880px;
+        margin: 0 auto;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .faq-cta {
+        max-width: 880px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}

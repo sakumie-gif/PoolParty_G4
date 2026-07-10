@@ -1,0 +1,1160 @@
+/* =============================================================
+   POOL PARTY - PAGE PROPOSER MON ESPACE
+   Parcours de création d'annonce en plein écran, inspiré du
+   tunnel Airbnb : un écran par question, barre de cycle de vie
+   en bas de page (3 étapes), navigation Retour / Continuer.
+   Mobile-first : base 393px, puis tablette 768px, desktop 1024px.
+   ============================================================= */
+
+/* ---------- Structure générale ---------- */
+
+.proposer-body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--color-white);
+}
+
+.proposer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    /* Écart entre les écrans d'un même groupe empilés sur une page */
+    gap: 48px;
+    /* Réserve la hauteur de la barre de navigation fixe */
+    padding: 24px var(--padding-page-mobile) 100px;
+}
+
+/* Une étape regroupe plusieurs écrans affichés ensemble : ils s'empilent
+   (flex: 0 0 auto) au lieu de se partager la hauteur. L'écart vient du
+   gap de .proposer ; chaque écran garde son titre H2 comme séparateur. */
+.proposer-ecran {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    animation: proposer-apparition var(--transition-medium);
+}
+
+.proposer-ecran[hidden] {
+    display: none;
+}
+
+@keyframes proposer-apparition {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.proposer-centre {
+    width: 100%;
+    max-width: 850px;
+}
+
+.proposer-centre--etroit {
+    max-width: 630px;
+}
+
+/* ---------- Header allégé ---------- */
+
+.proposer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p2-2);
+    padding: var(--padding-p2-2) var(--padding-page-mobile);
+}
+
+/* Le menu burger du tunnel réutilise .header-nav / .header-burger /
+   .main-menu du header principal (positionnement et style communs). */
+
+/* Barre d'actions du tunnel (Des questions ? / Enregistrer et quitter),
+   descendue sous l'en-tête et alignée à droite. */
+.proposer-actions-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: var(--padding-p2-2);
+    padding: 0 var(--padding-page-mobile) var(--padding-p3);
+}
+
+/* Action du tunnel : simple lien au libellé souligné (même traitement que
+   Partager / Favori de la fiche produit, mais sans icône), pour se
+   distinguer nettement du bouton Menu. */
+.proposer-action {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.proposer-action:hover {
+    color: var(--color-dark-green-blue);
+    font-weight: var(--fw-bold);
+}
+
+/* ---------- Cycle de vie cliquable (haut du tunnel) ----------
+   Rail horizontal d'étapes numérotées, une par grande étape, avec le
+   nom en dessous. Pastille grise pleine à venir, vert bleuté pleine
+   pour l'étape courante et les étapes faites (coche). Un trait relie
+   les pastilles. Le rail est centré ; s'il déborde (mobile) il défile
+   et se recentre sur l'étape courante (safe center évite le rognage). */
+.pp-steps {
+    display: flex;
+    align-items: flex-start;
+    justify-content: safe center;
+    gap: 0;
+    overflow-x: auto;
+    padding: var(--padding-p3) var(--padding-page-mobile);
+    border-bottom: 1px solid var(--color-grey-border);
+    scrollbar-width: none;
+}
+
+.pp-steps::-webkit-scrollbar {
+    display: none;
+}
+
+.pp-step {
+    flex: 0 0 auto;
+    width: 84px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p4);
+    position: relative;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+}
+
+.pp-step:disabled {
+    cursor: default;
+}
+
+/* Trait de liaison vers l'étape précédente (au niveau du centre des
+   pastilles), tiré derrière elles */
+.pp-step:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    top: 15px;
+    right: 50%;
+    left: -50%;
+    height: 2px;
+    background: var(--color-grey-border-2);
+    z-index: 0;
+}
+
+/* Pastilles en aplat (pas de contour) : gris plein pour les étapes à
+   venir, vert bleuté plein pour l'étape courante et les étapes faites. */
+.pp-step__marker {
+    position: relative;
+    z-index: 1;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    background: var(--color-grey-border-2);
+    color: var(--color-grey-font-1);
+    font-size: var(--fs-p3);
+    font-weight: var(--fw-semibold);
+}
+
+.pp-step__check {
+    display: none;
+    width: 18px;
+    height: 18px;
+}
+
+.pp-step__label {
+    font-size: var(--fs-p4);
+    font-weight: var(--fw-medium);
+    color: var(--color-grey-font-2);
+    text-align: center;
+    line-height: 1.25;
+}
+
+/* Étape courante : pastille pleine vert bleuté, libellé en avant */
+.pp-step.is-active .pp-step__marker {
+    background: var(--color-dark-green-blue);
+    color: var(--color-white);
+}
+
+.pp-step.is-active .pp-step__label {
+    color: var(--color-dark-green-blue);
+    font-weight: var(--fw-semibold);
+}
+
+/* Étape faite : pastille pleine avec la coche, trait de liaison coloré */
+.pp-step.is-done .pp-step__marker {
+    background: var(--color-dark-green-blue);
+    color: var(--color-white);
+}
+
+.pp-step.is-done .pp-step__num {
+    display: none;
+}
+
+.pp-step.is-done .pp-step__check {
+    display: block;
+}
+
+.pp-step.is-done::before {
+    background: var(--color-dark-green-blue);
+}
+
+.pp-step.is-done .pp-step__label {
+    color: var(--color-green);
+}
+
+/* ---------- Titres et textes ---------- */
+
+.proposer-titre {
+    font-family: var(--font-heading);
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-semibold);
+    color: var(--color-dark-green-blue);
+    margin-bottom: var(--padding-p2-2);
+}
+
+.proposer-sous-titre {
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+    line-height: 1.6;
+    margin-bottom: var(--padding-p1);
+}
+
+.proposer-groupe-titre {
+    font-family: var(--font-body);
+    font-size: var(--fs-p1);
+    font-weight: var(--fw-semibold);
+    color: var(--color-grey-font-1);
+    margin: var(--padding-p1) 0 var(--padding-p2-2);
+}
+
+/* ---------- Écrans d'introduction d'étape ---------- */
+
+.proposer-intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p1);
+    width: 100%;
+    max-width: 1100px;
+    align-self: center;
+    margin: auto 0;
+}
+
+.proposer-intro__etape {
+    font-size: var(--fs-p3);
+    font-weight: var(--fw-medium);
+    color: var(--color-grey-font-1);
+    margin-bottom: var(--padding-p4);
+}
+
+.proposer-intro__img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-r1);
+}
+
+.proposer-intro__texte .proposer-sous-titre {
+    margin-bottom: 0;
+}
+
+/* ---------- Formulaires du parcours ---------- */
+
+/* Carte du formulaire de l'écran compte : même rendu que la carte de
+   la page inscription (carte blanche sobre) pour que les deux écrans
+   de création de compte soient identiques. */
+.proposer-carte {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: 28px;
+    padding: var(--padding-p1) var(--padding-p2);
+    box-shadow: var(--shadow-2);
+}
+
+.proposer-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+}
+
+.proposer-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+}
+
+/* Le texte d'aide sous un champ (.form-field__aide) est mutualisé dans global.css */
+
+/* Message qui liste ce qui bloque le bouton Continuer (écran compte).
+   Pas de display imposé pour laisser l'attribut hidden agir. */
+.proposer-manque {
+    font-size: var(--fs-p3);
+    color: var(--color-corail);
+    line-height: 1.5;
+}
+
+/* Invitation neutre affichée dès l'arrivée sur l'écran compte
+   (ne pas confondre avec le message d'erreur en corail) */
+.proposer-manque--info {
+    color: var(--color-grey-font-2);
+}
+
+/* Bouton Continuer dans la carte de l'écran compte : pleine largeur,
+   au ras du formulaire, comme une vraie soumission */
+.proposer-carte__suivant {
+    width: 100%;
+}
+
+.proposer-deja {
+    margin-top: var(--padding-p1);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+/* Dans la carte de l'écran compte, l'espacement vient du gap de la
+   carte : on retire la marge propre au lien pour éviter le double écart */
+.proposer-carte .proposer-deja {
+    margin-top: 0;
+}
+
+.proposer-deja a {
+    color: var(--color-dark-green-blue);
+    font-weight: var(--fw-semibold);
+    text-decoration: underline;
+}
+
+.proposer-map {
+    width: 100%;
+    margin-top: var(--padding-p1);
+    border-radius: var(--radius-r1);
+    object-fit: cover;
+}
+
+/* ---------- Cartes de choix (type, équipements) ---------- */
+
+.choix-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--padding-p2-2);
+}
+
+.choix-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--padding-p4);
+    padding: var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r2);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.choix-card svg {
+    width: 32px;
+    height: 32px;
+    color: var(--color-dark-green-blue);
+}
+
+.choix-card__titre {
+    font-size: var(--fs-p3);
+    font-weight: var(--fw-medium);
+    color: var(--color-grey-font-1);
+}
+
+.choix-card__texte {
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+    line-height: 1.5;
+}
+
+.choix-card:hover {
+    border-color: var(--color-dark-green-blue);
+}
+
+.choix-card.is-selected {
+    border-color: var(--color-dark-green-blue);
+    background: var(--color-beige);
+    box-shadow: inset 0 0 0 1px var(--color-dark-green-blue);
+}
+
+/* Les trois grandes cartes de l'écran Que souhaitez-vous proposer */
+.choix-grid--large {
+    grid-template-columns: 1fr;
+}
+
+.choix-card--large {
+    padding: var(--padding-p1);
+    gap: var(--padding-p2-2);
+}
+
+.choix-card--large svg {
+    width: 40px;
+    height: 40px;
+}
+
+.choix-card--large .choix-card__titre {
+    font-size: var(--fs-p1);
+    font-weight: var(--fw-semibold);
+}
+
+/* Options pleine largeur (accès, mode de réservation) */
+.choix-liste {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2-2);
+}
+
+.choix-ligne {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p2);
+    padding: var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r2);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.choix-ligne svg {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    color: var(--color-dark-green-blue);
+}
+
+.choix-ligne__titre {
+    display: block;
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-semibold);
+    color: var(--color-grey-font-1);
+    margin-bottom: var(--padding-p5);
+}
+
+.choix-ligne__desc {
+    display: block;
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+    line-height: 1.5;
+}
+
+.choix-ligne:hover {
+    border-color: var(--color-dark-green-blue);
+}
+
+.choix-ligne.is-selected {
+    border-color: var(--color-dark-green-blue);
+    background: var(--color-beige);
+    box-shadow: inset 0 0 0 1px var(--color-dark-green-blue);
+}
+
+/* ---------- Compteurs (capacité d'accueil) ----------
+   Les styles des compteurs (.compteur-liste, .compteur) vivent dans
+   global.css : ils servent aussi au choix des invités de la page
+   réservation. */
+
+/* ---------- Photos ---------- */
+
+.photos-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p4);
+    padding: var(--padding-p1);
+    border: 2px dashed var(--color-grey-border-2);
+    border-radius: var(--radius-r2);
+    cursor: pointer;
+    text-align: center;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.photos-zone:hover,
+.photos-zone:focus-within {
+    border-color: var(--color-dark-green-blue);
+    background: var(--color-beige);
+}
+
+.photos-zone svg {
+    width: 40px;
+    height: 40px;
+    color: var(--color-dark-green-blue);
+}
+
+.photos-zone__titre {
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-medium);
+    color: var(--color-grey-font-1);
+}
+
+.photos-zone__texte {
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+.photos-compteur {
+    margin: var(--padding-p2-2) 0;
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--padding-p2-2);
+}
+
+.photo-item {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-r2);
+    overflow: hidden;
+}
+
+.photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* La première photo sert de couverture, comme sur Airbnb */
+.photo-item:first-child {
+    grid-column: 1 / -1;
+    aspect-ratio: 16 / 9;
+}
+
+.photo-item__badge {
+    position: absolute;
+    top: var(--padding-p4);
+    left: var(--padding-p4);
+    padding: var(--padding-p5) var(--padding-p4);
+    background: var(--color-white);
+    border-radius: var(--radius-r3);
+    font-size: var(--fs-p4);
+    font-weight: var(--fw-medium);
+    color: var(--color-grey-font-1);
+}
+
+.photo-item__suppr {
+    position: absolute;
+    top: var(--padding-p4);
+    right: var(--padding-p4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--color-white);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.photo-item__suppr:hover {
+    background: var(--color-black);
+}
+
+.photo-item__suppr svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* ---------- Titre et description ---------- */
+
+.proposer-textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.proposer-textarea--titre {
+    min-height: 90px;
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-medium);
+}
+
+.proposer-compteur {
+    margin-top: var(--padding-p4);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+/* ---------- Prix ---------- */
+
+.prix-saisie {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--padding-p4);
+    margin: var(--padding-p1) 0;
+}
+
+.prix-saisie__input {
+    width: 3.2ch;
+    border: none;
+    border-bottom: 2px solid var(--color-grey-border-2);
+    font-family: var(--font-heading);
+    font-size: 64px;
+    font-weight: var(--fw-semibold);
+    color: var(--color-dark-green-blue);
+    text-align: right;
+    background: transparent;
+    transition: border-color var(--transition-fast);
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.prix-saisie__input::-webkit-outer-spin-button,
+.prix-saisie__input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.prix-saisie__input:focus {
+    outline: none;
+    border-color: var(--color-dark-green-blue);
+}
+
+.prix-saisie__unite {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-medium);
+    color: var(--color-grey-font-2);
+}
+
+.prix-detail {
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r2);
+    padding: var(--padding-p2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2-2);
+}
+
+.prix-detail__ligne {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--padding-p2);
+}
+
+.prix-detail__ligne dt {
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.prix-detail__ligne dd {
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-semibold);
+    color: var(--color-grey-font-1);
+    white-space: nowrap;
+}
+
+/* ---------- Bandeau de reprise du brouillon ---------- */
+
+/* display:flex prendrait le pas sur l'attribut hidden, on le rétablit */
+.proposer-reprise[hidden] {
+    display: none;
+}
+
+.proposer-reprise {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--padding-p2-2);
+    width: 100%;
+    max-width: 850px;
+    margin: 0 auto var(--padding-p1);
+    padding: var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r2);
+}
+
+.proposer-reprise p {
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    line-height: 1.5;
+}
+
+/* ---------- Disponibilités ---------- */
+
+.jours-liste {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--padding-p4);
+}
+
+.jour-pill {
+    min-width: 56px;
+    padding: var(--padding-p4) var(--padding-p2-2);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-white);
+    font-family: var(--font-body);
+    font-size: var(--fs-p3);
+    font-weight: var(--fw-medium);
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.jour-pill:hover {
+    border-color: var(--color-dark-green-blue);
+}
+
+.jour-pill.is-selected {
+    border-color: var(--color-dark-green-blue);
+    background: var(--color-dark-green-blue);
+    color: var(--color-white);
+}
+
+.dispo-horaire {
+    padding: var(--padding-p4) var(--padding-p4) var(--padding-p1);
+}
+
+/* ---------- Versement ---------- */
+
+.versement-garanties {
+    margin-top: var(--padding-p1);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--padding-p2-2);
+}
+
+/* ---------- Règles ---------- */
+
+.regles-liste {
+    display: flex;
+    flex-direction: column;
+}
+
+.regles-ligne {
+    padding: var(--padding-p2) 0;
+    border-bottom: 1px solid var(--color-grey-border);
+}
+
+.regles-attestation {
+    margin-top: var(--padding-p1);
+    padding: var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r2);
+}
+
+/* ---------- Récapitulatif ---------- */
+
+.recap-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p1);
+}
+
+.recap-card {
+    max-width: 380px;
+}
+
+.recap-suite .proposer-groupe-titre {
+    margin-top: 0;
+}
+
+.recap-etapes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+}
+
+.recap-etape {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--padding-p2-2);
+}
+
+.recap-etape svg {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    color: var(--color-dark-green-blue);
+}
+
+.recap-etape__titre {
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-semibold);
+    color: var(--color-grey-font-1);
+    margin-bottom: var(--padding-p5);
+}
+
+.recap-etape__texte {
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+    line-height: 1.5;
+}
+
+/* ---------- Écran de confirmation ---------- */
+
+.proposer-fin {
+    text-align: center;
+    margin: auto;
+}
+
+.proposer-fin__badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    margin: 0 auto var(--padding-p2);
+    border-radius: var(--radius-pill);
+    background: var(--color-dark-green-blue);
+    color: var(--color-white);
+}
+
+.proposer-fin__badge svg {
+    width: 36px;
+    height: 36px;
+}
+
+.proposer-fin__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p2-2);
+    margin-top: var(--padding-p1);
+}
+
+.proposer-fin__note {
+    margin-top: var(--padding-p1);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+/* ---------- Barre de parcours (cycle de vie + navigation) ---------- */
+
+.proposer-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-white);
+    border-top: 1px solid var(--color-grey-border);
+    z-index: 20;
+}
+
+.proposer-bar__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p2);
+    padding: var(--padding-p3) var(--padding-page-mobile);
+}
+
+.proposer-bar__retour {
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-medium);
+    color: var(--color-grey-font-1);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.proposer-bar__retour:hover {
+    color: var(--color-dark-green-blue);
+}
+
+/* Le bouton Retour masqué garde sa place pour ne pas décaler le reste */
+.proposer-bar__retour[hidden] {
+    display: block;
+    visibility: hidden;
+}
+
+/* Sans cette règle, le display du composant .btn prendrait le pas
+   sur l'attribut hidden (écran de confirmation). Comme pour Retour,
+   le bouton garde sa place pour que la mention reste centrée. */
+.proposer-bar__suivant[hidden] {
+    display: inline-flex;
+    visibility: hidden;
+}
+
+.proposer-bar__mention {
+    display: none;
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+    text-align: center;
+}
+
+/* =============================================================
+   TABLETTE : à partir de 768px
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .proposer {
+        padding: 40px var(--padding-page-tablet) 110px;
+    }
+
+    .proposer-header {
+        padding: var(--padding-p2) var(--padding-page-tablet);
+    }
+
+    .proposer-actions-bar {
+        padding: 0 var(--padding-page-tablet) var(--padding-p3);
+    }
+
+    .proposer-titre {
+        font-size: var(--fs-h1);
+    }
+
+    .proposer-sous-titre {
+        font-size: var(--fs-p2);
+    }
+
+    .proposer-row {
+        flex-direction: row;
+    }
+
+    .proposer-row .form-field {
+        flex: 1;
+    }
+
+    .proposer-carte {
+        border-radius: 36px;
+        padding: var(--padding-p1);
+    }
+
+    .choix-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .choix-grid--large {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .photos-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .photo-item:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .pp-steps {
+        padding: var(--padding-p3) var(--padding-page-tablet);
+    }
+
+    .pp-step {
+        width: 104px;
+    }
+
+    .proposer-bar__nav {
+        padding: var(--padding-p3) var(--padding-page-tablet);
+    }
+
+    .proposer-bar__mention {
+        display: block;
+    }
+
+    .proposer-fin__actions {
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .recap-layout {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 64px;
+    }
+
+    .recap-card {
+        flex-shrink: 0;
+        width: 340px;
+    }
+}
+
+/* =============================================================
+   DESKTOP : à partir de 1024px
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .proposer {
+        padding: 48px var(--padding-page-desktop) 110px;
+    }
+
+    .proposer-header {
+        padding: var(--padding-p2) var(--padding-page-desktop);
+    }
+
+    .proposer-actions-bar {
+        padding: 0 var(--padding-page-desktop) var(--padding-p3);
+    }
+
+    .proposer-ecran {
+        align-items: center;
+    }
+
+    .proposer-intro {
+        flex-direction: row;
+        align-items: center;
+        gap: 80px;
+    }
+
+    .proposer-intro__texte {
+        flex: 1;
+    }
+
+    .proposer-intro__img {
+        flex: 1;
+        min-width: 0;
+        max-width: 560px;
+    }
+
+    .pp-steps {
+        padding: var(--padding-p3) var(--padding-page-desktop);
+    }
+
+    .proposer-bar__nav {
+        padding: var(--padding-p3) var(--padding-page-desktop);
+    }
+}
+
+/* =============================================================
+   BANDEAU COOKIES SUR LE TUNNEL
+   Le bandeau cookies (position fixe en bas, z-index élevé) recouvrait
+   la barre de parcours fixe et donc le bouton Continuer. Sur le tunnel,
+   on le remonte au-dessus de la barre pour que Continuer reste visible
+   et cliquable dès le premier passage.
+   ============================================================= */
+.proposer-body .cookies-banner {
+    bottom: 96px;
+}
+
+/* =============================================================
+   APERÇU DE L'ANNONCE (pop-up « Voir mon annonce »)
+   Réutilise le pop-up générique (.popup) et la carte produit
+   (.card-product) ; on ne stylise ici que la mise en page interne
+   et la liste des équipements.
+   ============================================================= */
+.proposer-apercu__intro {
+    margin-top: calc(-1 * var(--padding-p3));
+    font-size: var(--fs-body);
+    color: var(--color-grey-font-2);
+    text-align: center;
+}
+
+.proposer-apercu__corps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+}
+
+.proposer-apercu__carte {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+}
+
+.proposer-apercu__details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+}
+
+.proposer-apercu__bloc[hidden] {
+    display: none;
+}
+
+.proposer-apercu__bloc p {
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: var(--color-grey-font-2);
+    white-space: pre-line;
+}
+
+.proposer-apercu__equipements {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--padding-p4) var(--padding-p3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.proposer-apercu__equipements li {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p4);
+    font-size: var(--fs-body);
+    color: var(--color-grey-dark);
+}
+
+.proposer-apercu__equipements li::before {
+    content: "";
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-accent-blue);
+}
+
+/* Tablette et plus : carte à gauche, détails à droite */
+@media (min-width: 768px) {
+    .proposer-apercu__corps {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: var(--padding-p1);
+    }
+
+    .proposer-apercu__carte {
+        margin: 0;
+    }
+
+    .proposer-apercu__details {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    .proposer-body .cookies-banner {
+        bottom: 104px;
+    }
+}
+
+/* =============================================================
+   BOUTON D'ACCESSIBILITÉ SUR LE TUNNEL
+   Le bouton flottant (coin bas droit) recouvrait le Continuer de la
+   barre fixe. Sur le tunnel, on le remonte au-dessus de la barre.
+   ============================================================= */
+.proposer-body .pp-a11y-fab {
+    bottom: 92px;
+}
+
+@media (min-width: 768px) {
+    .proposer-body .pp-a11y-fab {
+        bottom: 100px;
+    }
+}

@@ -1,0 +1,171 @@
+/* =============================================================
+   POOL PARTY - CHARTE GRAPHIQUE
+   Variables CSS en miroir exact des variables Figma du projet.
+   Toute modification de la charte se fait ICI, jamais en dur
+   dans les autres feuilles.
+   ============================================================= */
+
+:root {
+
+    /* =========================================================
+       COULEURS PRINCIPALES (Figma : Color / main)
+       ========================================================= */
+    --color-dark-green-blue:    #305E63;   /* Dark Green blue, couleur principale */
+    --color-dark-green-blue-2:  #4B8182;   /* Dark Green blue 2, variante claire */
+    --color-dark-green:         #6A7F7E;   /* Dark Green */
+    --color-green:              #8EA8A3;    /* Green, vert pâle */
+    --color-beige:              #F4EDE6;    /* Beige, fond chaleureux */
+    --color-sable:              #AA8E81;    /* Sable */
+    --color-corail:             #CA8171;    /* Corail, boutons CTA */
+    --color-corail-hover:       #B67668;    /* Corail assombri, état hover des boutons corail */
+    --color-white:              #FFFFFF;    /* White */
+    --color-black:              #000000;    /* Black */
+
+    /* BORDURES ET GRIS */
+    --color-grey-border:        #EBEBEB;    /* Grey-Border */
+    --color-grey-border-2:      #D4D4D4;    /* Grey- Border 2 */
+
+    /* TEXTES (Figma : couleurs de police) */
+    --color-grey-font-1:        #454343;    /* Grey-font-1, texte foncé */
+    --color-grey-font-2:        #6A6A6A;    /* Grey Font-2, texte secondaire */
+    --color-blue-grey-font:     #3F4A5C;    /* Blue grey-Font */
+
+    /* =========================================================
+       COULEURS COMPLÉMENTAIRES
+       ========================================================= */
+    --color-yellow-tag:         #D2811D;    /* yellow tag, badges et étiquettes */
+    --color-disable:            #949494;    /* Disable, éléments désactivés */
+    --color-light-grey:         #DDDDDD;    /* Figma : "Color", gris clair */
+    --color-greengrey-light-rs: #446E72;    /* GreenGrey Light RS */
+    --color-accent-bleu-green:  #156B67;    /* Accent Bleu Green, texte du bouton Menu */
+    --color-hover-sable:        rgba(225, 167, 154, 0.30); /* survol des items de liste (Figma) */
+    --color-voile-photo:        rgba(38, 38, 38, 0.60);    /* badge compteur posé sur les photos (fiche produit mobile) */
+
+    /* Accents des composants avis et pop-up (valeurs Figma) */
+    --color-star:               #FFA76B;    /* étoiles de notation des cartes avis */
+    --color-grey-quote:         #717182;    /* citations et rôles des cartes avis */
+    --color-avatar-turquoise:   #3FA89C;    /* pastille avatar des cartes avis */
+    --color-accent-blue:        #52BEB3;    /* Accent/Blue : bouton de fermeture pop-up */
+    --color-accent-pink:        #F3ADB5;    /* Accent/Pink : bouton secondaire pop-up */
+    --color-grey-dark:          #909090;    /* Neutral/Grey Dark : titre du pop-up */
+
+    /* =========================================================
+       PADDING / ESPACEMENTS (Figma : Padding)
+       ========================================================= */
+    --padding-p1: 32px;   /* P1 */
+    --padding-p2: 20px;   /* P2 */
+    --padding-p2-2: 16px; /* P2 2 */
+    --padding-p3: 14px;   /* P3 */
+    --padding-p4: 8px;    /* P4 */
+    --padding-p5: 4px;    /* P5 */
+
+    /* GOUTTIÈRES DE PAGE (Figma : Padding / Page)
+       La gouttière desktop vaut 80px (valeur Figma) jusqu'à
+       environ 1926px de viewport ; au-delà elle grandit pour
+       plafonner le contenu et le garder centré, au lieu de le
+       laisser filer jusqu'aux bords des très grands écrans.
+       Le plafond de 1766px est calé sur la rangée de sept cartes
+       produit du bloc Coups de coeur : 7 x 238px + 6 gouttières
+       de 16px + 4px de padding de piste, pour que la dernière
+       carte s'arrête au bord droit du contenu. */
+    --padding-page-desktop: max(80px, calc((100% - 1766px) / 2));
+    --padding-page-tablet:  32px;  /* Tablette */
+    --padding-page-mobile:  16px;  /* Mobile */
+
+    /* =========================================================
+       RAYONS DE BORDURE (Figma : Radius)
+       ========================================================= */
+    --radius-r1: 20px;   /* R1 */
+    --radius-r2: 10px;   /* R2 */
+    --radius-r3: 4px;    /* R3 */
+    --radius-pill: 999px; /* pour les éléments totalement arrondis (boutons, barre de recherche) */
+
+    /* =========================================================
+       TYPOGRAPHIES
+       (Polices à confirmer en Dev Mode, voir note plus bas)
+       ========================================================= */
+    --font-heading: 'Cormorant Garamond', Georgia, serif;   /* Titres (Garamond) */
+    --font-body:    'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;  /* Corps, boutons, navigation */
+    --font-input:   'Inter', sans-serif;   /* Champs de la barre de recherche */
+
+    /* TAILLES DE POLICE (Figma : Text styles)
+       Corps : P1.big 18 / P2 16 / P3 14 / P4 12. */
+    --fs-p1: 18px;   /* P1.big */
+    --fs-p2: 16px;   /* P2.Normal + P2 maj */
+    --fs-p3: 14px;   /* P3.small + Input label */
+    --fs-p4: 12px;   /* P4 */
+
+    /* Titres en Garamond (valeurs Figma confirmées) */
+    --fs-h1: 40px;
+    --fs-h2: 32px;
+    --fs-h3: 24px;
+    --fs-h4: 18px;
+
+    /* Variantes Inter de titres (contextes spécifiques) */
+    --fs-h2-inter: 26px;
+    --fs-h3-inter: 20px;
+
+    /* POIDS DE POLICE */
+    --fw-light: 300;
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+    --fw-extrabold: 800; /* libellé des cartes événement (Figma) */
+
+    /* =========================================================
+       OMBRES (tokens exacts Figma)
+       ========================================================= */
+    --shadow-1: 0px 12px 42px rgba(24, 39, 75, 0.12), 0px 8px 18px rgba(24, 39, 75, 0.12);
+    --shadow-2: 0px 8px 24px rgba(24, 39, 75, 0.08), 0px 6px 12px rgba(24, 39, 75, 0.12);
+    --shadow-3: 0px 4px 4px rgba(24, 39, 75, 0.08), 0px 2px 4px rgba(24, 39, 75, 0.12);
+    --shadow-4: 0px 14px 64px rgba(24, 39, 75, 0.12), 0px 8px 22px rgba(24, 39, 75, 0.12);
+    --shadow-search: 3px 2px 7px rgba(0, 0, 0, 0.36);
+    --shadow-search-small: 3px 2px 3.5px rgba(0, 0, 0, 0.36); /* pilules de recherche / select */
+
+    /* Ombres des boutons (valeurs exactes du composant Button Figma) */
+    --shadow-btn: 0px 10px 7.5px rgba(0, 0, 0, 0.10), 0px 4px 3px rgba(0, 0, 0, 0.10);
+    --shadow-btn-outline: 0px 10px 15px rgba(0, 0, 0, 0.10), 0px 4px 6px rgba(0, 0, 0, 0.10);
+    --shadow-popup: 0px 25px 25px rgba(0, 0, 0, 0.25);
+
+    /* Alias lisibles (pointent vers les tokens Figma) */
+    --shadow-sm: var(--shadow-3);
+    --shadow-md: var(--shadow-2);
+    --shadow-lg: var(--shadow-1);
+
+    /* =========================================================
+       ICÔNES CSS (masques SVG, colorables via background-color)
+       ========================================================= */
+    --icon-chevron-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E");
+    --icon-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.6c.3 0 .58.17.71.45l2.45 4.96 5.48.8c.65.09.91.89.44 1.35l-3.96 3.86.93 5.45c.11.65-.57 1.14-1.15.84L12 17.74l-4.9 2.57c-.58.3-1.26-.19-1.15-.84l.93-5.45-3.96-3.86c-.47-.46-.21-1.26.44-1.35l5.48-.8 2.45-4.96A.79.79 0 0 1 12 2.6z'/%3E%3C/svg%3E");
+
+    /* Critères d'avis (icônes du composant Figma « Icone ») : aspirateur
+       = propreté, loupe = précision, clé = arrivée, bulle = contact,
+       carte dépliée = emplacement, double étiquette = qualité prix. */
+    --icon-vacuum: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='13' y='7' width='7' height='11' rx='2'/%3E%3Ccircle cx='16.5' cy='18' r='1.4'/%3E%3Cpath d='M3 18h3l1.2-1.5'/%3E%3Cpath d='M7.2 16.5c0-4 2-6.5 5.8-6.5'/%3E%3C/svg%3E");
+    --icon-search: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.34-4.34'/%3E%3C/svg%3E");
+    --icon-key: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4'/%3E%3Cpath d='m21 2-9.6 9.6'/%3E%3Ccircle cx='7.5' cy='15.5' r='5.5'/%3E%3C/svg%3E");
+    --icon-message: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 17a2 2 0 0 1-2 2H6l-4 4V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z'/%3E%3Cpath d='M8 10h8'/%3E%3Cpath d='M8 13.5h8'/%3E%3C/svg%3E");
+    --icon-map: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z'/%3E%3Cpath d='M15 5.764v15'/%3E%3Cpath d='M9 3.236v15'/%3E%3C/svg%3E");
+    --icon-tags: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19'/%3E%3Cpath d='M9.586 5.586A2 2 0 0 0 8.172 5H3a1 1 0 0 0-1 1v5.172a2 2 0 0 0 .586 1.414L8.29 18.29a2.426 2.426 0 0 0 3.42 0l3.58-3.58a2.426 2.426 0 0 0 0-3.42L9.586 5.586'/%3E%3Ccircle cx='6.5' cy='9.5' r='.5' fill='black'/%3E%3C/svg%3E");
+
+    /* =========================================================
+       TRANSITIONS
+       ========================================================= */
+    --transition-fast: 0.15s ease;
+    --transition-medium: 0.3s ease;
+    --transition-slow: 0.5s ease;
+
+    /* =========================================================
+       CONTAINER
+       ========================================================= */
+    --container-max: 1440px;
+}
+
+/* =============================================================
+   BREAKPOINTS DE RÉFÉRENCE (mobile-first)
+   - Mobile  : base de travail 393px
+   - Tablette : à partir de 768px (gouttière 32px)
+   - Desktop : à partir de 1024px
+   - Large   : à partir de 1440px (gouttière 80px)
+   ============================================================= */

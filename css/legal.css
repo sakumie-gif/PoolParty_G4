@@ -1,0 +1,332 @@
+/* =============================================================
+   POOL PARTY - PAGES LÉGALES
+   Styles partagés par mentions légales, CGU, CGV et 404.
+   Mise en page sobre, lisibilité prioritaire : colonne de
+   lecture étroite, sommaire ancré, fiches d'identification.
+   ============================================================= */
+
+/* =============================================================
+   BLOC 1 : FIL D'ARIANE
+   Même gabarit que les pages accessibilité et à propos.
+   ============================================================= */
+.legal-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile);
+}
+
+/* =============================================================
+   BLOC 2 : EN-TÊTE DE PAGE
+   Bandeau beige pleine largeur, titre et chapô centrés.
+   ============================================================= */
+.legal-hero {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    background: var(--color-beige);
+    text-align: center;
+}
+
+/* Titre réduit en mobile, la taille Figma (40px) revient en tablette */
+.legal-hero h1 {
+    font-size: 32px;
+}
+
+.legal-hero p {
+    max-width: 720px;
+    margin: var(--padding-p4) auto 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+/* Date de dernière mise à jour, sous le chapô */
+.legal-hero__date {
+    font-style: italic;
+    color: var(--color-grey-font-2);
+}
+
+/* =============================================================
+   COLONNE DE LECTURE
+   Largeur plafonnée pour garder des lignes confortables,
+   même patron que la déclaration d'accessibilité.
+   ============================================================= */
+.legal-layout {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
+}
+
+/* =============================================================
+   SOMMAIRE
+   Carte beige listant les ancres internes du document.
+   ============================================================= */
+.legal-sommaire {
+    margin-top: var(--padding-p2);
+    padding: var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+}
+
+.legal-sommaire h2 {
+    font-size: var(--fs-h3);
+}
+
+.legal-sommaire ol {
+    margin-top: var(--padding-p3);
+    padding-left: var(--padding-p2);
+    list-style: decimal;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.legal-sommaire a {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.legal-sommaire a:hover {
+    color: var(--color-dark-green-blue-2);
+}
+
+/* =============================================================
+   CORPS DU DOCUMENT
+   Sections ancrées depuis le sommaire : la marge de scroll
+   évite que le header ne masque le titre visé. Même valeur que
+   la règle [id] de global.css (hauteur du header sticky).
+   ============================================================= */
+.legal-content section {
+    scroll-margin-top: 160px;
+}
+
+.legal-content h2 {
+    margin-top: var(--padding-p1);
+    font-size: var(--fs-h3);
+}
+
+.legal-content h3 {
+    margin-top: var(--padding-p2);
+    font-size: var(--fs-h4);
+}
+
+.legal-content p {
+    margin-top: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.legal-content a {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.legal-content a:hover {
+    color: var(--color-dark-green-blue-2);
+}
+
+/* Listes à puces du corps de texte */
+.legal-liste {
+    margin-top: var(--padding-p3);
+    padding-left: var(--padding-p2);
+    list-style: disc;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   FICHE D'IDENTIFICATION
+   Liste de définitions (éditeur, agence, hébergeur) : libellé
+   au-dessus de la valeur en mobile, sur deux colonnes ensuite.
+   ============================================================= */
+.legal-fiche {
+    margin-top: var(--padding-p3);
+    padding: var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.legal-fiche dt {
+    margin-top: var(--padding-p3);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p3);
+    color: var(--color-dark-green-blue);
+}
+
+.legal-fiche dt:first-child {
+    margin-top: 0;
+}
+
+.legal-fiche dd {
+    margin-top: 2px;
+}
+
+/* =============================================================
+   ENCART PROJET PÉDAGOGIQUE FICTIF
+   Mention légale exigée par le cadre pédagogique : carte beige
+   soulignée d'un filet corail pour la distinguer du reste.
+   ============================================================= */
+.legal-notice {
+    margin-top: var(--padding-p2);
+    padding: var(--padding-p2);
+    background: var(--color-beige);
+    border-left: 4px solid var(--color-corail);
+    border-radius: var(--radius-r2);
+}
+
+.legal-notice p {
+    margin-top: 0;
+}
+
+.legal-notice p + p {
+    margin-top: var(--padding-p3);
+}
+
+/* =============================================================
+   PAGE 404
+   Écran d'erreur centré : code géant en vert pâle, vague
+   corail décorative, message et portes de sortie.
+   ============================================================= */
+.error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 60vh;
+    justify-content: center;
+    padding: 64px var(--padding-page-mobile);
+    text-align: center;
+}
+
+.error-page__code {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-semibold);
+    font-size: 120px;
+    line-height: 1;
+    color: var(--color-green);
+}
+
+.error-page__wave {
+    width: 160px;
+    margin-top: var(--padding-p3);
+    color: var(--color-corail);
+}
+
+.error-page h1 {
+    margin-top: var(--padding-p2);
+    font-size: 32px;
+}
+
+.error-page__text {
+    max-width: 520px;
+    margin-top: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.error-page__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--padding-p2-2);
+    margin-top: var(--padding-p1);
+}
+
+.error-page__aide {
+    margin-top: var(--padding-p1);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.error-page__aide a {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.error-page__aide a:hover {
+    color: var(--color-dark-green-blue-2);
+}
+
+/* =============================================================
+   RESPONSIVE : TABLETTE (768px et plus)
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .legal-intro {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .legal-hero {
+        padding: var(--padding-p1) var(--padding-page-tablet);
+    }
+
+    .legal-hero h1 {
+        font-size: var(--fs-h1);
+    }
+
+    .error-page__code {
+        font-size: 160px;
+    }
+
+    .error-page h1 {
+        font-size: var(--fs-h1);
+    }
+
+    .legal-hero p {
+        font-size: var(--fs-p2);
+    }
+
+    .legal-layout {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    /* Fiche sur deux colonnes : libellé à gauche, valeur à droite */
+    .legal-fiche {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        column-gap: var(--padding-p2);
+        row-gap: var(--padding-p4);
+        align-items: baseline;
+    }
+
+    .legal-fiche dt,
+    .legal-fiche dt:first-child,
+    .legal-fiche dd {
+        margin-top: 0;
+    }
+}
+
+/* =============================================================
+   RESPONSIVE : DESKTOP (1024px et plus)
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .legal-intro {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .legal-hero {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .legal-layout {
+        padding-top: var(--padding-p1);
+        padding-bottom: 64px;
+    }
+}

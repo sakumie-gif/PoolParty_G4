@@ -1,0 +1,486 @@
+/* =============================================================
+   POOL PARTY - PAGES PAIEMENT
+   Styles partagés par paiement-securise.html et
+   moyen-de-paiement.html (qui la complète avec
+   moyen-paiement.css). Mobile-first :
+   base 393px, puis tablette (768px) et desktop (1024px).
+   Les composants (fil d'Ariane, cartes protection, bande de
+   réassurance, accordéon FAQ, boutons) viennent de global.css ;
+   cette feuille ne gère que la mise en page et les blocs
+   propres à la page.
+   ============================================================= */
+
+/* =============================================================
+   BLOC 1 : FIL D'ARIANE
+   ============================================================= */
+.paiement-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile);
+}
+
+/* =============================================================
+   BLOC 2 : EN-TÊTE DE PAGE
+   Bandeau beige pleine largeur, titre et sous-titre centrés,
+   même gabarit que l'en-tête de la page contact.
+   ============================================================= */
+.paiement-hero {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    background: var(--color-beige);
+    text-align: center;
+}
+
+/* Titre réduit en mobile, la taille Figma (40px) revient en tablette */
+.paiement-hero h1 {
+    font-size: 32px;
+}
+
+.paiement-hero p {
+    max-width: 660px;
+    margin: var(--padding-p4) auto 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   BLOC 3 : BANDE DE GARANTIES
+   Carte blanche bordée avec trois items icône + texte, même
+   habillage que la bande de garanties de la page contact mais
+   visible à tous les breakpoints : items empilés en mobile,
+   en rangée à partir de la tablette.
+   ============================================================= */
+.paiement-garanties {
+    padding: var(--padding-p2) var(--padding-page-mobile) 0;
+}
+
+.paiement-garanties .reassurance-list {
+    padding: var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+}
+
+.paiement-garanties .reassurance-item {
+    font-family: var(--font-input);
+    color: var(--color-grey-font-1);
+}
+
+.paiement-garanties .reassurance-item svg {
+    width: 24px;
+    height: 24px;
+    color: var(--color-dark-green-blue);
+}
+
+/* =============================================================
+   BLOC 4 : VOTRE ARGENT ÉTAPE PAR ÉTAPE
+   Trois cartes numérotées : pastille beige avec le chiffre en
+   Garamond, titre et texte. Empilées en mobile, en rangée à
+   partir de la tablette.
+   ============================================================= */
+.paiement-etapes {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    text-align: center;
+}
+
+.paiement-etapes__sub {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.paiement-etapes__liste {
+    list-style: none;
+    margin: var(--padding-p1) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    counter-reset: etape;
+}
+
+.etape-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p3);
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    text-align: center;
+}
+
+/* Pastille ronde beige, chiffre Garamond vert bleuté */
+.etape-card__numero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: var(--color-beige);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-h3);
+    color: var(--color-dark-green-blue);
+}
+
+.etape-card__titre {
+    font-size: var(--fs-h4);
+}
+
+.etape-card__texte {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 20px;
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   BLOC 5 : MOYENS DE PAIEMENT
+   Cartes blanches bordées : icône, titre Garamond, texte, et
+   pilules des réseaux de cartes pour la carte bancaire.
+   ============================================================= */
+.paiement-moyens {
+    padding: var(--padding-p2) var(--padding-page-mobile);
+    text-align: center;
+}
+
+.paiement-moyens__grille {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p1);
+}
+
+.moyen-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--padding-p3);
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    text-align: left;
+}
+
+.moyen-card svg {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    color: var(--color-dark-green-blue);
+}
+
+.moyen-card__titre {
+    font-size: var(--fs-h4);
+}
+
+.moyen-card__texte {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 20px;
+    color: var(--color-grey-font-1);
+}
+
+/* Pilules des réseaux acceptés (Visa, Mastercard, CB, Amex) */
+.moyen-card__logos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--padding-p4);
+}
+
+.moyen-card__logos li {
+    padding: var(--padding-p5) var(--padding-p3);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    font-weight: var(--fw-semibold);
+    color: var(--color-grey-font-2);
+}
+
+/* Paragraphe de renvoi vers une page dédiée (dédoublonnage entre
+   moyen-de-paiement et paiement-securise) : texte centré et sobre. */
+.paiement-renvoi__texte {
+    max-width: 660px;
+    margin: var(--padding-p4) auto 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+/* Lien centré "voir plus / page dédiée" sous un bloc allégé ou la FAQ */
+.paiement-lien {
+    margin-top: var(--padding-p2);
+    text-align: center;
+}
+
+/* =============================================================
+   BLOC 6 : GRILLE DES PROTECTIONS
+   Bandeau beige pleine largeur, cartes protection (global.css)
+   centrées : une colonne en mobile, deux en tablette, quatre
+   en desktop, comme la bande de réassurance de l'accueil.
+   ============================================================= */
+.paiement-protections {
+    margin-top: var(--padding-p2);
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    background: var(--color-beige);
+    text-align: center;
+}
+
+.paiement-protections__grille {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: var(--padding-p1);
+    margin-top: var(--padding-p1);
+}
+
+/* =============================================================
+   BLOC 7 : LA RÈGLE D'OR
+   Carte d'avertissement : fond sable translucide (token Figma
+   du survol), grand bouclier et texte aligné à gauche.
+   ============================================================= */
+.paiement-alerte {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    margin: var(--padding-p1) var(--padding-page-mobile) 0;
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-hover-sable);
+    border-radius: var(--radius-r1);
+}
+
+.paiement-alerte > svg {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    color: var(--color-corail);
+}
+
+.paiement-alerte h2 {
+    font-size: var(--fs-h3);
+}
+
+.paiement-alerte__contenu p {
+    margin-top: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 22px;
+    color: var(--color-grey-font-1);
+}
+
+.paiement-alerte__contenu a {
+    color: var(--color-dark-green-blue);
+    font-weight: var(--fw-semibold);
+    text-decoration: underline;
+}
+
+/* =============================================================
+   BLOC 8 : QUESTIONS FRÉQUENTES
+   L'accordéon (.faq-liste, .faq-item) vient de global.css ;
+   ici seulement les gouttières de la section.
+   ============================================================= */
+.paiement-faq {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+}
+
+/* =============================================================
+   BLOC 9 : CTA FINAL
+   Bandeau beige arrondi, titre Garamond et deux boutons, même
+   gabarit que le CTA final de la page contact.
+   ============================================================= */
+.paiement-cta {
+    margin: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+    text-align: center;
+}
+
+.paiement-cta p {
+    margin-top: var(--padding-p2);
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.paiement-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p1);
+}
+
+/* =============================================================
+   TABLETTE (à partir de 768px)
+   Gouttières 32px, titre à sa taille Figma, garanties et
+   étapes en rangée, protections sur deux colonnes.
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .paiement-intro {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .paiement-hero {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .paiement-hero h1 {
+        font-size: var(--fs-h1);
+    }
+
+    .paiement-hero p {
+        font-size: var(--fs-p2);
+    }
+
+    .paiement-garanties {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .paiement-garanties .reassurance-list {
+        flex-direction: row;
+        justify-content: space-around;
+        padding: var(--padding-p1);
+    }
+
+    .paiement-garanties .reassurance-item {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--padding-p3);
+        text-align: center;
+    }
+
+    .paiement-etapes {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .paiement-etapes__liste {
+        flex-direction: row;
+        align-items: stretch;
+    }
+
+    .etape-card {
+        flex: 1;
+    }
+
+    .paiement-moyens {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .paiement-moyens__grille {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        align-items: stretch;
+    }
+
+    .paiement-protections {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .paiement-protections__grille {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .paiement-alerte {
+        flex-direction: row;
+        align-items: flex-start;
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+        padding: var(--padding-p1);
+    }
+
+    .paiement-faq {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .paiement-cta {
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+        padding: 48px var(--padding-p1);
+    }
+}
+
+/* =============================================================
+   DESKTOP (à partir de 1024px)
+   Gouttières 80px, protections sur quatre colonnes, FAQ
+   resserrée au centre pour garder des lignes lisibles.
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .paiement-intro {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .paiement-hero {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+        padding-top: 48px;
+        padding-bottom: 48px;
+    }
+
+    .paiement-garanties {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .paiement-etapes {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .paiement-etapes__liste {
+        gap: var(--padding-p1);
+    }
+
+    .paiement-moyens {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .paiement-moyens__grille {
+        gap: var(--padding-p1);
+    }
+
+    .paiement-protections {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .paiement-protections__grille {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .paiement-alerte {
+        margin-left: var(--padding-page-desktop);
+        margin-right: var(--padding-page-desktop);
+    }
+
+    .paiement-faq {
+        max-width: 900px;
+        margin: 0 auto;
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .paiement-cta {
+        margin-left: var(--padding-page-desktop);
+        margin-right: var(--padding-page-desktop);
+        padding: 64px var(--padding-p1);
+    }
+}

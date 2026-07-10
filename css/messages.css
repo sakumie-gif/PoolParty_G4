@@ -1,0 +1,530 @@
+/* =============================================================
+   POOL PARTY - PAGE MESSAGES (messagerie interne)
+   Page hors maquette Figma, composée avec les composants du site
+   (fil d'Ariane, boutons, panneaux d'état des pages favoris /
+   réservations). La boîte de réception est remplie par main.js
+   depuis le localStorage : liste des conversations à gauche, fil de
+   discussion à droite. Trois états pleine page l'accompagnent
+   (visiteur à connecter, aucune conversation, boîte de réception).
+   Mobile-first : base 393px, tablette 768px, desktop 1024px.
+   ============================================================= */
+
+/* =============================================================
+   INTRO : fil d'Ariane, titre et compteur de conversations
+   ============================================================= */
+.messages-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile) 0;
+}
+
+.messages-intro h1 {
+    margin-top: var(--padding-p2);
+}
+
+.messages-intro__sub {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   ÉTATS PLEINE PAGE (visiteur à connecter / aucune conversation)
+   Même panneau beige centré que les pages favoris et réservations.
+   ============================================================= */
+.messages-etat[hidden],
+.messagerie[hidden] {
+    display: none;
+}
+
+.messages-etat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p2-2);
+    margin: var(--padding-p1) var(--padding-page-mobile);
+    padding: calc(2 * var(--padding-p1)) var(--padding-p2);
+    background-color: var(--color-beige);
+    border-radius: var(--radius-r1);
+    text-align: center;
+}
+
+.messages-etat__icon {
+    width: 56px;
+    height: 56px;
+    color: var(--color-dark-green-blue);
+}
+
+.messages-etat h2 {
+    font-size: var(--fs-h3);
+}
+
+.messages-etat p {
+    max-width: 46ch;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-2);
+}
+
+.messages-etat__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--padding-p2-2);
+    margin-top: var(--padding-p4);
+}
+
+/* =============================================================
+   BOÎTE DE RÉCEPTION (deux panneaux)
+   Mobile : un seul panneau visible à la fois. La liste s'affiche par
+   défaut ; à l'ouverture d'une conversation, main.js pose
+   .is-thread-open pour afficher le fil et masquer la liste.
+   ============================================================= */
+.messagerie {
+    display: flex;
+    flex-direction: column;
+    margin: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
+    min-height: 60vh;
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    overflow: hidden;
+    background-color: var(--color-white);
+    box-shadow: var(--shadow-sm);
+}
+
+/* --- Panneau gauche : liste des conversations --- */
+.messagerie__liste {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.messagerie.is-thread-open .messagerie__liste {
+    display: none; /* mobile : masqué quand un fil est ouvert */
+}
+
+.messagerie__convos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.messagerie__convo {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p2-2);
+    width: 100%;
+    padding: var(--padding-p2-2) var(--padding-p2);
+    border: 0;
+    border-bottom: 1px solid var(--color-grey-border);
+    background: none;
+    font-family: var(--font-body);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.messagerie__convo:hover {
+    outline: none;
+}
+
+/* Focus clavier : anneau visible à l'intérieur du bouton (offset
+   négatif pour ne pas déborder de la liste défilante). Le retirer
+   privait la navigation au clavier de tout repère dans la liste des
+   conversations (le nom en gras seul ne suffit pas). */
+.messagerie__convo:focus-visible {
+    outline: 2px solid var(--color-dark-green-blue);
+    outline-offset: -2px;
+}
+
+/* Au survol / focus, seul le nom de l'interlocuteur passe en gras
+   (pas de fond coloré : il jurerait avec le beige de la conversation
+   active, ce qui ferait deux teintes au survol). */
+.messagerie__convo:hover .messagerie__convo-hote,
+.messagerie__convo:focus-visible .messagerie__convo-hote {
+    font-weight: 700;
+}
+
+.messagerie__convo.is-active {
+    background-color: var(--color-beige);
+}
+
+.messagerie__convo-photo {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-pill);
+    object-fit: cover;
+}
+
+.messagerie__convo-corps {
+    flex: 1;
+    min-width: 0;
+    display: block;
+}
+
+.messagerie__convo-tete {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--padding-p4);
+}
+
+.messagerie__convo-hote {
+    font-size: var(--fs-p2);
+    font-weight: 600;
+    color: var(--color-grey-font-1);
+}
+
+.messagerie__convo-heure {
+    flex-shrink: 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+.messagerie__convo-bien {
+    display: block;
+    max-width: 100%;
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-dark-green-blue-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.messagerie__convo-apercu {
+    display: block;
+    max-width: 100%;
+    margin-top: 2px;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.messagerie__convo.is-nonlu .messagerie__convo-apercu {
+    font-weight: 600;
+    color: var(--color-grey-font-1);
+}
+
+.messagerie__convo-pastille {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-corail);
+}
+
+/* --- Panneau droit : fil de discussion --- */
+.messagerie__fil {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
+}
+
+/* Mobile : le fil n'apparaît qu'une fois une conversation ouverte */
+.messagerie:not(.is-thread-open) .messagerie__fil {
+    display: none;
+}
+
+.messagerie__fil-tete[hidden] {
+    display: none;
+}
+
+.messagerie__fil-tete {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p2-2);
+    padding: var(--padding-p2-2) var(--padding-p2);
+    border-bottom: 1px solid var(--color-grey-border);
+    background-color: var(--color-white);
+}
+
+.messagerie__retour {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: none;
+    color: var(--color-dark-green-blue);
+    cursor: pointer;
+}
+
+.messagerie__retour:hover {
+    background-color: var(--color-hover-sable);
+}
+
+.messagerie__retour svg {
+    width: 22px;
+    height: 22px;
+}
+
+.messagerie__fil-photo {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-pill);
+    object-fit: cover;
+}
+
+.messagerie__fil-titres {
+    min-width: 0;
+}
+
+.messagerie__fil-hote {
+    font-size: var(--fs-p2);
+    font-weight: 600;
+    color: var(--color-grey-font-1);
+}
+
+.messagerie__fil-bien {
+    display: inline-block;
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-dark-green-blue-2);
+    text-decoration: underline;
+}
+
+/* Liste des bulles */
+.messagerie__messages {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+    padding: var(--padding-p2);
+    overflow-y: auto;
+    background-color: var(--color-white);
+}
+
+.messagerie__msg {
+    max-width: 78%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.messagerie__msg--moi {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+
+.messagerie__msg--hote {
+    align-self: flex-start;
+    align-items: flex-start;
+}
+
+.messagerie__bulle {
+    padding: var(--padding-p3) var(--padding-p2-2);
+    border-radius: var(--radius-r1);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 1.45;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.messagerie__msg--hote .messagerie__bulle {
+    background-color: var(--color-beige);
+    color: var(--color-grey-font-1);
+    border-bottom-left-radius: var(--radius-r3);
+}
+
+.messagerie__msg--moi .messagerie__bulle {
+    background-color: var(--color-dark-green-blue);
+    color: var(--color-white);
+    border-bottom-right-radius: var(--radius-r3);
+}
+
+.messagerie__heure {
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+    padding: 0 var(--padding-p5);
+}
+
+/* Indicateur « l'hôte écrit… » */
+.messagerie__typing {
+    align-self: flex-start;
+    display: inline-flex;
+    gap: 4px;
+    padding: var(--padding-p3) var(--padding-p2-2);
+    border-radius: var(--radius-r1);
+    background-color: var(--color-beige);
+}
+
+.messagerie__typing span {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-grey-border-2);
+    animation: messagerie-point 1s infinite ease-in-out;
+}
+
+.messagerie__typing span:nth-child(2) { animation-delay: 0.15s; }
+.messagerie__typing span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes messagerie-point {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+    30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* Fil vide (desktop, aucune conversation sélectionnée) */
+.messagerie__vide-fil {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding-p2-2);
+    padding: var(--padding-p1);
+    text-align: center;
+    color: var(--color-grey-font-2);
+}
+
+.messagerie__vide-fil[hidden] {
+    display: none;
+}
+
+.messagerie__vide-fil svg {
+    width: 48px;
+    height: 48px;
+    color: var(--color-grey-border-2);
+}
+
+.messagerie__vide-fil p {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+}
+
+/* Zone de saisie */
+.messagerie__saisie[hidden] {
+    display: none;
+}
+
+.messagerie__saisie {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--padding-p2-2);
+    padding: var(--padding-p2-2) var(--padding-p2);
+    border-top: 1px solid var(--color-grey-border);
+    background-color: var(--color-white);
+}
+
+.messagerie__champ {
+    flex: 1;
+    resize: none;
+    max-height: 120px;
+    padding: var(--padding-p3) var(--padding-p2-2);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r1);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 1.4;
+    color: var(--color-grey-font-1);
+}
+
+.messagerie__champ:focus-visible {
+    outline: none;
+    border-color: var(--color-dark-green-blue);
+}
+
+.messagerie__envoyer {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-corail);
+    color: var(--color-white);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.messagerie__envoyer:hover:not(:disabled) {
+    background-color: var(--color-corail-hover);
+}
+
+.messagerie__envoyer:disabled {
+    background-color: var(--color-disable);
+    cursor: not-allowed;
+}
+
+.messagerie__envoyer svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* =============================================================
+   TABLETTE (≥ 768px)
+   ============================================================= */
+@media (min-width: 768px) {
+    .messages-intro {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .messages-etat {
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+    }
+
+    .messagerie {
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+    }
+}
+
+/* =============================================================
+   DESKTOP (≥ 1024px) : les deux panneaux côte à côte
+   ============================================================= */
+@media (min-width: 1024px) {
+    .messages-intro {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .messages-etat {
+        margin-left: var(--padding-page-desktop);
+        margin-right: var(--padding-page-desktop);
+    }
+
+    .messagerie {
+        flex-direction: row;
+        margin-left: var(--padding-page-desktop);
+        margin-right: var(--padding-page-desktop);
+        height: 70vh;
+        min-height: 520px;
+    }
+
+    /* La liste devient une colonne fixe, toujours visible */
+    .messagerie__liste {
+        width: 340px;
+        flex-shrink: 0;
+        border-right: 1px solid var(--color-grey-border);
+    }
+
+    .messagerie.is-thread-open .messagerie__liste {
+        display: flex; /* desktop : la liste reste affichée avec le fil */
+    }
+
+    .messagerie:not(.is-thread-open) .messagerie__fil {
+        display: flex; /* desktop : le panneau fil est toujours présent */
+    }
+
+    /* Le bouton retour ne sert qu'en mobile */
+    .messagerie__retour {
+        display: none;
+    }
+}

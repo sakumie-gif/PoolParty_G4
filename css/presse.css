@@ -1,0 +1,508 @@
+/* =============================================================
+   POOL PARTY - PAGE PRESSE
+   Styles spécifiques à l'espace presse. Mobile-first : base
+   393px, puis tablette (768px) et desktop (1024px).
+   Les composants (fil d'Ariane, boutons, liens signal, tags)
+   viennent de global.css ; cette feuille ne gère que la mise
+   en page et les blocs propres à la page.
+   Structure inspirée des newsrooms de référence : en-tête avec
+   accès directs, chiffres clés, communiqués, retombées presse,
+   kit presse téléchargeable et contact dédié.
+   ============================================================= */
+
+/* =============================================================
+   BLOC 1 : FIL D'ARIANE
+   ============================================================= */
+.presse-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile);
+}
+
+/* =============================================================
+   BLOC 2 : EN-TÊTE DE PAGE
+   Bandeau beige pleine largeur : surtitre, titre, chapô et
+   deux accès directs (kit presse, contact presse).
+   ============================================================= */
+.presse-hero {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    background: var(--color-beige);
+    text-align: center;
+}
+
+.presse-hero__surtitre {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-corail);
+}
+
+/* Titre réduit en mobile, la taille Figma (40px) revient en tablette */
+.presse-hero h1 {
+    margin-top: var(--padding-p4);
+    font-size: 32px;
+}
+
+.presse-hero p {
+    max-width: 660px;
+    margin: var(--padding-p4) auto 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.presse-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p1);
+}
+
+/* =============================================================
+   BLOC 3 : POOL PARTY EN CHIFFRES
+   Tuiles blanches bordées : chiffre en Garamond vert bleuté,
+   libellé en Inter gris. Deux colonnes en mobile, quatre en
+   desktop.
+   ============================================================= */
+.presse-chiffres {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+}
+
+.presse-chiffres__grille {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--padding-p3);
+    margin-top: var(--padding-p2);
+    list-style: none;
+    padding: 0;
+}
+
+.presse-chiffre {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p5);
+    padding: var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    text-align: center;
+}
+
+.presse-chiffre__valeur {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-h2);
+    color: var(--color-dark-green-blue);
+    line-height: 1.1;
+}
+
+.presse-chiffre__label {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   BLOC 4 : COMMUNIQUÉS DE PRESSE
+   Cartes blanches bordées empilées : date + tag éventuel,
+   titre Garamond, résumé, puis lien de lecture et PDF.
+   ============================================================= */
+.presse-communiques {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    background: var(--color-beige);
+}
+
+.presse-communiques__liste {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+    margin-top: var(--padding-p2);
+    list-style: none;
+    padding: 0;
+}
+
+.presse-communique {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+    padding: var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    transition: border-color var(--transition-fast);
+}
+
+.presse-communique:hover,
+.presse-communique:focus-within {
+    border-color: var(--color-dark-green-blue);
+}
+
+.presse-communique__entete {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--padding-p3);
+}
+
+.presse-communique__date {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.presse-communique__titre {
+    font-size: var(--fs-h3);
+}
+
+.presse-communique__resume {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 20px;
+    color: var(--color-grey-font-1);
+}
+
+.presse-communique__actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p5);
+}
+
+/* Texte complet du communiqué, déplié par « Lire le communiqué ». */
+.presse-communique__complet {
+    margin-top: var(--padding-p3);
+    padding-top: var(--padding-p3);
+    border-top: 1px solid var(--color-grey-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+}
+
+.presse-communique__complet[hidden] {
+    display: none;
+}
+
+.presse-communique__complet p {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 22px;
+    color: var(--color-grey-font-1);
+    margin: 0;
+}
+
+/* =============================================================
+   BLOC 5 : ILS PARLENT DE NOUS
+   Cartes citation sur le modèle des cartes avis : extrait en
+   italique puis nom du média et date de parution.
+   ============================================================= */
+.presse-retombees {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+}
+
+.presse-retombees__grille {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p2);
+    list-style: none;
+    padding: 0;
+}
+
+.presse-citation {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--padding-p2);
+    padding: var(--padding-p1);
+    background: var(--color-white);
+    border-radius: 24px; /* rayon des cartes avis Figma */
+    box-shadow: var(--shadow-btn);
+}
+
+.presse-citation__texte {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: var(--fs-p2);
+    line-height: 24px;
+    color: var(--color-grey-quote);
+    margin: 0;
+}
+
+.presse-citation__media {
+    font-family: var(--font-body);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+}
+
+.presse-citation__date {
+    font-family: var(--font-body);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-quote);
+}
+
+/* =============================================================
+   BLOC 6 : KIT PRESSE
+   Cartes ressource : visuel sur fond beige, titre Garamond,
+   description et lien de téléchargement souligné.
+   ============================================================= */
+.presse-kit {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    background: var(--color-beige);
+}
+
+.presse-kit__sous-titre {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.presse-kit__grille {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p2);
+    list-style: none;
+    padding: 0;
+}
+
+.presse-ressource {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+    padding: var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+}
+
+/* Visuel : vignette au format constant, image en couverture ou
+   logo centré sur fond beige selon la ressource */
+.presse-ressource__visuel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 270 / 150;
+    border-radius: var(--radius-r2);
+    background: var(--color-beige);
+    overflow: hidden;
+}
+
+.presse-ressource__visuel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Variante logo : l'image garde ses proportions, centrée */
+.presse-ressource__visuel--logo img {
+    width: auto;
+    max-width: 70%;
+    height: auto;
+    max-height: 70%;
+    object-fit: contain;
+}
+
+/* Variante nuancier : quatre pastilles de la charte */
+.presse-ressource__visuel--charte {
+    gap: var(--padding-p3);
+}
+
+.presse-ressource__pastille {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: var(--shadow-3);
+}
+
+.presse-ressource__pastille--principal { background: var(--color-dark-green-blue); }
+.presse-ressource__pastille--vert      { background: var(--color-green); }
+.presse-ressource__pastille--corail    { background: var(--color-corail); }
+.presse-ressource__pastille--sable     { background: var(--color-sable); }
+
+.presse-ressource__titre {
+    font-size: var(--fs-h4);
+}
+
+.presse-ressource__texte {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 20px;
+    color: var(--color-grey-font-1);
+}
+
+.presse-ressource .link-signal {
+    margin-top: auto;
+}
+
+/* =============================================================
+   BLOC 7 : CONTACT PRESSE
+   Carte beige centrée : interlocutrice dédiée, email, téléphone
+   et délai de réponse.
+   ============================================================= */
+.presse-contact {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+}
+
+.presse-contact__carte {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p4);
+    max-width: 660px;
+    margin: 0 auto;
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+    text-align: center;
+}
+
+.presse-contact__nom {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p1);
+    color: var(--color-grey-font-1);
+}
+
+.presse-contact__role {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.presse-contact__coordonnees {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p3);
+    margin-top: var(--padding-p4);
+    list-style: none;
+    padding: 0;
+}
+
+.presse-contact__coordonnees li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.presse-contact__coordonnees svg {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    color: var(--color-dark-green-blue);
+}
+
+.presse-contact__coordonnees a {
+    color: var(--color-grey-font-1);
+    text-decoration: none;
+}
+
+.presse-contact__coordonnees a:hover {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+}
+
+.presse-contact__delai {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+/* =============================================================
+   TABLETTE (à partir de 768px)
+   Gouttières 32px, titre à sa taille Figma, grilles à deux
+   colonnes pour les retombées et le kit presse.
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .presse-intro,
+    .presse-hero,
+    .presse-chiffres,
+    .presse-communiques,
+    .presse-retombees,
+    .presse-kit,
+    .presse-contact {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .presse-hero h1 {
+        font-size: var(--fs-h1);
+    }
+
+    .presse-hero p {
+        font-size: var(--fs-p2);
+    }
+
+    .presse-chiffres__grille {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .presse-communique {
+        padding: var(--padding-p1);
+    }
+
+    .presse-retombees__grille {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
+    }
+
+    .presse-kit__grille {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .presse-contact__coordonnees {
+        flex-direction: row;
+        justify-content: center;
+        gap: var(--padding-p1);
+    }
+}
+
+/* =============================================================
+   DESKTOP (à partir de 1024px)
+   Gouttières 80px, retombées sur trois colonnes, kit presse
+   sur quatre colonnes.
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .presse-intro,
+    .presse-hero,
+    .presse-chiffres,
+    .presse-communiques,
+    .presse-retombees,
+    .presse-kit,
+    .presse-contact {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .presse-hero {
+        padding-top: 48px;
+        padding-bottom: 48px;
+    }
+
+    .presse-chiffre {
+        padding: var(--padding-p1) var(--padding-p2);
+    }
+
+    .presse-retombees__grille {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .presse-kit__grille {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .presse-contact {
+        padding-bottom: 64px;
+    }
+}

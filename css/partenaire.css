@@ -1,0 +1,505 @@
+/* =============================================================
+   POOL PARTY - PAGE DEVENIR PARTENAIRE
+   Styles spécifiques à devenir-partenaire.html. Mobile-first :
+   base 393px, puis tablette (768px) et desktop (1024px).
+   Les composants (fil d'Ariane, cartes protection, parcours et
+   avis, accordéon FAQ, champs form-field, pilule select, cases
+   à cocher, boutons) viennent de global.css ; cette feuille ne
+   gère que la mise en page et les blocs propres à la page.
+   ============================================================= */
+
+/* =============================================================
+   BLOC 1 : FIL D'ARIANE
+   ============================================================= */
+.partenaire-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile);
+}
+
+/* =============================================================
+   BLOC 2 : EN-TÊTE DE PAGE
+   Bandeau beige pleine largeur : titre, texte d'intro et deux
+   boutons, photo d'équipe en dessous. En desktop, le texte passe
+   à gauche et la photo à droite.
+   ============================================================= */
+.partenaire-hero {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    background: var(--color-beige);
+}
+
+.partenaire-hero__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+}
+
+/* Titre réduit en mobile, la taille Figma (40px) revient en tablette */
+.partenaire-hero h1 {
+    font-size: 32px;
+}
+
+.partenaire-hero__texte p {
+    margin-top: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 1.6;
+    color: var(--color-grey-font-1);
+}
+
+.partenaire-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--padding-p2-2);
+    margin-top: var(--padding-p2);
+}
+
+.partenaire-hero__photo {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-r1);
+    box-shadow: var(--shadow-search-small);
+}
+
+/* =============================================================
+   BLOC 3 : CHIFFRES CLÉS
+   Carte blanche bordée (même langage que la bande de garanties
+   de la page contact) : valeur en Garamond, libellé en Inter.
+   Mobile : grille deux par deux ; desktop : une seule rangée.
+   ============================================================= */
+.partenaire-chiffres {
+    padding: var(--padding-p2) var(--padding-page-mobile);
+}
+
+.partenaire-chiffres__liste {
+    list-style: none;
+    margin: 0;
+    padding: var(--padding-p2);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+}
+
+.chiffre-cle {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p5);
+    text-align: center;
+}
+
+.chiffre-cle__valeur {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-h2);
+    color: var(--color-dark-green-blue);
+}
+
+.chiffre-cle__label {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 20px;
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   BLOC 4 : AVANTAGES DU PARTENARIAT
+   Titre + sous-titre centrés, puis grille de cartes protection
+   (composant global.css) : une colonne en mobile, deux en
+   tablette, quatre en desktop.
+   ============================================================= */
+.partenaire-atouts {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    text-align: center;
+}
+
+.partenaire-atouts__sous-titre {
+    max-width: 660px;
+    margin: var(--padding-p4) auto 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.partenaire-atouts__grille {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--padding-p1);
+    justify-items: center;
+    margin-top: var(--padding-p1);
+}
+
+/* =============================================================
+   BLOC 5 : PROFILS DE PARTENAIRES
+   Bandeau beige pleine largeur. Cartes blanches arrondies :
+   photo en tête, titre Garamond, texte puis liste d'exemples
+   cochés. Une colonne en mobile, trois en desktop.
+   ============================================================= */
+.partenaire-profils {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    background: var(--color-beige);
+    text-align: center;
+}
+
+.partenaire-profils__sous-titre {
+    max-width: 660px;
+    margin: var(--padding-p4) auto 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.partenaire-profils__grille {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p1);
+}
+
+.card-profil {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-white);
+    border-radius: var(--radius-r1);
+    box-shadow: var(--shadow-3);
+    overflow: hidden;
+    text-align: left;
+}
+
+.card-profil__photo {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.card-profil__corps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+    padding: var(--padding-p2);
+}
+
+.card-profil__titre {
+    font-size: var(--fs-h3);
+}
+
+.card-profil__texte {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 20px;
+    color: var(--color-grey-font-1);
+}
+
+.card-profil__exemples {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+}
+
+.card-profil__exemples li {
+    position: relative;
+    padding-left: 26px;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+/* Coche dessinée en CSS (deux bordures pivotées, comme la case
+   à cocher de global.css), en vert bleuté devant chaque exemple */
+.card-profil__exemples li::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 3px;
+    width: 6px;
+    height: 11px;
+    border: solid var(--color-dark-green-blue);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* =============================================================
+   BLOC 6 : ÉTAPES DU PARTENARIAT
+   Trois cartes parcours (composant global.css) centrées,
+   empilées en mobile puis alignées en rangée.
+   ============================================================= */
+.partenaire-etapes {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    text-align: center;
+}
+
+.partenaire-etapes__grille {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--padding-p2);
+    justify-items: center;
+    margin-top: var(--padding-p2);
+}
+
+/* =============================================================
+   BLOC 7 : TÉMOIGNAGES DE PARTENAIRES
+   Cartes avis (composant global.css) : empilées en mobile,
+   deux colonnes en tablette, trois en desktop.
+   ============================================================= */
+.partenaire-temoignages {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    text-align: center;
+}
+
+.partenaire-temoignages__grille {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--padding-p2);
+    justify-items: center;
+    margin-top: var(--padding-p1);
+}
+
+.partenaire-temoignages .card-avis {
+    text-align: left;
+}
+
+/* =============================================================
+   BLOC 8 : QUESTIONS FRÉQUENTES DES PARTENAIRES
+   L'accordéon (.faq-liste, .faq-item) vit dans global.css.
+   ============================================================= */
+.partenaire-faq {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+}
+
+.partenaire-faq .faq-item__reponse a {
+    color: var(--color-grey-font-1);
+    text-decoration: underline;
+}
+
+/* =============================================================
+   BLOC 9 : FORMULAIRE DE CANDIDATURE
+   Carte beige arrondie centrée. L'ancre #candidature visée par
+   le bouton du hero passe sous le header sticky grâce au
+   scroll-margin global de global.css.
+   ============================================================= */
+.partenaire-candidature {
+    padding: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
+}
+
+.partenaire-candidature__carte {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+}
+
+.partenaire-candidature__sous-titre {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.partenaire-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p2);
+}
+
+.partenaire-form__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+}
+
+.partenaire-form textarea.form-field__input {
+    min-height: 180px;
+}
+
+.partenaire-form .checkbox a {
+    color: var(--color-grey-font-1);
+    text-decoration: underline;
+}
+
+.partenaire-form__submit {
+    width: 100%;
+}
+
+/* Confirmation affichée à la place du formulaire après envoi */
+.partenaire-form__confirmation {
+    padding: var(--padding-p1) 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-semibold);
+    color: var(--color-dark-green-blue);
+    text-align: center;
+}
+
+/* =============================================================
+   TABLETTE (à partir de 768px)
+   Gouttières 32px, titre à sa taille Figma, grilles à deux
+   colonnes, champs du formulaire côte à côte.
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .partenaire-intro {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .partenaire-hero {
+        padding: 48px var(--padding-page-tablet);
+    }
+
+    .partenaire-hero h1 {
+        font-size: var(--fs-h1);
+    }
+
+    .partenaire-hero__texte p {
+        font-size: var(--fs-p2);
+    }
+
+    .partenaire-chiffres {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .partenaire-chiffres__liste {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        padding: var(--padding-p1);
+    }
+
+    .partenaire-atouts {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .partenaire-atouts__grille {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .partenaire-profils {
+        padding: 48px var(--padding-page-tablet);
+    }
+
+    .partenaire-profils__grille {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--padding-p1);
+    }
+
+    .partenaire-etapes {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .partenaire-etapes__grille {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .partenaire-temoignages {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .partenaire-temoignages__grille {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .partenaire-faq {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .partenaire-candidature {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .partenaire-candidature__carte {
+        padding: var(--padding-p1);
+    }
+
+    .partenaire-form__row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* =============================================================
+   DESKTOP (à partir de 1024px)
+   Hero sur deux colonnes texte / photo, avantages sur quatre
+   colonnes, profils et témoignages sur trois.
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .partenaire-intro {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .partenaire-hero {
+        padding: 64px var(--padding-page-desktop);
+    }
+
+    .partenaire-hero__inner {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        gap: var(--padding-p1);
+        align-items: center;
+    }
+
+    .partenaire-hero__actions {
+        margin-top: var(--padding-p1);
+    }
+
+    .partenaire-hero__photo {
+        aspect-ratio: 5 / 4;
+    }
+
+    .partenaire-chiffres {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .partenaire-atouts {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .partenaire-atouts__grille {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .partenaire-profils {
+        padding: 64px var(--padding-page-desktop);
+    }
+
+    .partenaire-profils__grille {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .partenaire-etapes {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .partenaire-temoignages {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .partenaire-temoignages__grille {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .partenaire-faq {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .partenaire-candidature {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+}

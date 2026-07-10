@@ -1,0 +1,402 @@
+/* =============================================================
+   POOL PARTY - PAGE INSCRIPTION
+   Styles spécifiques à la page de création de compte. Mobile-first :
+   base 393px, puis tablette (768px) et desktop (1024px).
+   Les composants (fil d'Ariane, champs form-field, boutons) viennent
+   de global.css ; cette feuille ne gère que la mise en page, la carte
+   du formulaire et la liste des avantages.
+   Mise en page desktop : deux colonnes (titre + avantages à gauche,
+   carte du formulaire à droite). La carte reste blanche et sobre, sans
+   le décor texture eau de la pop-up de connexion.
+   ============================================================= */
+
+/* =============================================================
+   FIL D'ARIANE
+   ============================================================= */
+.inscription-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile);
+}
+
+/* =============================================================
+   MISE EN PAGE
+   Mobile : titre, formulaire puis avantages empilés.
+   Desktop : grille deux colonnes, le formulaire occupe la colonne
+   de droite sur toute la hauteur.
+   ============================================================= */
+.inscription-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p1);
+    padding: var(--padding-p2) var(--padding-page-mobile) 56px;
+}
+
+/* =============================================================
+   TITRE ET SOUS-TITRE
+   ============================================================= */
+.inscription-pitch h1 {
+    font-size: 32px; /* taille réduite en mobile, 40px en tablette */
+}
+
+.inscription-pitch__sub {
+    max-width: 560px;
+    margin-top: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    line-height: 1.6;
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   CARTE DU FORMULAIRE
+   Carte blanche très arrondie, posée sur la page. Pas de décor
+   texture eau (on ne réutilise plus le vocabulaire de la pop-up).
+   ============================================================= */
+.inscription-carte {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+}
+
+.inscription-carte__card {
+    position: relative;
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: 28px;
+    padding: var(--padding-p1) var(--padding-p2);
+    box-shadow: var(--shadow-2);
+}
+
+/* L'attribut hidden doit gagner sur le display: flex ci-dessous
+   (main.js masque le formulaire après soumission) */
+.inscription-form[hidden] {
+    display: none;
+}
+
+.inscription-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p2);
+}
+
+.inscription-form__fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    width: 100%;
+}
+
+/* Prénom et nom : empilés en mobile, côte à côte à partir de la
+   tablette, comme l'écran compte du tunnel proposer */
+.inscription-form__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+}
+
+/* Case à cocher d'acceptation des CGU */
+.inscription-form__cgu {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--padding-p4);
+    width: 100%;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 1.5;
+    color: var(--color-grey-font-2);
+    cursor: pointer;
+}
+
+.inscription-form__cgu input {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: var(--color-dark-green-blue);
+    cursor: pointer;
+}
+
+.inscription-form__cgu a {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.inscription-form__cgu a:hover {
+    color: var(--color-dark-green-blue-2);
+}
+
+/* Message qui liste ce qui bloque le bouton Créer mon compte
+   (même rôle que .proposer-manque du tunnel proposer).
+   Pas de display imposé pour laisser l'attribut hidden agir. */
+.inscription-manque {
+    width: 100%;
+    font-size: var(--fs-p3);
+    color: var(--color-corail);
+    line-height: 1.5;
+}
+
+.inscription-form__submit {
+    width: 100%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+/* Renvoi vers la connexion */
+.inscription-form__connexion {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-2);
+    text-align: center;
+}
+
+.inscription-form__connexion a {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.inscription-form__connexion a:hover {
+    color: var(--color-dark-green-blue-2);
+}
+
+/* =============================================================
+   ÉTAT DE CONFIRMATION
+   Affiché par main.js à la place du formulaire après soumission.
+   ============================================================= */
+/* L'attribut hidden doit gagner sur le display: flex ci-dessous
+   (le panneau n'apparaît qu'après soumission du formulaire) */
+.inscription-succes[hidden] {
+    display: none;
+}
+
+.inscription-succes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p2-2);
+    padding: var(--padding-p2) 0;
+    text-align: center;
+}
+
+.inscription-succes__icone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-pill);
+    background: var(--color-beige);
+    color: var(--color-dark-green-blue);
+}
+
+.inscription-succes__icone svg {
+    width: 32px;
+    height: 32px;
+}
+
+.inscription-succes h2 {
+    font-size: var(--fs-h3);
+}
+
+.inscription-succes p {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    line-height: 1.6;
+    color: var(--color-grey-font-1);
+}
+
+.inscription-succes__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+    width: 100%;
+    margin-top: var(--padding-p4);
+}
+
+/* =============================================================
+   AVANTAGES DU COMPTE
+   ============================================================= */
+.inscription-avantages {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.inscription-avantage {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--padding-p3);
+}
+
+.inscription-avantage__icone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-pill);
+    background: var(--color-beige);
+    color: var(--color-dark-green-blue);
+}
+
+.inscription-avantage__icone svg {
+    width: 22px;
+    height: 22px;
+}
+
+.inscription-avantage h2 {
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-dark-green-blue);
+}
+
+.inscription-avantage p {
+    margin-top: var(--padding-p5);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 1.5;
+    color: var(--color-grey-font-2);
+    max-width: 420px;
+}
+
+/* =============================================================
+   TABLETTE (768px et plus)
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .inscription-intro {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .inscription-layout {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+        align-items: center;
+    }
+
+    .inscription-pitch {
+        text-align: center;
+    }
+
+    .inscription-pitch h1 {
+        font-size: var(--fs-h1);
+    }
+
+    .inscription-pitch__sub {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Prénom et nom côte à côte */
+    .inscription-form__row {
+        flex-direction: row;
+    }
+
+    .inscription-form__row .form-field {
+        flex: 1;
+    }
+
+    .inscription-carte__card {
+        border-radius: 36px;
+        padding: var(--padding-p1);
+    }
+
+    .inscription-succes__actions {
+        flex-direction: row;
+        justify-content: center;
+        width: auto;
+    }
+
+    /* Les avantages passent sur une rangée de trois colonnes */
+    .inscription-avantages {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: var(--padding-p1);
+        max-width: 960px;
+    }
+
+    .inscription-avantage {
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+/* =============================================================
+   DESKTOP (1024px et plus)
+   Grille deux colonnes : titre et avantages à gauche, formulaire
+   à droite. Carte blanche sobre, sans décor texture eau.
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .inscription-intro {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .inscription-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(360px, 480px);
+        /* La rangée 1fr absorbe la hauteur de la carte : les avantages
+           restent collés sous le titre au lieu d'être repoussés */
+        grid-template-rows: auto 1fr;
+        grid-template-areas:
+            "pitch carte"
+            "avantages carte";
+        align-items: start;
+        column-gap: 72px;
+        row-gap: var(--padding-p1);
+        padding: var(--padding-p1) var(--padding-page-desktop) 88px;
+    }
+
+    .inscription-pitch {
+        grid-area: pitch;
+        text-align: left;
+    }
+
+    .inscription-pitch__sub {
+        margin-left: 0;
+    }
+
+    .inscription-carte {
+        grid-area: carte;
+        justify-self: end;
+    }
+
+    .inscription-avantages {
+        grid-area: avantages;
+        flex-direction: column;
+        gap: var(--padding-p2);
+    }
+
+    .inscription-avantage {
+        flex-direction: row;
+        align-items: flex-start;
+        text-align: left;
+    }
+}
+
+/* =============================================================
+   GRAND ÉCRAN (1440px et plus)
+   ============================================================= */
+@media (min-width: 1440px) {
+
+    .inscription-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(420px, 560px);
+        column-gap: 96px;
+    }
+
+    .inscription-carte__card {
+        border-radius: 45px;
+        padding: 48px;
+    }
+}

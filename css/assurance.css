@@ -1,0 +1,376 @@
+/* =============================================================
+   POOL PARTY - PAGE ASSURANCE
+   Recommandations d'assurance (assurance.html). Mobile-first :
+   base 393px, puis tablette (768px) et desktop (1024px).
+   Les composants (fil d'Ariane, cartes protection, boutons)
+   viennent de global.css ; cette feuille ne gère que la mise
+   en page et les blocs propres à la page. Le mockup d'origine
+   utilisait des bandeaux cyan et rose : ils sont remplacés par
+   la charte (vert bleuté, corail, beige) pour rester cohérent.
+   ============================================================= */
+
+/* =============================================================
+   BLOC 1 : FIL D'ARIANE
+   ============================================================= */
+.assurance-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile);
+}
+
+/* =============================================================
+   BLOC 2 : EN-TÊTE DE PAGE
+   Bandeau beige pleine largeur, titre et sous-titre centrés,
+   même gabarit que les autres pages informatives.
+   ============================================================= */
+.assurance-hero {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    background: var(--color-beige);
+    text-align: center;
+}
+
+/* Titre réduit en mobile, la taille Figma (40px) revient en tablette */
+.assurance-hero h1 {
+    font-size: 32px;
+}
+
+.assurance-hero__baseline {
+    max-width: 660px;
+    margin: var(--padding-p3) auto 0;
+    font-family: var(--font-heading);
+    font-size: var(--fs-h3-inter);
+    color: var(--color-bleu-canard);
+}
+
+.assurance-hero p:not(.assurance-hero__baseline) {
+    max-width: 660px;
+    margin: var(--padding-p3) auto 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   BLOC 3 et 4 : SECTIONS PAR PUBLIC (propriétaires, locataires)
+   En-tête centré : picto vert bleuté, titre rose magenta, ligne
+   d'accroche. Remplace les bandeaux colorés pleins du mockup.
+   ============================================================= */
+.assurance-public {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+}
+
+.assurance-public--locataires {
+    background: var(--color-beige);
+}
+
+.assurance-public__entete {
+    max-width: 620px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.assurance-public__entete svg {
+    width: 40px;
+    height: 40px;
+    color: var(--color-dark-green-blue);
+}
+
+.assurance-public__entete h2 {
+    margin-top: var(--padding-p3);
+}
+
+.assurance-public__entete p {
+    margin-top: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 22px;
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   GRILLE DES ASSUREURS RECOMMANDÉS (propriétaires)
+   Trois cartes blanches bordées : nom de l'assureur en libellé
+   sobre à la charte (pas de logo de marque), description, liste
+   de garanties cochées, lien Voir l'offre.
+   Une colonne en mobile, trois à partir de la tablette.
+   ============================================================= */
+.assurance-grille {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p1);
+}
+
+.assurance-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p3);
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    text-align: center;
+}
+
+/* Libellé sobre de l'assureur (à la place d'un logo de marque) :
+   plaque beige arrondie, nom en Garamond vert bleuté. */
+.assurance-card__marque {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 56px;
+    padding: var(--padding-p3) var(--padding-p1);
+    background: var(--color-beige);
+    border-radius: var(--radius-r2);
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-h3);
+    letter-spacing: 0.02em;
+    color: var(--color-dark-green-blue);
+}
+
+.assurance-card__nom {
+    font-size: var(--fs-h4);
+    color: var(--color-bleu-canard);
+}
+
+.assurance-card__desc {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 20px;
+    color: var(--color-grey-font-1);
+}
+
+.assurance-card__label {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-body);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p3);
+    color: var(--color-bleu-canard);
+}
+
+/* Liste des garanties : puce en coche vert bleuté, alignée à
+   gauche pour une lecture confortable. */
+.assurance-card__liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+    width: 100%;
+    text-align: left;
+}
+
+.assurance-card__liste li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 20px;
+    color: var(--color-grey-font-1);
+}
+
+.assurance-card__liste svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--color-dark-green-blue);
+}
+
+/* Lien Voir l'offre, poussé en bas de carte pour aligner les
+   trois cartes en rangée. */
+.assurance-card__lien {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p4);
+    margin-top: auto;
+    padding-top: var(--padding-p3);
+    font-family: var(--font-body);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p3);
+    color: var(--color-corail);
+    text-decoration: none;
+}
+
+.assurance-card__lien svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.assurance-card__lien:hover,
+.assurance-card__lien:focus-visible {
+    color: var(--color-corail-hover);
+    text-decoration: underline;
+}
+
+/* =============================================================
+   CONSEILS AUX LOCATAIRES
+   Cartes protection (global.css), une colonne en mobile puis
+   trois à partir de la tablette.
+   ============================================================= */
+.assurance-conseils {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: var(--padding-p1);
+    margin-top: var(--padding-p1);
+}
+
+/* =============================================================
+   BLOC 5 : INFORMATION IMPORTANTE
+   Carte d'information : fond sable translucide, picto info et
+   texte aligné à gauche, même habillage que la règle d'or de la
+   page paiement sécurisé.
+   ============================================================= */
+.assurance-note {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    margin: var(--padding-p1) var(--padding-page-mobile) 0;
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-hover-sable);
+    border-radius: var(--radius-r1);
+}
+
+.assurance-note > svg {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    color: var(--color-corail);
+}
+
+.assurance-note h2 {
+    font-size: var(--fs-h3);
+}
+
+.assurance-note__contenu p {
+    margin-top: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 22px;
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   BLOC 6 : CTA FINAL
+   Bandeau beige arrondi, titre Garamond et deux boutons, même
+   gabarit que le CTA final des autres pages informatives.
+   ============================================================= */
+.assurance-cta {
+    margin: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+    text-align: center;
+}
+
+.assurance-cta p {
+    margin-top: var(--padding-p2);
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.assurance-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p1);
+}
+
+/* =============================================================
+   TABLETTE (à partir de 768px)
+   Gouttières 32px, titre à sa taille Figma, assureurs sur trois
+   colonnes, conseils sur trois colonnes.
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .assurance-intro {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .assurance-hero {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .assurance-hero h1 {
+        font-size: var(--fs-h1);
+    }
+
+    .assurance-hero p:not(.assurance-hero__baseline) {
+        font-size: var(--fs-p2);
+    }
+
+    .assurance-public {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .assurance-grille {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        align-items: stretch;
+    }
+
+    .assurance-conseils {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        align-items: start;
+    }
+
+    .assurance-note {
+        flex-direction: row;
+        align-items: flex-start;
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+        padding: var(--padding-p1);
+    }
+
+    .assurance-cta {
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+        padding: 48px var(--padding-p1);
+    }
+}
+
+/* =============================================================
+   DESKTOP (à partir de 1024px)
+   Gouttières 80px, en-têtes de section et note resserrés au
+   centre pour garder des lignes lisibles.
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .assurance-intro {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .assurance-hero {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+        padding-top: 48px;
+        padding-bottom: 48px;
+    }
+
+    .assurance-public {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .assurance-note {
+        margin-left: var(--padding-page-desktop);
+        margin-right: var(--padding-page-desktop);
+    }
+
+    .assurance-cta {
+        margin-left: var(--padding-page-desktop);
+        margin-right: var(--padding-page-desktop);
+        padding: 64px var(--padding-p1);
+    }
+}

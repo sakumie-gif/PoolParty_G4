@@ -1,0 +1,1064 @@
+/* =============================================================
+   POOL PARTY - PAGE D'ACCUEIL
+   Styles spécifiques à la page d'accueil (index.html).
+   Mobile-first.
+   ============================================================= */
+
+/* =============================================================
+   HERO
+   Mobile : titre (vert foncé) au-dessus, image arrondie en dessous.
+   Desktop : image en fond pleine largeur, titre blanc à droite,
+   barre de recherche flottante en bas à gauche.
+   ============================================================= */
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    padding: var(--padding-p1) var(--padding-page-mobile);
+}
+
+.hero-content {
+    order: 1;
+}
+
+.hero-title {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-semibold);
+    font-size: 28px;
+    line-height: 1.2;
+    color: var(--color-dark-green-blue);
+}
+
+.hero-subtitle {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-body);
+    font-size: var(--fs-p1);
+    color: var(--color-grey-font-1);
+}
+
+.hero-image {
+    order: 2;
+    display: block;
+    border-radius: var(--radius-r1);
+    overflow: hidden;
+    box-shadow: var(--shadow-3);
+}
+
+.hero-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    object-position: 32% center;
+    display: block;
+}
+
+/* La barre de recherche du hero n'apparaît pas en mobile
+   (la recherche mobile est accessible depuis le header). */
+.hero-search {
+    display: none;
+}
+
+/* =============================================================
+   HERO - TABLETTE (768px à 1023px)
+   Maquette tablette : image en fond, titre blanc à droite,
+   barre de recherche quasi pleine largeur posée en bas de
+   l'image, sans sortir du hero.
+   ============================================================= */
+@media (min-width: 768px) and (max-width: 1023px) {
+
+    .hero {
+        position: relative;
+        min-height: 360px;
+        padding: var(--padding-p1) var(--padding-page-tablet) 0;
+        background-image: url('../assets/images/hero/hero.webp');
+        background-size: cover;
+        background-position: 25% center;
+    }
+
+    .hero-image {
+        display: none;
+    }
+
+    .hero-content {
+        margin-left: auto;
+        max-width: 540px;
+        text-align: right;
+        padding-top: var(--padding-p1);
+    }
+
+    .hero-title {
+        color: var(--color-white);
+        font-weight: var(--fw-bold);
+        font-size: 36px;
+    }
+
+    .hero-subtitle {
+        color: var(--color-white);
+        font-family: var(--font-input);
+        font-weight: var(--fw-semibold);
+        font-size: var(--fs-p1);
+    }
+
+    /* Recherche pleine largeur, posée en bas de l'image,
+       entièrement dans le hero */
+    .hero-search {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        left: var(--padding-page-tablet);
+        right: var(--padding-page-tablet);
+        bottom: var(--padding-p2);
+        background: var(--color-white);
+        border: 1px solid var(--color-grey-border);
+        border-radius: var(--radius-pill);
+        box-shadow: var(--shadow-search);
+        padding: 10px 20px 10px 32px;
+        gap: 14px;
+        z-index: 5;
+    }
+}
+
+/* =============================================================
+   HERO - DESKTOP (à partir de 1024px)
+   Specs Figma : conteneur 468px de haut, contenu centré
+   verticalement, padding 20px haut / 80px côtés. Titre Garamond
+   Bold 54px à droite, sous-titre Inter Semi Bold 20px, recherche
+   à gauche. Positions fixes du Figma (1044/150) traduites en
+   alignement fluide (titre à droite, recherche à gauche).
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .hero {
+        position: relative;
+        min-height: 468px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: var(--padding-p2);          /* item spacing 20 */
+        /* côtés : gouttière de page (80px Figma, plafonnée en très
+           grand écran) ; le fond, lui, reste pleine largeur */
+        padding: var(--padding-p2) var(--padding-page-desktop) 0;
+        background-image: url('../assets/images/hero/hero.webp');
+        background-size: cover;
+        background-position: center;
+    }
+
+    /* L'image en balise est masquée : on utilise le fond */
+    .hero-image {
+        display: none;
+    }
+
+    /* Bloc titre poussé à droite */
+    .hero-content {
+        align-self: flex-end;
+        max-width: 640px;
+        display: flex;
+        flex-direction: column;
+        gap: var(--padding-p4);           /* item spacing 8 */
+    }
+
+    .hero-title {
+        color: var(--color-white);
+        font-family: var(--font-heading);
+        font-weight: var(--fw-bold);
+        font-size: 54px;
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        margin-top: 0;
+        max-width: 575px;
+        color: var(--color-white);
+        font-family: var(--font-input);   /* Inter */
+        font-weight: var(--fw-semibold);
+        font-size: 20px;
+        line-height: 1.4;
+    }
+
+    /* Barre de recherche posée à gauche, dans le hero */
+    .hero-search {
+        order: 2;
+        display: inline-flex;
+        align-items: center;
+        align-self: flex-start;
+        margin-left: 70px;
+        width: min(720px, calc(100% - 80px));
+        background: var(--color-white);
+        border: 1px solid var(--color-grey-border);
+        border-radius: var(--radius-pill);
+        box-shadow: var(--shadow-search);
+        /* padding interne : 10 haut/bas (intermédiaire 66px), 32 gauche, 20 droite */
+        padding: 10px 20px 10px 32px;
+        gap: 14px;
+    }
+}
+
+/* =============================================================
+   SOUS-TITRE DE SECTION
+   Ligne Inter semi-gras posée sous les H2 centrés (blocs
+   Simplicité et Hôtes). Valeur Figma : Inter Semi Bold 20,
+   réduite à 18 en mobile.
+   ============================================================= */
+.section-sub {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p1);
+    color: var(--color-grey-font-1);
+}
+
+@media (min-width: 1024px) {
+
+    .section-sub {
+        font-size: var(--fs-h3-inter);
+    }
+}
+
+/* =============================================================
+   BLOC 2 : CARROUSEL DES CATÉGORIES
+   Jeu de cinq cartes portrait qui se chevauchent en éventail :
+   la carte sélectionnée vient au centre, au-dessus des autres
+   et légèrement surélevée (valeurs Figma : chevauchement ~50px,
+   élévation 17px). La sélection se fait au clic sur une carte,
+   un onglet ou une flèche ; le JS distribue les classes de
+   position pos-m2 / pos-m1 / pos-0 / pos-p1 / pos-p2.
+   Les onglets portent une barre de progression : grise au repos,
+   remplie de vert sur la catégorie sélectionnée.
+   ============================================================= */
+.categories {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    padding: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
+    overflow: hidden; /* les cartes en bord d'éventail peuvent dépasser */
+}
+
+.categories-carousel {
+    position: relative;
+    width: 100%;
+}
+
+/* La piste donne la hauteur : carte (ratio 264/396) + élévation */
+.categories-track {
+    --cat-card-w: min(258px, 66vw); /* largeur de carte mobile */
+    --cat-step: 22vw;               /* décalage entre deux cartes */
+    position: relative;
+    height: calc(var(--cat-card-w) * 1.5 + 17px);
+}
+
+/* Chaque carte est un bouton positionné depuis le centre */
+.categories-slide {
+    position: absolute;
+    top: 17px;
+    left: 50%;
+    width: var(--cat-card-w);
+    aspect-ratio: 264 / 396;
+    border-radius: var(--radius-r1);
+    overflow: hidden;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    box-shadow: var(--shadow-3);
+    transition: transform var(--transition-medium);
+}
+
+.categories-slide:focus-visible {
+    outline: 2px solid var(--color-dark-green-blue-2);
+    outline-offset: 2px;
+}
+
+.categories-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Positions de l'éventail : la carte active (pos-0) est centrée,
+   surélevée et passe au-dessus, les autres glissent dessous */
+.categories-slide.pos-m2 {
+    transform: translateX(calc(-50% - 2 * var(--cat-step)));
+    z-index: 1;
+}
+
+.categories-slide.pos-m1 {
+    transform: translateX(calc(-50% - var(--cat-step)));
+    z-index: 2;
+}
+
+.categories-slide.pos-0 {
+    transform: translateX(-50%) translateY(-17px);
+    z-index: 3;
+}
+
+.categories-slide.pos-p1 {
+    transform: translateX(calc(-50% + var(--cat-step)));
+    z-index: 2;
+}
+
+.categories-slide.pos-p2 {
+    transform: translateX(calc(-50% + 2 * var(--cat-step)));
+    z-index: 1;
+}
+
+/* Flèches posées sur l'éventail, centrées verticalement */
+.categories-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    border: none;
+}
+
+.categories-control--prev {
+    left: var(--padding-p4);
+}
+
+.categories-control--next {
+    right: var(--padding-p4);
+}
+
+/* Onglets : barre de progression + libellé Garamond.
+   La barre grise se remplit de vert sur l'onglet sélectionné. */
+.categories-tabs {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--padding-p2);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: var(--padding-p5);
+}
+
+.categories-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.categorie-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* valeur Figma */
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-h4);
+    color: var(--color-black);
+}
+
+.categorie-tab .progress {
+    width: 100px; /* largeur Figma de la barre */
+}
+
+.categorie-tab.is-active .progress__bar {
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+
+    .categories {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .categories-track {
+        --cat-card-w: 240px;
+        --cat-step: 185px;
+    }
+
+    .categories-tabs {
+        justify-content: center;
+        gap: 56px;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    .categories {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    /* Éventail centré, cinq cartes visibles comme la maquette */
+    .categories-carousel {
+        max-width: 1160px;
+        margin: 0 auto;
+    }
+
+    .categories-track {
+        --cat-card-w: 264px;
+        --cat-step: 215px;
+    }
+
+    .categories-tabs {
+        gap: 96px;
+    }
+}
+
+/* GRAND ÉCRAN (à partir de 1440px) : l'éventail s'agrandit pour
+   occuper l'espace disponible ; les tailles précédentes restent
+   valables entre tablette et grand écran. */
+@media (min-width: 1440px) {
+
+    .categories-carousel {
+        max-width: 1410px;
+    }
+
+    .categories-track {
+        --cat-card-w: 330px;
+        --cat-step: 268px;
+    }
+
+    .categories-tabs {
+        gap: 128px;
+    }
+}
+
+/* =============================================================
+   BLOC 3 : COUPS DE COEUR DU MOMENT
+   Titre + sous-titre à gauche, piste horizontale de cartes
+   produit (composant card-product), lien "Explorez tous les
+   espaces" aligné à droite.
+   ============================================================= */
+.coup-de-coeur {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+}
+
+.coup-de-coeur__sub {
+    margin-top: var(--padding-p5);
+    font-family: var(--font-body);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+/* Les cartes sont en fill (maquette Figma). Sur mobile la maquette
+   montre UNE carte large (~270px, la largeur Figma de la carte) avec
+   la suivante qui déborde légèrement : ce « peek » signale qu'on peut
+   faire défiler. On affiche donc ~1,3 carte sur mobile ; à 2 cartes
+   entières la tuile tombait à ~175px, trop étroite, et la note
+   « ★ 4,7 (5 avis) » chevauchait le titre. À partir de 576px le nombre
+   visible augmente par paliers ; au plafond de contenu, les sept
+   cartes tombent pile à 238px. */
+.products-track {
+    --cartes-visibles: 1.3;
+    display: flex;
+    gap: var(--padding-p2-2);
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    /* marge haute : laisse dépasser les tags posés à cheval sur les cartes */
+    padding: 12px 2px var(--padding-p5);
+    margin-top: var(--padding-p2);
+}
+
+.products-track::-webkit-scrollbar {
+    display: none;
+}
+
+.products-track .card-product {
+    flex: 0 0 calc((100% - (var(--cartes-visibles) - 1) * var(--padding-p2-2)) / var(--cartes-visibles));
+    /* min-width:0 : sans ça un flex item garde min-width:auto et refuse
+       de rétrécir sous la largeur de son contenu ; un nom de ville long
+       et insécable (« Pontault-Combault », « Champs-sur-Marne ») élargit
+       alors la carte au-delà de sa base flex. Toutes les cartes gardent
+       la même largeur, le texte trop long est coupé par le meta. */
+    min-width: 0;
+    scroll-snap-align: start;
+}
+
+@media (min-width: 576px) {
+
+    .products-track {
+        --cartes-visibles: 3;
+    }
+}
+
+.coup-de-coeur__footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--padding-p2-2);
+}
+
+/* Chevron en fin de lien (même dessin que le composant btn-link) */
+.coup-de-coeur__link::after {
+    content: "";
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    background-color: currentColor;
+    -webkit-mask: var(--icon-chevron-right) center / contain no-repeat;
+    mask: var(--icon-chevron-right) center / contain no-repeat;
+}
+
+@media (min-width: 768px) {
+
+    .coup-de-coeur {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+}
+
+@media (min-width: 900px) {
+
+    .products-track {
+        --cartes-visibles: 4;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    .coup-de-coeur {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+}
+
+@media (min-width: 1280px) {
+
+    .products-track {
+        --cartes-visibles: 5;
+    }
+}
+
+@media (min-width: 1536px) {
+
+    .products-track {
+        --cartes-visibles: 6;
+    }
+}
+
+@media (min-width: 1780px) {
+
+    .products-track {
+        --cartes-visibles: 7;
+    }
+}
+
+/* =============================================================
+   BLOC 4 : LA SIMPLICITÉ AVANT TOUT
+   Trois cartes parcours (composant card-parcours). Mobile : les
+   trois étapes empilées les unes sous les autres (le carrousel de la
+   maquette laissait croire, sur un écran étroit type iPhone 12, qu'il
+   n'y avait qu'une étape, la 2e se devinant à peine) ; tablette :
+   cartes en quinconce ; desktop : trois cartes sur la ligne.
+   ============================================================= */
+.simplicite {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    text-align: center;
+}
+
+.simplicite-track {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p2);
+}
+
+.simplicite-track::-webkit-scrollbar {
+    display: none;
+}
+
+.simplicite-track .card-parcours {
+    width: min(285px, 100%);
+}
+
+@media (min-width: 768px) {
+
+    .simplicite {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .simplicite-track {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+    }
+
+    .simplicite-track .card-parcours {
+        flex: 0 0 285px;
+        width: auto;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    .simplicite {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .simplicite-track {
+        justify-content: space-between;
+    }
+}
+
+/* =============================================================
+   BLOC 5 : TÉMOIGNAGES LOCATAIRES
+   Bande beige arrondie, titre centré, cartes corail (composant
+   card-temoignage) en piste horizontale.
+   ============================================================= */
+.temoignages-locataires {
+    margin: var(--padding-p2) var(--padding-page-mobile);
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+    text-align: center;
+}
+
+/* Une SEULE rangée, jamais deux. On n'affiche que les cartes entières
+   qui tiennent sur la largeur disponible ; js/main.js masque les autres
+   (attribut hidden) selon la place. Largeur de carte fixe, jamais
+   coupée ni étirée. Les cartes visibles ont la même hauteur (align-items
+   stretch par défaut du flex). Centré et plafonné à 1336px. */
+.temoignages-track {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: var(--padding-p2);
+    overflow: hidden;
+    margin-top: var(--padding-p2);
+    text-align: left;
+    max-width: 1336px;
+    margin-inline: auto;
+}
+
+/* Cartes élastiques : elles s'élargissent pour remplir la ligne (donc
+   pas de vide au milieu sur grand écran), mais ne dépassent pas 340px
+   (donc une carte seule ne s'étire pas sur toute la largeur). Le nombre
+   de cartes affichées est décidé par js/main.js à partir d'une largeur
+   mini de 250px (à garder synchronisée avec le JS). */
+.temoignages-track .card-temoignage {
+    flex: 1 1 250px;
+    max-width: 340px;
+}
+
+/* Le composant .card-temoignage est en display:flex, ce qui écrase le
+   display:none de l'attribut hidden ; on le rétablit explicitement pour
+   que les cartes masquées par le JS disparaissent réellement. */
+.temoignages-track .card-temoignage[hidden] {
+    display: none;
+}
+
+@media (min-width: 768px) {
+
+    .temoignages-locataires {
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+    }
+}
+
+/* Très grands écrans : la bande beige suit la gouttière desktop
+   plafonnée au lieu de rester à 32px des bords */
+@media (min-width: 1920px) {
+
+    .temoignages-locataires {
+        margin-left: var(--padding-page-desktop);
+        margin-right: var(--padding-page-desktop);
+    }
+}
+
+/* =============================================================
+   BLOC 6 : ILS VOUS OUVRENT LEURS PORTES (hôtes)
+   Colonne texte (titre, sous-titre, trois étapes numérotées) et
+   cartes hôtes (composant card-hote). Mobile : deux cartes ;
+   desktop : grille 2 x 2 en quinconce.
+   ============================================================= */
+.temoignages-proprietaires {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p1);
+}
+
+.hotes-sub {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p1);
+    color: var(--color-grey-font-1);
+}
+
+.hotes-steps {
+    list-style: none;
+    margin: var(--padding-p2) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p1);
+}
+
+.hotes-steps li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--padding-p4);
+}
+
+/* Pastille numérotée (Figma : cercle 40px vert bleuté) */
+.hotes-steps__num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--color-dark-green-blue);
+    color: var(--color-white);
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+}
+
+.hotes-steps__title {
+    font-family: var(--font-input);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+}
+
+.hotes-steps__text {
+    margin-top: var(--padding-p5);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.hotes-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 222px));
+    gap: var(--padding-p2);
+    justify-content: center;
+}
+
+/* Mobile et tablette : seules deux cartes sont montrées (maquette) */
+.card-hote--extra {
+    display: none;
+}
+
+@media (min-width: 768px) {
+
+    .temoignages-proprietaires {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--padding-p1);
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    /* Cartes empilées en colonne à droite du texte */
+    .hotes-cards {
+        grid-template-columns: 222px;
+        align-content: start;
+        flex-shrink: 0;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    .temoignages-proprietaires {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .hotes-content {
+        max-width: 517px; /* largeur Figma de la colonne texte */
+    }
+
+    .card-hote--extra {
+        display: flex;
+    }
+
+    /* Grille 2 x 2 en quinconce comme la maquette, écart P2
+       identique dans les deux sens pour rester harmonieux */
+    .hotes-cards {
+        grid-template-columns: repeat(2, 222px);
+        gap: var(--padding-p2);
+    }
+
+    /* Quinconce : la colonne de droite (cartes 2 et 4) descend de
+       20px, l'écart de 20px entre cartes reste identique partout */
+    .hotes-cards > :nth-child(2),
+    .hotes-cards > :nth-child(4) {
+        transform: translateY(20px);
+    }
+}
+
+/* =============================================================
+   BLOC 7 : CTA PROPRIÉTAIRE
+   Encart beige arrondi : titre, phrase d'accroche en gras et
+   bouton corail. L'image sauna apparaît à droite en desktop.
+   ============================================================= */
+.cta-hote {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+}
+
+.cta-hote__box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p1);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+    padding: var(--padding-p1) var(--padding-p2);
+}
+
+.cta-hote__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--padding-p2);
+}
+
+.cta-hote__text {
+    font-family: var(--font-input);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+    max-width: 45ch;
+}
+
+.cta-hote__img {
+    display: none;
+}
+
+@media (min-width: 768px) {
+
+    .cta-hote {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+}
+
+@media (min-width: 1024px) {
+
+    .cta-hote {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .cta-hote__box {
+        padding: var(--padding-p1);
+    }
+
+    .cta-hote__img {
+        display: block;
+        width: min(468px, 42%);
+        aspect-ratio: 468 / 290;
+        object-fit: cover;
+        border-radius: var(--radius-r1);
+    }
+}
+
+/* =============================================================
+   BLOC 8 : LES GARANTIES POOLPARTY
+   Quatre cartes protection (composant card-protection) :
+   2 x 2 en mobile, une seule ligne à partir du desktop.
+   ============================================================= */
+.reassurance {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    text-align: center;
+}
+
+.reassurance-grid {
+    margin-top: var(--padding-p1);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--padding-p1) var(--padding-p2);
+    justify-items: center;
+}
+
+@media (min-width: 768px) {
+
+    .reassurance {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .reassurance-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+
+    .reassurance {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+}
+
+/* =============================================================
+   BLOC 9 : DES MOMENTS À VIVRE (événements)
+   Bande pleine largeur vert bleuté : libellé "A venir", titre
+   blanc, sous-titre, grille de cartes événement (composant
+   card-event) puis mention "et bien plus encore".
+   ============================================================= */
+.evenements {
+    background: var(--color-dark-green-blue);
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    text-align: center;
+}
+
+.evenements h2 {
+    color: var(--color-white);
+    margin-top: var(--padding-p4);
+}
+
+.evenements__label {
+    font-family: var(--font-input);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-p2);
+    color: var(--color-white);
+}
+
+.evenements__sub {
+    margin-top: var(--padding-p4);
+    margin-inline: auto;
+    max-width: 448px; /* largeur Figma */
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-white);
+}
+
+.evenements-grid {
+    margin-top: var(--padding-p1);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--padding-p4);
+}
+
+/* Libellés réduits tant que les cartes sont petites */
+.evenements .card-event__label {
+    font-size: var(--fs-p3);
+}
+
+.evenements__more {
+    margin-top: var(--padding-p2);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-white);
+}
+
+@media (min-width: 768px) {
+
+    .evenements {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .evenements-grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: var(--padding-p3);
+    }
+}
+
+@media (min-width: 1024px) {
+
+    .evenements {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .evenements .card-event__label {
+        font-size: var(--fs-h3); /* valeur du composant Figma */
+    }
+}
+
+/* =============================================================
+   BLOC 10 : NEWSLETTER
+   Encart beige arrondi centré : titre, texte en gras, champ
+   email en pilule et bouton corail.
+   ============================================================= */
+.newsletter {
+    padding: var(--padding-p1) var(--padding-page-mobile) 48px;
+}
+
+.newsletter__box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+    padding: var(--padding-p1) var(--padding-p2);
+    text-align: center;
+}
+
+.newsletter__text {
+    font-family: var(--font-input);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+    max-width: 75ch;
+}
+
+.newsletter__form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--padding-p2);
+    width: 100%;
+    max-width: 620px;
+}
+
+.newsletter__form input {
+    flex: 1 1 260px;
+    height: 40px;
+    padding: var(--padding-p4) var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-search-small);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.newsletter__form input::placeholder {
+    color: var(--color-grey-font-2);
+    opacity: 1;
+}
+
+.newsletter__form input:hover,
+.newsletter__form input:focus {
+    border-color: var(--color-dark-green-blue-2);
+    outline: none;
+}
+
+/* Mention d'information RGPD sous le formulaire d'inscription */
+.newsletter__rgpd {
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+    max-width: 620px;
+}
+
+.newsletter__rgpd a {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+}
+
+@media (min-width: 768px) {
+
+    .newsletter {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+}
+
+@media (min-width: 1024px) {
+
+    .newsletter {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+}

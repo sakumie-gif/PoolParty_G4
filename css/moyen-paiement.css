@@ -1,0 +1,238 @@
+/* =============================================================
+   POOL PARTY - PAGE MOYENS DE PAIEMENT
+   Styles spécifiques à moyen-de-paiement.html. Mobile-first :
+   base 393px, puis tablette (768px) et desktop (1024px).
+   La page recharge paiement.css et réutilise ses blocs communs
+   (fil d'Ariane, en-tête, cartes moyen-card, FAQ, CTA) ; cette
+   feuille ne gère que les blocs propres à la page : note sous
+   les moyens, échéancier, versements des hôtes, bande sécurité.
+   ============================================================= */
+
+/* =============================================================
+   BLOC 3 : NOTE SOUS LES MOYENS DE PAIEMENT
+   Rappel des moyens non acceptés, centré sous la grille.
+   ============================================================= */
+.paiement-moyens__note {
+    max-width: 660px;
+    margin: var(--padding-p2) auto 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.paiement-moyens__note a {
+    color: var(--color-dark-green-blue);
+    font-weight: var(--fw-semibold);
+    text-decoration: underline;
+}
+
+/* =============================================================
+   BLOC 4 : ÉCHÉANCIER
+   Deux cartes blanches comparant le paiement comptant et le
+   paiement en trois fois, avec le récapitulatif de prix
+   (composant resa__recap de global.css) sur un exemple.
+   ============================================================= */
+.moyen-echeancier {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    text-align: center;
+}
+
+.moyen-echeancier__sub {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.moyen-echeancier__grille {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p1);
+}
+
+.echeancier-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    text-align: left;
+}
+
+.echeancier-card__titre {
+    font-size: var(--fs-h4);
+}
+
+.echeancier-card__aide {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 20px;
+    color: var(--color-grey-font-1);
+}
+
+/* Le récapitulatif se cale en bas pour aligner les totaux
+   des deux cartes quand elles sont côte à côte */
+.echeancier-card .resa__recap {
+    margin-top: auto;
+    font-size: var(--fs-p3);
+}
+
+.moyen-echeancier__note {
+    max-width: 660px;
+    margin: var(--padding-p2) auto 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+/* =============================================================
+   BLOC 5 : VERSEMENTS DES HÔTES
+   Carte beige arrondie : icône, titre Garamond et texte alignés
+   à gauche, même gabarit que la règle d'or de la page paiement
+   sécurisé mais en registre rassurant.
+   ============================================================= */
+.moyen-hotes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    margin: var(--padding-p2) var(--padding-page-mobile) 0;
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+}
+
+.moyen-hotes > svg {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    color: var(--color-dark-green-blue);
+}
+
+.moyen-hotes h2 {
+    font-size: var(--fs-h3);
+}
+
+.moyen-hotes__contenu p {
+    margin-top: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 22px;
+    color: var(--color-grey-font-1);
+}
+
+.moyen-hotes__lien {
+    margin-top: var(--padding-p2);
+}
+
+/* =============================================================
+   BLOC 6 : BANDE SÉCURITÉ
+   Titre centré, carte blanche bordée avec trois items icône +
+   texte (même habillage que la bande de garanties de la page
+   paiement sécurisé), puis lien chevron vers cette page.
+   ============================================================= */
+.moyen-securite {
+    padding: var(--padding-p1) var(--padding-page-mobile) 0;
+    text-align: center;
+}
+
+.moyen-securite .reassurance-list {
+    margin-top: var(--padding-p1);
+    padding: var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    text-align: left;
+}
+
+.moyen-securite .reassurance-item {
+    font-family: var(--font-input);
+    color: var(--color-grey-font-1);
+}
+
+.moyen-securite .reassurance-item svg {
+    width: 24px;
+    height: 24px;
+    color: var(--color-dark-green-blue);
+}
+
+.moyen-securite__lien {
+    margin-top: var(--padding-p2);
+}
+
+/* =============================================================
+   TABLETTE (à partir de 768px)
+   Gouttières 32px, échéancier sur deux colonnes, items de la
+   bande sécurité en rangée.
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .moyen-echeancier {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .moyen-echeancier__grille {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
+    }
+
+    .moyen-hotes {
+        flex-direction: row;
+        align-items: flex-start;
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+        padding: var(--padding-p1);
+    }
+
+    .moyen-securite {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .moyen-securite .reassurance-list {
+        flex-direction: row;
+        justify-content: space-around;
+        padding: var(--padding-p1);
+    }
+
+    .moyen-securite .reassurance-item {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--padding-p3);
+        text-align: center;
+    }
+}
+
+/* =============================================================
+   DESKTOP (à partir de 1024px)
+   Gouttières 80px, échéancier resserré au centre pour garder
+   des cartes lisibles.
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .moyen-echeancier {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .moyen-echeancier__grille {
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+        gap: var(--padding-p1);
+    }
+
+    .moyen-hotes {
+        margin-left: var(--padding-page-desktop);
+        margin-right: var(--padding-page-desktop);
+    }
+
+    .moyen-securite {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+}

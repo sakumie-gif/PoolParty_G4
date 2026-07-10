@@ -1,0 +1,17 @@
+# Fichiers systeme / OneDrive
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editeurs
+.vscode/
+.idea/
+*.code-workspace
+
+# Dependances (si un jour tu ajoutes npm/composer)
+node_modules/
+vendor/
+
+# Logs et fichiers temporaires
+*.log
+*.tmp

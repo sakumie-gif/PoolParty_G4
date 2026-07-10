@@ -1,0 +1,458 @@
+/* =============================================================
+   POOL PARTY - PAGE CONTACT
+   Styles spécifiques à la page contact. Mobile-first : base
+   393px, puis tablette (768px) et desktop (1024px).
+   Les composants (fil d'Ariane, champs form-field, pilule
+   select, cases à cocher, liens signal, boutons, bande de
+   réassurance) viennent de global.css ; cette feuille ne gère
+   que la mise en page et les blocs propres à la page.
+   ============================================================= */
+
+/* =============================================================
+   BLOC 1 : FIL D'ARIANE
+   ============================================================= */
+.contact-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile);
+}
+
+/* =============================================================
+   BLOC 2 : EN-TÊTE DE PAGE
+   Bandeau beige pleine largeur, titre et sous-titre centrés.
+   ============================================================= */
+.contact-hero {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+    background: var(--color-beige);
+    text-align: center;
+}
+
+/* Titre réduit en mobile, la taille Figma (40px) revient en tablette */
+.contact-hero h1 {
+    font-size: 32px;
+}
+
+.contact-hero p {
+    max-width: 660px;
+    margin: var(--padding-p4) auto 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   BLOC 3 : COORDONNÉES + FORMULAIRE
+   Mobile : cartes empilées. Desktop : coordonnées à gauche,
+   formulaire à droite, sur deux colonnes égales.
+   ============================================================= */
+.contact-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    padding: var(--padding-p2) var(--padding-page-mobile);
+}
+
+.contact-aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+}
+
+/* Cartes beiges communes aux blocs de coordonnées ; le formulaire
+   reste sur fond blanc en mobile et tablette (maquette), sa carte
+   beige n'apparaît qu'en desktop */
+.contact-card,
+.contact-avant {
+    padding: var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+}
+
+/* -------------------------------------------------------------
+   CARTE CONTACTEZ-NOUS
+   Titre Garamond, photo, puis liste des coordonnées séparées
+   par de fins traits horizontaux.
+   ------------------------------------------------------------- */
+.contact-card h2 {
+    font-size: var(--fs-h3);
+}
+
+.contact-card__sub {
+    margin-top: var(--padding-p5);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.contact-card__photo {
+    width: 100%;
+    margin-top: var(--padding-p2);
+    border-radius: var(--radius-r2);
+    object-fit: cover;
+}
+
+.contact-card__infos {
+    list-style: none;
+    margin: var(--padding-p4) 0 0;
+    padding: 0;
+}
+
+.contact-info {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--padding-p3);
+    padding: var(--padding-p2-2) 0;
+    border-bottom: 1px solid var(--color-grey-border-2);
+}
+
+.contact-info:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.contact-info svg {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    color: var(--color-dark-green-blue);
+}
+
+.contact-info div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.contact-info__label {
+    font-weight: var(--fw-semibold);
+}
+
+.contact-info a {
+    color: var(--color-grey-font-1);
+    text-decoration: none;
+}
+
+/* -------------------------------------------------------------
+   CARTE AVANT DE NOUS ÉCRIRE
+   Trois liens signal (chevron + texte souligné) empilés.
+   ------------------------------------------------------------- */
+.contact-avant__titre {
+    font-family: var(--font-input);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-p1);
+    color: var(--color-grey-font-1);
+}
+
+.contact-avant ul {
+    list-style: none;
+    margin: var(--padding-p2) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+}
+
+/* -------------------------------------------------------------
+   FORMULAIRE DE CONTACT
+   Champs form-field, pilules select, message avec compteur,
+   pièce jointe, consentements et bouton corail pleine largeur.
+   ------------------------------------------------------------- */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+}
+
+.contact-form__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+}
+
+/* Pilule select : reprend le composant Input Chevron mais avec
+   les angles et l'ombre des champs de formulaire */
+.contact-select {
+    position: relative;
+}
+
+.contact-select__pill {
+    border-radius: var(--radius-r2);
+    box-shadow: var(--shadow-search);
+}
+
+.contact-select__pill input {
+    cursor: pointer;
+}
+
+/* Fermée par défaut : display:flex ci-dessous écraserait
+   l'attribut hidden sans cette règle */
+.contact-select__liste[hidden] {
+    display: none;
+}
+
+.contact-select__liste {
+    position: absolute;
+    top: calc(100% + var(--padding-p4));
+    left: 0;
+    right: 0;
+    z-index: 20;
+    list-style: none;
+    margin: 0;
+    padding: var(--padding-p4);
+    display: flex;
+    flex-direction: column;
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r2);
+    box-shadow: var(--shadow-2);
+}
+
+/* Message : zone de texte haute, compteur de caractères posé
+   dans le coin inférieur droit du champ */
+.contact-form__message {
+    position: relative;
+}
+
+.contact-form__message textarea {
+    min-height: 220px;
+    padding-bottom: var(--padding-p1);
+}
+
+.contact-form__compteur {
+    position: absolute;
+    right: var(--padding-p2);
+    bottom: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+    pointer-events: none;
+}
+
+/* Pièce jointe : lien discret avec trombone, l'input file reste
+   accessible mais invisible (classe sr-only) */
+.contact-form__fichier {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    cursor: pointer;
+}
+
+.contact-form__fichier svg {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+}
+
+.contact-form__fichier:hover .contact-form__fichier-nom {
+    text-decoration: underline;
+}
+
+.contact-form__fichier:has(input:focus-visible) {
+    outline: 2px solid var(--color-dark-green-blue-2);
+    outline-offset: 2px;
+    border-radius: var(--radius-r3);
+}
+
+/* Lien vers la politique de confidentialité dans le consentement */
+.contact-form .checkbox a {
+    color: var(--color-grey-font-1);
+    text-decoration: underline;
+}
+
+.contact-form__submit {
+    width: 100%;
+}
+
+/* Confirmation affichée à la place du formulaire après envoi */
+.contact-form__confirmation {
+    padding: var(--padding-p1) 0;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-semibold);
+    color: var(--color-dark-green-blue);
+    text-align: center;
+}
+
+/* =============================================================
+   BLOC 4 : BANDE DE GARANTIES
+   Carte blanche bordée avec trois items icône + texte.
+   Absente des maquettes mobile et tablette : desktop seulement.
+   ============================================================= */
+.contact-garanties {
+    display: none;
+}
+
+.contact-garanties .reassurance-list {
+    flex-direction: row;
+    justify-content: space-around;
+    padding: var(--padding-p1);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+}
+
+/* Icône au-dessus du libellé, le tout centré (maquette) */
+.contact-garanties .reassurance-item {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p3);
+    font-family: var(--font-input);
+    color: var(--color-grey-font-1);
+    text-align: center;
+}
+
+.contact-garanties .reassurance-item svg {
+    color: var(--color-dark-green-blue);
+}
+
+/* =============================================================
+   BLOC 5 : QUESTIONS FRÉQUENTES
+   L'accordéon lui-même (.faq-liste, .faq-item) est un composant
+   partagé avec la page FAQ : il vit dans global.css. Ici, seuls
+   les réglages propres à la page contact.
+   ============================================================= */
+.contact-faq {
+    padding: var(--padding-p1) var(--padding-page-mobile);
+}
+
+.contact-faq__voir-tout {
+    margin-top: var(--padding-p1);
+    text-align: center;
+}
+
+/* =============================================================
+   BLOC 6 : CTA FINAL
+   Bandeau beige arrondi, titre Garamond et deux boutons.
+   ============================================================= */
+.contact-cta {
+    margin: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
+    padding: var(--padding-p1) var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+    text-align: center;
+}
+
+.contact-cta p {
+    margin-top: var(--padding-p2);
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.contact-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--padding-p2);
+    margin-top: var(--padding-p1);
+}
+
+/* =============================================================
+   TABLETTE (à partir de 768px)
+   Gouttières 32px, titre à sa taille Figma, champs Nom/Prénom
+   et Email/Téléphone sur deux colonnes.
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .contact-intro {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .contact-hero {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .contact-hero h1 {
+        font-size: var(--fs-h1);
+    }
+
+    .contact-hero p {
+        font-size: var(--fs-p2);
+    }
+
+    .contact-layout {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .contact-form__row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .contact-faq {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .contact-cta {
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+        padding: 48px var(--padding-p1);
+    }
+}
+
+/* =============================================================
+   DESKTOP (à partir de 1024px)
+   Coordonnées à gauche, formulaire à droite ; la bande de
+   garanties apparaît sous la zone.
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .contact-intro {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .contact-hero {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .contact-layout {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--padding-p1);
+        align-items: start;
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .contact-aside {
+        gap: var(--padding-p1);
+    }
+
+    .contact-card,
+    .contact-avant {
+        padding: var(--padding-p1);
+    }
+
+    .contact-form-card {
+        padding: var(--padding-p1);
+        background: var(--color-beige);
+        border-radius: var(--radius-r1);
+    }
+
+    .contact-garanties {
+        display: block;
+        padding: var(--padding-p2) var(--padding-page-desktop) 0;
+    }
+
+    .contact-faq {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .contact-cta {
+        margin-left: var(--padding-page-desktop);
+        margin-right: var(--padding-page-desktop);
+        padding: 64px var(--padding-p1);
+    }
+}

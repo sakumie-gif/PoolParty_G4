@@ -1,0 +1,670 @@
+/* =============================================================
+   POOL PARTY - PAGE CATÉGORIE
+   Styles spécifiques à la page catégorie (Figma : Page catégorie,
+   maquettes Mobile 393 / Tablette 834 / Desktop 1920).
+   Mobile-first. Les composants (carte produit, fil d'Ariane,
+   menu-item, dropdown-item, toggle, jauge double...) viennent de
+   global.css ; cette feuille gère la mise en page et les blocs
+   propres à la page : bandeau de réassurance, barre de pilules,
+   compteur + tri, grille de résultats, panneau carte, pagination.
+   ============================================================= */
+
+/* =============================================================
+   BLOC 1 : FIL D'ARIANE
+   Mobile (maquette) : Accueil, points de suspension, région.
+   Tablette et plus : le fil complet, page courante en gras.
+   ============================================================= */
+.categorie-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile) 0;
+}
+
+/* Le sélecteur composé garde la priorité sur ".breadcrumb li" */
+.breadcrumb .breadcrumb__etape {
+    display: none;
+}
+
+/* En mobile, seule la page courante reste visible après les points */
+.breadcrumb .breadcrumb__etape.is-current {
+    display: inline-flex;
+}
+
+/* L'étape ville n'apparaît que si une adresse a été recherchée :
+   main.js retire alors l'attribut hidden. Sans cette règle, le
+   display de ".breadcrumb li" annulerait l'attribut hidden. */
+.breadcrumb__region[hidden] {
+    display: none;
+}
+
+/* =============================================================
+   BLOC 2 : BANDEAU RÉASSURANCE (Figma : Reservation Info)
+   Encart beige arrondi : titre Garamond vert bleuté puis trois
+   arguments avec pictogramme badge coché.
+   ============================================================= */
+.bandeau-resa {
+    margin: var(--padding-p2) var(--padding-page-mobile) 0;
+    padding: var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r2);
+}
+
+.bandeau-resa h1 {
+    font-size: var(--fs-h3); /* 24px mobile, la taille monte ensuite */
+    line-height: 1.25;
+}
+
+.bandeau-resa__liste {
+    list-style: none;
+    margin: var(--padding-p2-2) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+}
+
+.bandeau-resa__liste li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.bandeau-resa__liste svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--color-grey-font-1);
+}
+
+/* =============================================================
+   BLOC 3 : BARRE DE FILTRES EN PILULES + INTERRUPTEUR CARTE
+   Pilules construites sur le composant menu-item, chacune ouvre
+   une liste déroulante. Mobile : seule la pilule Filtres reste ;
+   Catégories et Prix arrivent en tablette, le reste en desktop.
+   ============================================================= */
+.filtres-barre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p2);
+    padding: var(--padding-p2) var(--padding-page-mobile);
+}
+
+.filtres-pilules {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--padding-p2-2);
+}
+
+.pilule {
+    position: relative;
+}
+
+/* Paliers d'apparition des pilules (maquettes tablette et desktop) */
+.pilule--md,
+.pilule--lg {
+    display: none;
+}
+
+/* Liste déroulante sous la pilule */
+.pilule__liste {
+    position: absolute;
+    top: calc(100% + var(--padding-p4));
+    left: 0;
+    z-index: 20;
+    min-width: 220px;
+    list-style: none;
+    margin: 0;
+    padding: var(--padding-p4);
+    display: flex;
+    flex-direction: column;
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r2);
+    box-shadow: var(--shadow-2);
+}
+
+/* L'attribut hidden doit gagner sur le display:flex ci-dessus */
+.pilule__liste[hidden] {
+    display: none;
+}
+
+/* Variante fourchette de prix : panneau compact avec la jauge */
+.pilule__liste--prix {
+    min-width: 260px;
+    padding: var(--padding-p2-2);
+}
+
+.pilule__liste--prix .filtres__titre {
+    margin-bottom: var(--padding-p4);
+}
+
+.pilule__liste--prix .range-double__value {
+    padding: 0;
+    margin-bottom: var(--padding-p3);
+}
+
+.pilule__liste--prix .range-double {
+    margin: 0 var(--padding-p4) var(--padding-p5);
+}
+
+/* Bouton « Appliquer » de la fourchette de prix : recharge le catalogue
+   avec la fourchette choisie. Prend toute la largeur du panneau. */
+.filtres__prix-appliquer {
+    display: block;
+    width: 100%;
+    margin-top: var(--padding-p4);
+}
+
+/* Variante panneau détaillé (pilule Filtres) : la colonne de
+   filtres complète vit dans la liste déroulante. En mobile le
+   panneau est calé sur le bord gauche de la barre pour ne pas
+   déborder de l'écran. */
+.pilule__liste--panneau {
+    min-width: min(320px, calc(100vw - 2 * var(--padding-page-mobile)));
+    padding: var(--padding-p2);
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Titres des groupes du panneau et du panneau prix */
+.filtres__titre {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-h4);
+    color: var(--color-dark-green-blue);
+    margin-bottom: var(--padding-p3);
+}
+
+.filtres__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p1);
+}
+
+/* Groupes de cases : le fieldset reste en flux normal (les
+   fieldsets gèrent mal flex), l'espacement passe par les labels */
+.filtres__groupe {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.filtres__groupe .checkbox,
+.filtres__groupe .radio,
+.filtres__groupe .toggle {
+    display: flex;
+}
+
+.filtres__groupe > label + label {
+    margin-top: 12px; /* même valeur que le gap interne des cases (Figma) */
+}
+
+.filtres__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p3);
+}
+
+.filtres__actions .btn-primary {
+    width: 100%;
+}
+
+/* Interrupteur d'affichage de la carte : pictogramme, libellé
+   (masqué en mobile comme la maquette) puis interrupteur */
+.carte-toggle {
+    flex-shrink: 0;
+}
+
+.carte-toggle svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--color-grey-font-1);
+}
+
+.carte-toggle__texte {
+    display: none;
+}
+
+/* =============================================================
+   BLOC 4 : COMPTEUR DE RÉSULTATS + TRI
+   "1345 résultats · 8 Victimes de leurs succès" à gauche,
+   "Trier par : Avis" avec chevron à droite.
+   ============================================================= */
+.resultats-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--padding-p4) var(--padding-p2);
+    padding: 0 var(--padding-page-mobile) var(--padding-p2);
+}
+
+.resultats-info__compte {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.resultats-info__compte strong {
+    font-weight: var(--fw-semibold);
+    color: var(--color-black);
+}
+
+/* La note n'apparaît qu'à partir de la tablette (maquette mobile) */
+.resultats-info__note {
+    display: none;
+    color: var(--color-grey-font-2);
+}
+
+/* Point séparateur entre le compte et la note */
+.resultats-info__note::before {
+    content: "\2022";
+    margin-right: var(--padding-p3);
+    font-size: 12px;
+}
+
+/* Tri : bouton texte avec chevron, liste déroulante à droite */
+.tri {
+    position: relative;
+}
+
+.tri__bouton {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--padding-p4);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.tri__bouton strong {
+    font-weight: var(--fw-semibold);
+    color: var(--color-dark-green-blue);
+}
+
+.tri__bouton::after {
+    content: "";
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    background-color: var(--color-dark-green-blue);
+    -webkit-mask: var(--icon-chevron-right) center / contain no-repeat;
+    mask: var(--icon-chevron-right) center / contain no-repeat;
+    transform: rotate(90deg);
+    transition: transform var(--transition-fast);
+}
+
+.tri__bouton.is-open::after {
+    transform: rotate(-90deg);
+}
+
+.tri__liste {
+    position: absolute;
+    top: calc(100% + var(--padding-p4));
+    right: 0;
+    z-index: 20;
+    min-width: 210px;
+    list-style: none;
+    margin: 0;
+    padding: var(--padding-p4);
+    display: flex;
+    flex-direction: column;
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r2);
+    box-shadow: var(--shadow-2);
+}
+
+.tri__liste[hidden] {
+    display: none;
+}
+
+/* =============================================================
+   BLOC 5 : GRILLE DE RÉSULTATS + PANNEAU CARTE
+   Sans carte : grille seule (1 colonne mobile, 3 tablette,
+   4 desktop). Avec carte (is-carte) : la carte passe au-dessus
+   de la grille en mobile, puis à sa droite en desktop, et un
+   en-tête "Près de chez vous" apparaît.
+   ============================================================= */
+.categorie-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p1);
+    padding: 0 var(--padding-page-mobile) var(--padding-p1);
+}
+
+/* En-tête de section visible uniquement en mode carte */
+.resultats__head {
+    display: none;
+    margin-bottom: var(--padding-p2);
+}
+
+.categorie-layout.is-carte .resultats__head {
+    display: block;
+}
+
+.resultats__head h2 {
+    font-size: var(--fs-h3);
+}
+
+.resultats__sub {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.resultats-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--padding-p1) var(--padding-p2-2);
+    /* laisse la place aux tags posés à cheval sur les cartes */
+    padding-top: 12px;
+}
+
+/* Panneau carte : au-dessus de la grille tant que l'écran est
+   étroit, la carte Leaflet remplit le cadre arrondi. z-index: 0
+   isole les calques Leaflet du reste de la page. */
+.carte-panel {
+    position: relative;
+    z-index: 0;
+    order: -1;
+    height: 380px;
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    overflow: hidden;
+    box-shadow: var(--shadow-3);
+}
+
+.carte-panel[hidden] {
+    display: none;
+}
+
+.carte-osm {
+    width: 100%;
+    height: 100%;
+}
+
+/* Curseurs des biens : Leaflet positionne l'élément .carte-pin,
+   on ne dessine que son contenu (point ou pin maison) */
+.carte-pin {
+    background: none;
+    border: none;
+}
+
+.carte-pin__point {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-dark-green-blue);
+    border: 2px solid var(--color-white);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-3);
+    transition: transform var(--transition-fast);
+}
+
+.carte-pin:hover .carte-pin__point,
+.carte-pin:focus-visible .carte-pin__point {
+    transform: scale(1.3);
+}
+
+/* Bien sélectionné : le point laisse place au grand pin maison,
+   dont la pointe reste ancrée sur la ville */
+.carte-pin--maison svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 4px 4px rgba(24, 39, 75, 0.35));
+}
+
+.carte-pin__goutte {
+    fill: var(--color-dark-green-blue);
+}
+
+.carte-pin__maison {
+    stroke: var(--color-white);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Boutons zoom Leaflet repris à la charte : pastilles blanches
+   arrondies, pictogramme vert bleuté */
+.carte-panel .leaflet-control-zoom {
+    border: none;
+    box-shadow: none;
+}
+
+.carte-panel .leaflet-control-zoom a,
+.carte-panel .leaflet-touch .leaflet-control-zoom a {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    margin-bottom: 6px;
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-white);
+    color: var(--color-dark-green-blue);
+    box-shadow: var(--shadow-3);
+    font-family: var(--font-body);
+}
+
+.carte-panel .leaflet-control-zoom a:hover {
+    background-color: var(--color-beige);
+    color: var(--color-dark-green-blue);
+}
+
+/* En mode carte, l'annonce liée au curseur sélectionné est cerclée */
+.categorie-layout.is-carte .card-product.is-carte-active {
+    outline: 2px solid var(--color-corail);
+    outline-offset: 3px;
+    border-radius: var(--radius-r2);
+}
+
+/* =============================================================
+   PAGINATION
+   Pages en pastilles rondes, la page courante est remplie en
+   corail (maquette), chevron vers la page suivante.
+   ============================================================= */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding-p4);
+    margin-top: var(--padding-p1);
+}
+
+.pagination__page,
+.pagination__fleche {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.pagination__page:hover,
+.pagination__fleche:hover {
+    background: var(--color-beige);
+    color: var(--color-dark-green-blue);
+}
+
+.pagination__page.is-current {
+    background: var(--color-corail);
+    color: var(--color-white);
+    font-weight: var(--fw-semibold);
+}
+
+/* Chevron dessiné en masque, colorable via currentColor */
+.pagination__fleche::before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    background-color: currentColor;
+    -webkit-mask: var(--icon-chevron-right) center / contain no-repeat;
+    mask: var(--icon-chevron-right) center / contain no-repeat;
+}
+
+.pagination__points {
+    color: var(--color-grey-font-2);
+    letter-spacing: 2px;
+}
+
+/* =============================================================
+   TABLETTE (à partir de 768px)
+   Fil d'Ariane complet, pilules Catégories et Prix, libellé de
+   l'interrupteur carte, grille sur trois colonnes.
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .categorie-intro {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    /* Fil d'Ariane complet : la page courante reprend le gras */
+    .breadcrumb .breadcrumb__etape {
+        display: inline-flex;
+    }
+
+    .breadcrumb .breadcrumb__points {
+        display: none;
+    }
+
+    .bandeau-resa {
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+        padding: var(--padding-p1);
+    }
+
+    .bandeau-resa h1 {
+        font-size: var(--fs-h2);
+    }
+
+    .filtres-barre {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .pilule--md {
+        display: block;
+    }
+
+    .carte-toggle__texte {
+        display: inline;
+    }
+
+    .resultats-info {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .resultats-info__note {
+        display: inline;
+    }
+
+    .categorie-layout {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .resultats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--padding-p2) var(--padding-p2-2);
+    }
+}
+
+/* =============================================================
+   DESKTOP (à partir de 1024px)
+   Toutes les pilules, grille sur quatre colonnes ; en mode
+   carte la grille repasse à trois... puis deux colonnes le
+   temps que la carte occupe la moitié droite de l'écran.
+   ============================================================= */
+@media (min-width: 1024px) {
+
+    .categorie-intro {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .bandeau-resa {
+        margin-left: var(--padding-page-desktop);
+        margin-right: var(--padding-page-desktop);
+    }
+
+    .filtres-barre {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .pilule--lg {
+        display: block;
+    }
+
+    .resultats-info {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .categorie-layout {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .resultats-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    /* Mode carte : disposition en deux colonnes, la carte occupe
+       la moitié droite et suit le défilement ; la grille passe à
+       deux colonnes et seules six annonces restent visibles
+       (maquette : deux rangées de trois sur très grand écran) */
+    .categorie-layout.is-carte {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(340px, 46%);
+        align-items: start;
+    }
+
+    .categorie-layout.is-carte .carte-panel {
+        order: 0;
+        position: sticky;
+        top: var(--padding-p2);
+        height: min(900px, calc(100vh - 2 * var(--padding-p2)));
+    }
+
+    .categorie-layout.is-carte .resultats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .categorie-layout.is-carte .resultats-grid .card-product:nth-child(n + 7) {
+        display: none;
+    }
+}
+
+/* GRAND ÉCRAN (à partir de 1440px) : en mode carte la grille
+   retrouve les trois colonnes de la maquette desktop */
+@media (min-width: 1440px) {
+
+    .categorie-layout.is-carte .resultats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
