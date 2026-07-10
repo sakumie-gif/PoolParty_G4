@@ -37,7 +37,7 @@ get_header();
                 <p>Le constat est là : d'un côté des bassins sous-exploités qui coûtent cher à leurs propriétaires, de l'autre des familles, des amis et des sportifs en quête d'un coin d'eau tranquille. Pool Party naît en 2025 pour faire se rencontrer ces deux mondes.</p>
                 <p>Aujourd'hui, la plateforme référence des piscines, jacuzzis, spas, saunas et hammams chez des particuliers de toute l'Île-de-France. Chaque réservation aide un hôte à rentabiliser son espace et offre à un locataire un moment privilégié, loin de la foule.</p>
             </div>
-            <img class="apropos-histoire__img" src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-croissy.jpg'); ?>" alt="Piscine privée entourée de verdure chez un hôte Pool Party">
+            <img class="apropos-histoire__img" src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-croissy.jpg'); ?>" alt="Piscine privée entourée de verdure chez un hôte Pool Party" loading="lazy" decoding="async" width="800" height="533">
         </section>
 
         <!-- BLOC 4 : Chiffres clés -->

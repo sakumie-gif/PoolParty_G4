@@ -15,8 +15,8 @@ get_header();
         <!-- BLOC 1 : Hero + barre de recherche -->
         <section class="hero">
             <picture class="hero-image">
-                <source srcset="<?php echo esc_url(pp_asset('assets/images/hero/hero.webp')); ?>" type="image/webp">
-                <img src="<?php echo esc_url(pp_asset('assets/images/hero/hero.jpg')); ?>" alt="Femme se détendant dans une piscine à débordement entourée de végétation tropicale">
+                <source srcset="<?php echo esc_url(pp_asset('assets/images/hero/hero-original.webp')); ?>" type="image/webp">
+                <img src="<?php echo esc_url(pp_asset('assets/images/hero/hero-original.jpg')); ?>" width="1920" height="468" fetchpriority="high" decoding="async" alt="Femme se détendant dans une piscine à débordement entourée de végétation tropicale">
             </picture>
 
             <div class="hero-content">
@@ -60,19 +60,19 @@ get_header();
             <div class="categories-carousel">
                 <div class="categories-track">
                     <button type="button" class="categories-slide pos-m2" data-categorie="pres-de-chez-vous" aria-label="Voir la catégorie Près de chez vous" aria-pressed="false">
-                        <img src="<?php echo esc_url(pp_asset('assets/images/categories/categorie-1.jpg')); ?>" alt="">
+                        <img src="<?php echo esc_url(pp_asset('assets/images/categories/categorie-1.jpg')); ?>" alt="" loading="lazy" decoding="async" width="500" height="800">
                     </button>
                     <button type="button" class="categories-slide pos-m1" data-categorie="coup-de-coeur" aria-label="Voir la catégorie Coup de coeur" aria-pressed="false">
-                        <img src="<?php echo esc_url(pp_asset('assets/images/categories/categorie-2.jpg')); ?>" alt="">
+                        <img src="<?php echo esc_url(pp_asset('assets/images/categories/categorie-2.jpg')); ?>" alt="" loading="lazy" decoding="async" width="600" height="800">
                     </button>
                     <button type="button" class="categories-slide pos-0" data-categorie="nouveautes" aria-label="Voir la catégorie Nouveautés" aria-pressed="true">
-                        <img src="<?php echo esc_url(pp_asset('assets/images/categories/categorie-3.jpg')); ?>" alt="">
+                        <img src="<?php echo esc_url(pp_asset('assets/images/categories/categorie-3.jpg')); ?>" alt="" loading="lazy" decoding="async" width="533" height="800">
                     </button>
                     <button type="button" class="categories-slide pos-p1" data-categorie="spas-jacuzzis" aria-label="Voir la catégorie Spas et Jacuzzis" aria-pressed="false">
-                        <img src="<?php echo esc_url(pp_asset('assets/images/categories/categorie-4.jpg')); ?>" alt="">
+                        <img src="<?php echo esc_url(pp_asset('assets/images/categories/categorie-4.jpg')); ?>" alt="" loading="lazy" decoding="async" width="533" height="800">
                     </button>
                     <button type="button" class="categories-slide pos-p2" data-categorie="insolite" aria-label="Voir la catégorie Insolite" aria-pressed="false">
-                        <img src="<?php echo esc_url(pp_asset('assets/images/categories/categorie-5.jpg')); ?>" alt="">
+                        <img src="<?php echo esc_url(pp_asset('assets/images/categories/categorie-5.jpg')); ?>" alt="" loading="lazy" decoding="async" width="466" height="800">
                     </button>
                 </div>
                 <button type="button" class="carousel-control carousel-control--prev categories-control categories-control--prev" data-carousel-prev aria-label="Catégorie précédente"></button>
@@ -195,7 +195,7 @@ get_header();
                 <article class="card-temoignage">
                     <blockquote class="card-temoignage__quote">"Un après-midi magnifique pour l'anniversaire de ma fille. Le cadre était somptueux et l'hôte d'une gentillesse rare."</blockquote>
                     <footer class="card-temoignage__author">
-                        <img class="card-temoignage__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/temoin-lucie.jpg')); ?>" alt="Portrait de Lucie G.">
+                        <img class="card-temoignage__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/temoin-lucie.jpg')); ?>" alt="Portrait de Lucie G." loading="lazy" decoding="async" width="132" height="200">
                         <div>
                             <p class="card-temoignage__name">Lucie G.</p>
                             <p class="card-temoignage__meta"><span>Paris</span><span>Locataire</span></p>
@@ -206,7 +206,7 @@ get_header();
                 <article class="card-temoignage">
                     <blockquote class="card-temoignage__quote">"On cherchait un endroit calme pour souffler en amoureux un dimanche. La piscine était impeccable et le jardin parfait."</blockquote>
                     <footer class="card-temoignage__author">
-                        <img class="card-temoignage__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/temoin-thomas.jpg')); ?>" alt="Portrait de Thomas R.">
+                        <img class="card-temoignage__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/temoin-thomas.jpg')); ?>" alt="Portrait de Thomas R." loading="lazy" decoding="async" width="133" height="200">
                         <div>
                             <p class="card-temoignage__name">Thomas R.</p>
                             <p class="card-temoignage__meta"><span>Versailles</span><span>Locataire</span></p>
@@ -217,7 +217,7 @@ get_header();
                 <article class="card-temoignage">
                     <blockquote class="card-temoignage__quote">"Mes enfants ont passé une journée incroyable. Pouvoir profiter d'une piscine privée à vingt minutes de la maison, sans entretien, c'est un vrai luxe."</blockquote>
                     <footer class="card-temoignage__author">
-                        <img class="card-temoignage__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/temoin-sandrine.jpg')); ?>" alt="Portrait de Sandrine M.">
+                        <img class="card-temoignage__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/temoin-sandrine.jpg')); ?>" alt="Portrait de Sandrine M." loading="lazy" decoding="async" width="159" height="200">
                         <div>
                             <p class="card-temoignage__name">Sandrine M.</p>
                             <p class="card-temoignage__meta"><span>Melun</span><span>Locataire</span></p>
@@ -228,7 +228,7 @@ get_header();
                 <article class="card-temoignage">
                     <blockquote class="card-temoignage__quote">"Réservé pour les 30 ans d'un copain. Tout était prêt à notre arrivée, le jacuzzi marchait nickel et l'hôte nous a laissés tranquilles."</blockquote>
                     <footer class="card-temoignage__author">
-                        <img class="card-temoignage__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/temoin-julien.jpg')); ?>" alt="Portrait de Julien S.">
+                        <img class="card-temoignage__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/temoin-julien.jpg')); ?>" alt="Portrait de Julien S." loading="lazy" decoding="async" width="200" height="200">
                         <div>
                             <p class="card-temoignage__name">Julien S.</p>
                             <p class="card-temoignage__meta"><span>Paris</span><span>Locataire</span></p>
@@ -272,7 +272,7 @@ get_header();
 
             <div class="hotes-cards">
                 <article class="card-hote">
-                    <img class="card-hote__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/hote-paula.jpg')); ?>" alt="Portrait de Paula G.">
+                    <img class="card-hote__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/hote-paula.jpg')); ?>" alt="Portrait de Paula G." loading="lazy" decoding="async" width="300" height="300">
                     <h3 class="card-hote__name">Paula G.</h3>
                     <p class="card-hote__role">Hôte à Poissy</p>
                     <span class="rating">8,7</span>
@@ -280,7 +280,7 @@ get_header();
                 </article>
 
                 <article class="card-hote card-hote--extra">
-                    <img class="card-hote__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/hote-yoann.jpg')); ?>" alt="Portrait de Yoann D.">
+                    <img class="card-hote__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/hote-yoann.jpg')); ?>" alt="Portrait de Yoann D." loading="lazy" decoding="async" width="241" height="300">
                     <h3 class="card-hote__name">Yoann D.</h3>
                     <p class="card-hote__role">Hôte à Bussy</p>
                     <span class="rating">8,7</span>
@@ -288,7 +288,7 @@ get_header();
                 </article>
 
                 <article class="card-hote card-hote--extra">
-                    <img class="card-hote__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/hote-tony.jpg')); ?>" alt="Portrait de Tony S.">
+                    <img class="card-hote__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/hote-tony.jpg')); ?>" alt="Portrait de Tony S." loading="lazy" decoding="async" width="300" height="300">
                     <h3 class="card-hote__name">Tony S.</h3>
                     <p class="card-hote__role">Hôte à Chelles</p>
                     <span class="rating">8,7</span>
@@ -296,7 +296,7 @@ get_header();
                 </article>
 
                 <article class="card-hote">
-                    <img class="card-hote__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/hote-fraise.jpg')); ?>" alt="Portrait de Fraise T.">
+                    <img class="card-hote__photo" src="<?php echo esc_url(pp_asset('assets/images/temoignages/hote-fraise.jpg')); ?>" alt="Portrait de Fraise T." loading="lazy" decoding="async" width="200" height="300">
                     <h3 class="card-hote__name">Fraise T.</h3>
                     <p class="card-hote__role">Hôte à Montmorency</p>
                     <span class="rating">8,7</span>
@@ -313,7 +313,7 @@ get_header();
                     <p class="cta-hote__text">Rejoignez la plus grande communauté de partage d'espace aquatique d'Europe</p>
                     <a href="<?php echo esc_url(home_url('/proposer/')); ?>" class="btn btn-secondary cta-hote__btn">Commencez l'aventure côté propriétaire</a>
                 </div>
-                <img class="cta-hote__img" src="<?php echo esc_url(pp_asset('assets/images/cta/sauna.jpg')); ?>" alt="Femme assise dans un sauna en bois clair">
+                <img class="cta-hote__img" src="<?php echo esc_url(pp_asset('assets/images/cta/sauna.jpg')); ?>" alt="Femme assise dans un sauna en bois clair" loading="lazy" decoding="async" width="936" height="630">
             </div>
         </section>
 
@@ -356,27 +356,27 @@ get_header();
 
             <div class="evenements-grid">
                 <a class="card-event" href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>">
-                    <img src="<?php echo esc_url(pp_asset('assets/images/evenements/anniversaire.jpg')); ?>" alt="Ananas à lunettes de soleil entouré de ballons de fête">
+                    <img src="<?php echo esc_url(pp_asset('assets/images/evenements/anniversaire.jpg')); ?>" alt="Ananas à lunettes de soleil entouré de ballons de fête" loading="lazy" decoding="async" width="834" height="556">
                     <span class="card-event__label">Anniversaire</span>
                 </a>
                 <a class="card-event" href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>">
-                    <img src="<?php echo esc_url(pp_asset('assets/images/evenements/famille.jpg')); ?>" alt="Parents et enfant jouant dans une piscine avec une bouée">
+                    <img src="<?php echo esc_url(pp_asset('assets/images/evenements/famille.jpg')); ?>" alt="Parents et enfant jouant dans une piscine avec une bouée" loading="lazy" decoding="async" width="900" height="566">
                     <span class="card-event__label">Famille</span>
                 </a>
                 <a class="card-event" href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>">
-                    <img src="<?php echo esc_url(pp_asset('assets/images/evenements/detente.jpg')); ?>" alt="Femme se relaxant dans un sauna">
+                    <img src="<?php echo esc_url(pp_asset('assets/images/evenements/detente.jpg')); ?>" alt="Femme se relaxant dans un sauna" loading="lazy" decoding="async" width="900" height="600">
                     <span class="card-event__label">Détente</span>
                 </a>
                 <a class="card-event" href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>">
-                    <img src="<?php echo esc_url(pp_asset('assets/images/evenements/pool-party.jpg')); ?>" alt="Groupe d'amis sautant dans une piscine tropicale au coucher du soleil">
+                    <img src="<?php echo esc_url(pp_asset('assets/images/evenements/pool-party.jpg')); ?>" alt="Groupe d'amis sautant dans une piscine tropicale au coucher du soleil" loading="lazy" decoding="async" width="900" height="600">
                     <span class="card-event__label">Pool Party</span>
                 </a>
                 <a class="card-event" href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>">
-                    <img src="<?php echo esc_url(pp_asset('assets/images/evenements/sport.jpg')); ?>" alt="Séance d'aquagym dans une piscine intérieure">
+                    <img src="<?php echo esc_url(pp_asset('assets/images/evenements/sport.jpg')); ?>" alt="Séance d'aquagym dans une piscine intérieure" loading="lazy" decoding="async" width="833" height="667">
                     <span class="card-event__label">Sport</span>
                 </a>
                 <a class="card-event" href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>">
-                    <img src="<?php echo esc_url(pp_asset('assets/images/evenements/team-building.jpg')); ?>" alt="Mains d'une équipe réunies au centre d'un cercle">
+                    <img src="<?php echo esc_url(pp_asset('assets/images/evenements/team-building.jpg')); ?>" alt="Mains d'une équipe réunies au centre d'un cercle" loading="lazy" decoding="async" width="834" height="556">
                     <span class="card-event__label">Team building</span>
                 </a>
             </div>

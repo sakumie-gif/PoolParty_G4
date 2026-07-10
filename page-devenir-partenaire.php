@@ -14,7 +14,7 @@ get_header();
 $pp_partenaire_envoye = (
     (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST')
     && isset($_POST['pp_partenaire_nonce'])
-    && wp_verify_nonce($_POST['pp_partenaire_nonce'], 'pp_partenaire_envoi')
+    && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['pp_partenaire_nonce'])), 'pp_partenaire_envoi')
 );
 ?>
 
@@ -45,7 +45,7 @@ $pp_partenaire_envoye = (
                         <a href="<?php echo esc_url(home_url('/contact/')); ?>" class="btn btn-tertiary btn-medium">Poser une question</a>
                     </div>
                 </div>
-                <img class="partenaire-hero__photo" src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/evenements/team-building.jpg'); ?>" alt="Mains d'une équipe réunies au centre d'un cercle">
+                <img class="partenaire-hero__photo" src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/evenements/team-building.jpg'); ?>" alt="Mains d'une équipe réunies au centre d'un cercle" loading="lazy" decoding="async" width="834" height="556">
             </div>
         </section>
 
@@ -107,7 +107,7 @@ $pp_partenaire_envoye = (
 
             <div class="partenaire-profils__grille">
                 <article class="card-profil">
-                    <img class="card-profil__photo" src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/evenements/detente.jpg'); ?>" alt="Femme se relaxant dans un sauna">
+                    <img class="card-profil__photo" src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/evenements/detente.jpg'); ?>" alt="Femme se relaxant dans un sauna" loading="lazy" decoding="async" width="900" height="600">
                     <div class="card-profil__corps">
                         <h3 class="card-profil__titre">Professionnels du bien-être</h3>
                         <p class="card-profil__texte">Proposez vos prestations en option des réservations et transformez chaque baignade en parenthèse de détente.</p>
@@ -119,7 +119,7 @@ $pp_partenaire_envoye = (
                     </div>
                 </article>
                 <article class="card-profil">
-                    <img class="card-profil__photo" src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/evenements/anniversaire.jpg'); ?>" alt="Ananas à lunettes de soleil entouré de ballons de fête">
+                    <img class="card-profil__photo" src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/evenements/anniversaire.jpg'); ?>" alt="Ananas à lunettes de soleil entouré de ballons de fête" loading="lazy" decoding="async" width="834" height="556">
                     <div class="card-profil__corps">
                         <h3 class="card-profil__titre">Prestataires d'événements</h3>
                         <p class="card-profil__texte">Anniversaires, team buildings, pool parties : équipez les fêtes organisées dans les espaces de nos hôtes.</p>
@@ -131,7 +131,7 @@ $pp_partenaire_envoye = (
                     </div>
                 </article>
                 <article class="card-profil">
-                    <img class="card-profil__photo" src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-torcy.jpg'); ?>" alt="Piscine extérieure entretenue dans un jardin">
+                    <img class="card-profil__photo" src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-torcy.jpg'); ?>" alt="Piscine extérieure entretenue dans un jardin" loading="lazy" decoding="async" width="800" height="533">
                     <div class="card-profil__corps">
                         <h3 class="card-profil__titre">Experts de la piscine</h3>
                         <p class="card-profil__texte">Accompagnez nos hôtes dans l'entretien et la mise aux normes de leurs bassins, avec des offres réservées à la communauté.</p>

@@ -44,7 +44,7 @@ while (have_posts()) : the_post();
             <!-- Image d'en-tête -->
             <?php if ($image) : ?>
                 <div class="article-hero">
-                    <img src="<?php echo esc_url(pp_asset($image)); ?>" alt="<?php echo esc_attr($alt); ?>">
+                    <img src="<?php echo esc_url(pp_asset($image)); ?>" alt="<?php echo esc_attr($alt); ?>" loading="lazy" decoding="async">
                 </div>
             <?php endif; ?>
 

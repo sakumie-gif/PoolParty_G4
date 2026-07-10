@@ -309,7 +309,7 @@ function poolparty_g4_afficher_metabox_bien($post) {
 }
 
 function poolparty_g4_enregistrer_bien($post_id) {
-    if (!isset($_POST['pp_bien_nonce']) || !wp_verify_nonce($_POST['pp_bien_nonce'], 'pp_enregistrer_bien')) {
+    if (!isset($_POST['pp_bien_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['pp_bien_nonce'])), 'pp_enregistrer_bien')) {
         return;
     }
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -572,7 +572,7 @@ function poolparty_g4_image_bien($post_id, $classe = '') {
         return '';
     }
     $classe_attr = $classe ? ' class="' . esc_attr($classe) . '"' : '';
-    return '<img src="' . esc_url(pp_asset($image)) . '" alt="' . esc_attr($alt) . '"' . $classe_attr . '>';
+    return '<img src="' . esc_url(pp_asset($image)) . '" alt="' . esc_attr($alt) . '" loading="lazy" decoding="async"' . $classe_attr . '>';
 }
 
 /**

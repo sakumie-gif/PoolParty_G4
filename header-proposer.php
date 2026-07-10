@@ -24,8 +24,8 @@
     <!-- HEADER allégé : logo + menu burger (pour circuler sur le site) -->
     <header class="proposer-header">
         <a href="<?php echo esc_url(home_url('/')); ?>" class="header-logo" aria-label="Accueil Pool Party">
-            <img src="<?php echo esc_url(pp_asset('assets/images/logo/logo-full.png')); ?>" alt="Pool Party" class="header-logo-full">
-            <img src="<?php echo esc_url(pp_asset('assets/images/logo/logo-icon.png')); ?>" alt="Pool Party" class="header-logo-icon">
+            <img src="<?php echo esc_url(pp_asset('assets/images/logo/logo-full.png')); ?>" alt="Pool Party" class="header-logo-full" decoding="async" width="459" height="174">
+            <img src="<?php echo esc_url(pp_asset('assets/images/logo/logo-icon.png')); ?>" alt="Pool Party" class="header-logo-icon" decoding="async" width="127" height="158">
         </a>
 
         <!-- Navigation : même menu déroulant que l'en-tête principal, pour

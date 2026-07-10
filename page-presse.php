@@ -183,7 +183,7 @@ $presse_dir = trailingslashit(get_template_directory_uri()) . 'assets/presse/';
                 <li>
                     <article class="presse-ressource">
                         <div class="presse-ressource__visuel presse-ressource__visuel--logo">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/logo/logo-full.png'); ?>" alt="Logo Pool Party sur fond beige">
+                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/logo/logo-full.png'); ?>" alt="Logo Pool Party sur fond beige" decoding="async" width="459" height="174">
                         </div>
                         <h3 class="presse-ressource__titre">Logos</h3>
                         <p class="presse-ressource__texte">Le logo Pool Party en versions couleur et blanche, formats PNG et SVG.</p>
@@ -193,7 +193,7 @@ $presse_dir = trailingslashit(get_template_directory_uri()) . 'assets/presse/';
                 <li>
                     <article class="presse-ressource">
                         <div class="presse-ressource__visuel">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-croissy.jpg'); ?>" alt="Piscine privée référencée sur Pool Party, entourée d'un jardin">
+                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-croissy.jpg'); ?>" alt="Piscine privée référencée sur Pool Party, entourée d'un jardin" loading="lazy" decoding="async" width="800" height="533">
                         </div>
                         <h3 class="presse-ressource__titre">Photos officielles</h3>
                         <p class="presse-ressource__texte">Une sélection de photos haute définition d'espaces référencés sur la plateforme.</p>
@@ -216,7 +216,7 @@ $presse_dir = trailingslashit(get_template_directory_uri()) . 'assets/presse/';
                 <li>
                     <article class="presse-ressource">
                         <div class="presse-ressource__visuel">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/hero/hero.jpg'); ?>" alt="Baignade dans une piscine louée avec Pool Party">
+                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/hero/hero.jpg'); ?>" alt="Baignade dans une piscine louée avec Pool Party" decoding="async" width="2880" height="702">
                         </div>
                         <h3 class="presse-ressource__titre">Dossier de presse</h3>
                         <p class="presse-ressource__texte">L'histoire de Pool Party, son modèle, son équipe et ses chiffres clés en un document.</p>

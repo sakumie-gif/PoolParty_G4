@@ -207,7 +207,7 @@ if ($pp_bien_ok) {
 
                 <div class="recap">
                     <a class="recap__annonce" href="<?php echo esc_url($pp_r_lien); ?>" aria-label="Voir la fiche de l'annonce : <?php echo esc_attr($pp_r_titre); ?>">
-                        <img src="<?php echo esc_url($pp_r_image); ?>" alt="<?php echo esc_attr($pp_r_alt); ?>">
+                        <img src="<?php echo esc_url($pp_r_image); ?>" alt="<?php echo esc_attr($pp_r_alt); ?>" loading="lazy" decoding="async">
                         <div>
                             <p class="recap__titre"><?php echo esc_html($pp_r_titre); ?></p>
                             <span class="rating rating--small"><?php echo esc_html($pp_r_note); ?> <span class="rating__count">(<?php echo esc_html($pp_r_avis); ?> avis)</span></span>

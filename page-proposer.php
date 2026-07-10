@@ -179,7 +179,10 @@ get_header('proposer');
                     </div>
                 </form>
 
-                <img class="proposer-map" src="<?php echo esc_url(pp_asset('assets/images/produit/map.png')); ?>" alt="Carte de localisation de votre espace, le repère sera ajusté après validation de l'adresse">
+                <picture>
+                    <source srcset="<?php echo esc_url(pp_asset('assets/images/produit/map.webp')); ?>" type="image/webp">
+                    <img class="proposer-map" src="<?php echo esc_url(pp_asset('assets/images/produit/map.png')); ?>" width="1760" height="480" loading="lazy" decoding="async" alt="Carte de localisation de votre espace, le repère sera ajusté après validation de l'adresse">
+                </picture>
             </div>
         </section>
 
@@ -492,7 +495,7 @@ get_header('proposer');
                 <div class="recap-layout">
                     <article class="card-product recap-card">
                         <div class="card-product__media">
-                            <img src="<?php echo esc_url(pp_asset('assets/images/piscines/annonce-lagny.jpg')); ?>" alt="Photo de couverture de votre annonce" data-recap="photo">
+                            <img src="<?php echo esc_url(pp_asset('assets/images/piscines/annonce-lagny.jpg')); ?>" alt="Photo de couverture de votre annonce" data-recap="photo" loading="lazy" decoding="async" width="1024" height="728">
                         </div>
                         <span class="tag tag--nouveau card-product__tag">Nouveau</span>
                         <div class="card-product__body">
@@ -575,7 +578,7 @@ get_header('proposer');
             <div class="popup__body proposer-apercu__corps">
                 <article class="card-product proposer-apercu__carte">
                     <div class="card-product__media">
-                        <img src="<?php echo esc_url(pp_asset('assets/images/piscines/annonce-lagny.jpg')); ?>" alt="Photo de couverture de votre annonce" data-apercu="photo">
+                        <img src="<?php echo esc_url(pp_asset('assets/images/piscines/annonce-lagny.jpg')); ?>" alt="Photo de couverture de votre annonce" data-apercu="photo" loading="lazy" decoding="async" width="1024" height="728">
                     </div>
                     <span class="tag tag--nouveau card-product__tag">Nouveau</span>
                     <div class="card-product__body">

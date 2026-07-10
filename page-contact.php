@@ -14,7 +14,7 @@ get_header();
 $pp_contact_envoye = (
     (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST')
     && isset($_POST['pp_contact_nonce'])
-    && wp_verify_nonce($_POST['pp_contact_nonce'], 'pp_contact_envoi')
+    && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['pp_contact_nonce'])), 'pp_contact_envoi')
 );
 ?>
 
@@ -49,7 +49,7 @@ $pp_contact_envoye = (
                 <section class="contact-card" aria-labelledby="contact-card-titre">
                     <h2 id="contact-card-titre">Contactez-nous</h2>
                     <p class="contact-card__sub">Parlons de votre projet</p>
-                    <img class="contact-card__photo" src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/contact/contact-telephone.jpg'); ?>" alt="Un conseiller Pool Party répond à un message sur son téléphone">
+                    <img class="contact-card__photo" src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/contact/contact-telephone.jpg'); ?>" alt="Un conseiller Pool Party répond à un message sur son téléphone" loading="lazy" decoding="async" width="818" height="372">
 
                     <ul class="contact-card__infos">
                         <li class="contact-info">

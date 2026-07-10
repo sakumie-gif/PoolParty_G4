@@ -12,6 +12,10 @@
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php if ( is_front_page() ) : ?>
+    <!-- Preload de l'image hero (LCP) : version legere 96 Ko servie par defaut -->
+    <link rel="preload" as="image" href="<?php echo esc_url(pp_asset('assets/images/hero/hero-original.webp')); ?>" fetchpriority="high">
+    <?php endif; ?>
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
@@ -29,30 +33,30 @@
 
             <!-- Logo -->
             <a href="<?php echo esc_url(home_url('/')); ?>" class="header-logo" aria-label="Accueil Pool Party">
-                <img src="<?php echo esc_url(pp_asset('assets/images/logo/logo-full.png')); ?>" alt="Pool Party" class="header-logo-full">
-                <img src="<?php echo esc_url(pp_asset('assets/images/logo/logo-icon.png')); ?>" alt="Pool Party" class="header-logo-icon">
+                <img src="<?php echo esc_url(pp_asset('assets/images/logo/logo-full.png')); ?>" alt="Pool Party" class="header-logo-full" decoding="async" width="459" height="174">
+                <img src="<?php echo esc_url(pp_asset('assets/images/logo/logo-icon.png')); ?>" alt="Pool Party" class="header-logo-icon" decoding="async" width="127" height="158">
             </a>
 
             <!-- Barre de recherche (visible sur grand écran) -->
             <form class="header-search" action="<?php echo esc_url(get_post_type_archive_link('bien')); ?>" role="search" aria-label="Rechercher un espace">
                 <div class="search-field">
                     <label for="search-quoi">Quoi</label>
-                    <input type="text" id="search-quoi" name="quoi" placeholder="Choisissez votre bien" value="<?php echo esc_attr(isset($_GET['quoi']) ? wp_unslash($_GET['quoi']) : ''); ?>">
+                    <input type="text" id="search-quoi" name="quoi" placeholder="Choisissez votre bien" value="<?php echo esc_attr(isset($_GET['quoi']) ? sanitize_text_field(wp_unslash($_GET['quoi'])) : ''); ?>">
                 </div>
                 <span class="search-divider" aria-hidden="true"></span>
                 <div class="search-field">
                     <label for="search-adresse">Adresse</label>
-                    <input type="text" id="search-adresse" name="adresse" placeholder="Où cherchez-vous ?" value="<?php echo esc_attr(isset($_GET['adresse']) ? wp_unslash($_GET['adresse']) : ''); ?>">
+                    <input type="text" id="search-adresse" name="adresse" placeholder="Où cherchez-vous ?" value="<?php echo esc_attr(isset($_GET['adresse']) ? sanitize_text_field(wp_unslash($_GET['adresse'])) : ''); ?>">
                 </div>
                 <span class="search-divider" aria-hidden="true"></span>
                 <div class="search-field search-field--small">
                     <label for="search-date">Date</label>
-                    <input type="text" id="search-date" name="date" placeholder="Quand ?" value="<?php echo esc_attr(isset($_GET['date']) ? wp_unslash($_GET['date']) : ''); ?>">
+                    <input type="text" id="search-date" name="date" placeholder="Quand ?" value="<?php echo esc_attr(isset($_GET['date']) ? sanitize_text_field(wp_unslash($_GET['date'])) : ''); ?>">
                 </div>
                 <span class="search-divider" aria-hidden="true"></span>
                 <div class="search-field search-field--small">
                     <label for="search-invites">Invités</label>
-                    <input type="text" id="search-invites" name="invites" placeholder="Combien ?" value="<?php echo esc_attr(isset($_GET['invites']) ? wp_unslash($_GET['invites']) : ''); ?>">
+                    <input type="text" id="search-invites" name="invites" placeholder="Combien ?" value="<?php echo esc_attr(isset($_GET['invites']) ? sanitize_text_field(wp_unslash($_GET['invites'])) : ''); ?>">
                 </div>
                 <button type="submit" class="search-submit" aria-label="Lancer la recherche">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

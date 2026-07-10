@@ -160,19 +160,19 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
             <div class="galerie__mobile">
                 <div class="galerie__carrousel" role="group" aria-roledescription="carrousel" aria-label="Faites défiler les photos">
                     <button type="button" class="galerie__diapo" aria-haspopup="dialog" aria-controls="galerie-popup" aria-label="Agrandir : <?php echo esc_attr($pp_alt); ?>">
-                        <img src="<?php echo esc_url($pp_image); ?>" alt="">
+                        <img src="<?php echo esc_url($pp_image); ?>" alt="" loading="lazy" decoding="async" width="800" height="533">
                     </button>
                     <button type="button" class="galerie__diapo" aria-haspopup="dialog" aria-controls="galerie-popup" aria-label="Agrandir : la vue dégagée depuis le bord du bassin">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-champs.jpg'); ?>" alt="">
+                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-champs.jpg'); ?>" alt="" loading="lazy" decoding="async" width="800" height="533">
                     </button>
                     <button type="button" class="galerie__diapo" aria-haspopup="dialog" aria-controls="galerie-popup" aria-label="Agrandir : le coin détente avec transats sur la terrasse en bois">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-croissy.jpg'); ?>" alt="">
+                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-croissy.jpg'); ?>" alt="" loading="lazy" decoding="async" width="800" height="533">
                     </button>
                     <button type="button" class="galerie__diapo" aria-haspopup="dialog" aria-controls="galerie-popup" aria-label="Agrandir : le jardin planté de palmiers et de graminées vu de la maison">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-lagny.jpg'); ?>" alt="">
+                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-lagny.jpg'); ?>" alt="" loading="lazy" decoding="async" width="1024" height="728">
                     </button>
                     <button type="button" class="galerie__diapo" aria-haspopup="dialog" aria-controls="galerie-popup" aria-label="Agrandir : l'allée gravillonnée qui mène au portillon d'accès de la piscine">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-chelles.jpg'); ?>" alt="">
+                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-chelles.jpg'); ?>" alt="" loading="lazy" decoding="async" width="800" height="597">
                     </button>
                 </div>
                 <div class="galerie__points" aria-hidden="true">
@@ -186,20 +186,20 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
             </div>
 
             <figure class="galerie__principale">
-                <img src="<?php echo esc_url($pp_image); ?>" alt="<?php echo esc_attr($pp_alt); ?>" id="galerie-photo">
+                <img src="<?php echo esc_url($pp_image); ?>" alt="<?php echo esc_attr($pp_alt); ?>" id="galerie-photo" decoding="async" fetchpriority="high" width="800" height="533">
             </figure>
             <div class="galerie__vignettes" role="group" aria-label="Choisir la photo affichée en grand">
                 <button type="button" class="galerie__vignette" aria-label="Afficher cette photo en grand">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-champs.jpg'); ?>" alt="La vue dégagée depuis le bord du bassin">
+                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-champs.jpg'); ?>" alt="La vue dégagée depuis le bord du bassin" loading="lazy" decoding="async" width="800" height="533">
                 </button>
                 <button type="button" class="galerie__vignette" aria-label="Afficher cette photo en grand">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-croissy.jpg'); ?>" alt="Le coin détente avec transats sur la terrasse en bois">
+                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-croissy.jpg'); ?>" alt="Le coin détente avec transats sur la terrasse en bois" loading="lazy" decoding="async" width="800" height="533">
                 </button>
                 <button type="button" class="galerie__vignette" aria-label="Afficher cette photo en grand">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-lagny.jpg'); ?>" alt="Le jardin planté de palmiers et de graminées vu de la maison">
+                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-lagny.jpg'); ?>" alt="Le jardin planté de palmiers et de graminées vu de la maison" loading="lazy" decoding="async" width="1024" height="728">
                 </button>
                 <button type="button" class="galerie__vignette" aria-label="Afficher cette photo en grand">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-chelles.jpg'); ?>" alt="L'allée gravillonnée qui mène au portillon d'accès de la piscine">
+                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-chelles.jpg'); ?>" alt="L'allée gravillonnée qui mène au portillon d'accès de la piscine" loading="lazy" decoding="async" width="800" height="597">
                 </button>
             </div>
             <button type="button" class="galerie__toutes" aria-haspopup="dialog" aria-controls="galerie-popup">
@@ -214,11 +214,11 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
                 <button type="button" class="popup__close" aria-label="Fermer la galerie"></button>
                 <h2 class="popup__title" id="galerie-popup-titre">Toutes les photos</h2>
                 <div class="popup__body galerie-popup__liste">
-                    <img src="<?php echo esc_url($pp_image); ?>" alt="<?php echo esc_attr($pp_alt); ?>">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-champs.jpg'); ?>" alt="La vue dégagée depuis le bord du bassin">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-croissy.jpg'); ?>" alt="Le coin détente avec transats sur la terrasse en bois">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-lagny.jpg'); ?>" alt="Le jardin planté de palmiers et de graminées vu de la maison">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-chelles.jpg'); ?>" alt="L'allée gravillonnée qui mène au portillon d'accès de la piscine">
+                    <img src="<?php echo esc_url($pp_image); ?>" alt="<?php echo esc_attr($pp_alt); ?>" loading="lazy" decoding="async" width="800" height="533">
+                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-champs.jpg'); ?>" alt="La vue dégagée depuis le bord du bassin" loading="lazy" decoding="async" width="800" height="533">
+                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-croissy.jpg'); ?>" alt="Le coin détente avec transats sur la terrasse en bois" loading="lazy" decoding="async" width="800" height="533">
+                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-lagny.jpg'); ?>" alt="Le jardin planté de palmiers et de graminées vu de la maison" loading="lazy" decoding="async" width="1024" height="728">
+                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-chelles.jpg'); ?>" alt="L'allée gravillonnée qui mène au portillon d'accès de la piscine" loading="lazy" decoding="async" width="800" height="597">
                 </div>
             </div>
         </div>
@@ -230,7 +230,7 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
 
                 <!-- Hôte -->
                 <div class="hote">
-                    <img class="hote__avatar" src="<?php echo esc_url($pp_hote_photo); ?>" alt="">
+                    <img class="hote__avatar" src="<?php echo esc_url($pp_hote_photo); ?>" alt="" loading="lazy" decoding="async" width="200" height="200">
                     <div>
                         <p class="hote__nom">Hôte : <?php echo esc_html($pp_hote ? $pp_hote['prenom'] : ''); ?></p>
                         <p class="hote__infos">8 mois d'expérience en tant qu'hôte</p>
@@ -555,8 +555,11 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
                     <h2 id="localisation-titre">Où se situe l'espace</h2>
                     <p class="localisation__adresse">Boulogne-Billancourt, Paris, France</p>
                     <div class="localisation__carte">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/produit/map.png'); ?>" alt="Plan du quartier de l'annonce à Boulogne-Billancourt">
-                        <img class="map-pin localisation__pin" src="<?php echo esc_url(get_template_directory_uri() . '/assets/icons/pin-map.svg'); ?>" alt="">
+                        <picture>
+                            <source srcset="<?php echo esc_url(get_template_directory_uri() . '/assets/images/produit/map.webp'); ?>" type="image/webp">
+                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/produit/map.png'); ?>" width="1760" height="480" loading="lazy" decoding="async" alt="Plan du quartier de l'annonce à Boulogne-Billancourt">
+                        </picture>
+                        <img class="map-pin localisation__pin" src="<?php echo esc_url(get_template_directory_uri() . '/assets/icons/pin-map.svg'); ?>" alt="" loading="lazy" decoding="async">
                     </div>
                 </section>
 
@@ -580,7 +583,7 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
                         <div class="hote-carte__profil">
                             <h2 class="hote-carte__titre" id="hote-titre">Faites connaissance avec votre hôte</h2>
                             <div class="hote-carte__identite">
-                                <img class="hote-carte__avatar" src="<?php echo esc_url($pp_hote_photo); ?>" alt="">
+                                <img class="hote-carte__avatar" src="<?php echo esc_url($pp_hote_photo); ?>" alt="" loading="lazy" decoding="async" width="200" height="200">
                                 <div>
                                     <p class="hote-carte__nom"><?php echo esc_html($pp_hote ? $pp_hote['prenom'] : ''); ?></p>
                                     <p class="hote-carte__depuis">Hôte depuis 8 mois</p>

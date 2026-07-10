@@ -1144,6 +1144,13 @@ textarea.form-field__input {
     opacity: 1;
 }
 
+/* Focus clavier : l'outline par défaut du champ est retiré (border:none
+   sur l'input), on rend donc le focus visible sur la pilule entière. */
+.input-search:focus-within {
+    border-color: var(--color-dark-green-blue);
+    box-shadow: 0 0 0 3px rgba(48, 94, 99, 0.30);
+}
+
 /* Pastille ronde de soumission : loupe blanche sur vert bleuté */
 .input-search__submit {
     display: inline-flex;
@@ -2396,7 +2403,8 @@ textarea.form-field__input {
         position: absolute;
         inset: 47px 83px -47px -83px;
         border-radius: 36px;
-        background: url("../assets/images/popup/texture-eau.jpg") center / cover no-repeat;
+        background: url("../assets/images/popup/texture-eau.jpg") center / cover no-repeat; /* fallback */
+        background-image: image-set(url("../assets/images/popup/texture-eau.webp") type("image/webp"), url("../assets/images/popup/texture-eau.jpg") type("image/jpeg"));
         box-shadow: var(--shadow-search);
     }
 
@@ -4433,6 +4441,13 @@ html.pp-a11y-contrast body {
     --color-green: #45605b;
     --color-grey-border: #6a6a6a;
     --color-grey-border-2: #5c5c5c;
+    /* Corail assombri pour atteindre le contraste AA 4,5:1 avec le
+       texte blanc des boutons CTA (le corail Figma #CA8171 reste la
+       couleur par défaut du site, hors mode contraste renforcé). */
+    --color-corail: #B95A45;
+    --color-corail-hover: #9C4C3A;
+    /* Étiquette jaune assombrie pour le texte blanc des badges */
+    --color-yellow-tag: #8F5510;
     background: var(--color-white);
 }
 

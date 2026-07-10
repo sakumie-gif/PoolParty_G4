@@ -57,7 +57,7 @@ $journal = new WP_Query(array(
                 <h2 class="sr-only" id="actus-featured-titre">À la une</h2>
                 <article class="actus-une">
                     <a class="actus-une__media" href="<?php the_permalink(); ?>" aria-hidden="true" tabindex="-1">
-                        <img src="<?php echo esc_url(pp_asset($image)); ?>" alt="<?php echo esc_attr($alt); ?>">
+                        <img src="<?php echo esc_url(pp_asset($image)); ?>" alt="<?php echo esc_attr($alt); ?>" loading="lazy" decoding="async">
                     </a>
                     <div class="actus-une__body">
                         <div class="actus-card__entete">
@@ -85,7 +85,7 @@ $journal = new WP_Query(array(
                         <li>
                             <article class="actus-card">
                                 <a class="actus-card__media" href="<?php the_permalink(); ?>" aria-hidden="true" tabindex="-1">
-                                    <img src="<?php echo esc_url(pp_asset($image)); ?>" alt="<?php echo esc_attr($alt); ?>">
+                                    <img src="<?php echo esc_url(pp_asset($image)); ?>" alt="<?php echo esc_attr($alt); ?>" loading="lazy" decoding="async">
                                 </a>
                                 <div class="actus-card__body">
                                     <div class="actus-card__entete">
