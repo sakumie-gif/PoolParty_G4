@@ -466,12 +466,9 @@
     color: var(--color-dark-green-blue);
 }
 
-/* En mode carte, l'annonce liée au curseur sélectionné est cerclée */
-.categorie-layout.is-carte .card-product.is-carte-active {
-    outline: 2px solid var(--color-corail);
-    outline-offset: 3px;
-    border-radius: var(--radius-r2);
-}
+/* En mode carte, la tuile survolée ne reçoit aucune surbrillance : le lien
+   avec la carte passe par le pin maison. La classe is-carte-active reste
+   posée en JS pour le défilement vers l'annonce au clic d'un pin. */
 
 /* =============================================================
    PAGINATION

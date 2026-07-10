@@ -1361,6 +1361,13 @@ textarea.form-field__input {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* zoom doux au survol de la tuile, cadré par l'overflow:hidden du media */
+    transition: transform var(--transition-medium);
+}
+
+.card-product:hover .card-product__media img,
+.card-product:focus-within .card-product__media img {
+    transform: scale(1.06);
 }
 
 /* Coeur favori posé sur la photo ; passe au-dessus du lien étendu
