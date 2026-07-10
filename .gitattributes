@@ -1,0 +1,16 @@
+# Normalise les fins de ligne : LF dans le depot et sur le serveur Linux (o2switch)
+* text=auto eol=lf
+
+# Fichiers binaires : ne pas toucher
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
