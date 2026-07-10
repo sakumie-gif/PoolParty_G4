@@ -1041,6 +1041,14 @@ a:hover {
     outline: none;
 }
 
+/* Focus clavier : anneau visible distinct du survol (RGAA 3.2 / WCAG 2.4.7).
+   :focus-visible ne se déclenche pas au clic souris → invisible pour ces
+   utilisateurs, donc sans impact sur la maquette. */
+.form-field__input:focus-visible {
+    outline: 2px solid var(--color-dark-green-blue-2);
+    outline-offset: 2px;
+}
+
 /* Champ verrouillé : valeur imposée, non modifiable ET non cliquable —
    ex. le pays de l'annonce (Pool Party n'opère qu'en France). On le grise
    pour signaler qu'il n'y a rien à saisir ni à choisir. À ne pas confondre
@@ -1137,6 +1145,13 @@ textarea.form-field__input {
     font-family: var(--font-input);
     font-size: var(--fs-p2);
     color: var(--color-grey-font-1);
+}
+
+/* Focus clavier de la recherche mobile : anneau sur la pilule entière
+   (le champ interne n'a pas de bordure propre). RGAA 3.2 / WCAG 2.4.7. */
+.input-search:focus-within {
+    outline: 2px solid var(--color-dark-green-blue-2);
+    outline-offset: 2px;
 }
 
 .input-search input::placeholder {

@@ -68,7 +68,7 @@
 
             <!-- Recherche simple (mobile et tablette), composant Input Search -->
             <form class="input-search header-search-simple" action="<?php echo esc_url(get_post_type_archive_link('bien')); ?>" role="search" aria-label="Rechercher un espace">
-                <input type="search" name="recherche" placeholder="Trouver un espace">
+                <input type="search" name="recherche" placeholder="Trouver un espace" aria-label="Trouver un espace">
                 <button type="submit" class="input-search__submit" aria-label="Lancer la recherche">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
