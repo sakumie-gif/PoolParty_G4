@@ -1450,11 +1450,10 @@ textarea.form-field__input {
     /* interligne resserré : sur deux lignes l'écart entre « Piscine »
        et « enterrée » restait trop aéré à 1.2 */
     line-height: 1.05;
-    /* réserve toujours deux lignes de titre : les noms courts (« Jacuzzi »,
-       « Sauna ») occupent la même hauteur que « Piscine enterrée » qui
-       s'enroule sur deux lignes, sinon le prix remontait d'une ligne et les
-       tuiles d'une rangée n'alignaient plus leurs prix (effet de vagues) */
-    min-height: 2.1em;
+    /* pas de hauteur réservée : les noms courts (« Spa », « Jacuzzi ») ne
+       gardent plus une 2e ligne vide sous le titre. Les prix d'une rangée
+       restent alignés car les cartes sont étirées à la même hauteur et le
+       prix est collé en bas (body flex:1 + price margin-top:auto). */
 }
 
 /* Le titre est un lien vers la fiche annonce : noir au repos (annule le
