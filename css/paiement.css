@@ -471,9 +471,13 @@
         margin-right: var(--padding-page-desktop);
     }
 
+    /* Largeur standard des sections (contenu plafonne a 1766px centre par
+       --padding-page-desktop), comme le hero et la bande de garanties. Un
+       ancien max-width:900px combine a cette gouttiere faisait exploser le
+       padding sur grand ecran (jusqu'a ~400px de chaque cote) et reduisait
+       les tuiles a une colonne minuscule ; supprime pour qu'elles suivent
+       la largeur de la page. */
     .paiement-faq {
-        max-width: 900px;
-        margin: 0 auto;
         padding-left: var(--padding-page-desktop);
         padding-right: var(--padding-page-desktop);
     }
