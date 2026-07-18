@@ -22,6 +22,7 @@ $pp_note_fr = str_replace('.', ',', $pp_note);
 $pp_nb_avis = poolparty_g4_meta($pp_id, 'nb_avis');
 $pp_nb_avis_int = (int) $pp_nb_avis;
 $pp_cap     = poolparty_g4_capacite(poolparty_g4_meta($pp_id, 'capacite_min'), poolparty_g4_meta($pp_id, 'capacite_max'));
+$pp_capmax  = max(1, (int) poolparty_g4_meta($pp_id, 'capacite_max'));
 $pp_favori  = poolparty_g4_meta($pp_id, 'favori_id');
 $pp_hote    = poolparty_g4_get_hote(poolparty_g4_meta($pp_id, 'id_hote'));
 
@@ -687,7 +688,7 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
             <!-- Panneau de réservation -->
             <aside class="resa-panel" aria-labelledby="resa-titre">
                 <h2 class="sr-only" id="resa-titre">Panneau de réservation</h2>
-                <form class="resa" data-bien-id="<?php echo esc_attr($pp_id); ?>">
+                <form class="resa" data-bien-id="<?php echo esc_attr($pp_id); ?>" data-capacite="<?php echo esc_attr($pp_capmax); ?>">
 
                     <div class="resa__entete">
                         <p class="resa__prix">Dès <?php echo esc_html($pp_prix); ?>€</p>
@@ -731,7 +732,7 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
                     </div>
 
                     <div class="resa__voyageurs">
-                        <div class="resa-stepper" data-compte="adultes" data-min="1" data-max="6">
+                        <div class="resa-stepper" data-compte="adultes" data-min="1" data-max="<?php echo esc_attr($pp_capmax); ?>">
                             <div class="resa-stepper__libelle">
                                 <span class="resa-stepper__nom">Adultes</span>
                                 <span class="resa-stepper__detail">13 ans et +</span>
@@ -746,7 +747,7 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
                                 </button>
                             </div>
                         </div>
-                        <div class="resa-stepper" data-compte="enfants" data-min="0" data-max="6">
+                        <div class="resa-stepper" data-compte="enfants" data-min="0" data-max="<?php echo esc_attr(max(0, $pp_capmax - 1)); ?>">
                             <div class="resa-stepper__libelle">
                                 <span class="resa-stepper__nom">Enfants</span>
                                 <span class="resa-stepper__detail">De 2 à 12 ans</span>

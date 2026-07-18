@@ -42,6 +42,11 @@ if ($pp_bien_ok) {
     $pp_r_lien  = get_post_type_archive_link('bien');
     $pp_r_hote  = 'Julien';
 }
+
+// Capacité d'accueil du bien (adultes + enfants) : pilote les compteurs
+// de la pop-up Invités et le texte d'aide ; 6 = valeur de la maquette
+// en accès direct sans bien.
+$pp_r_capacite = $pp_bien_ok ? max(1, (int) poolparty_g4_meta($pp_bien_id, 'capacite_max')) : 6;
 ?>
 
     <main id="contenu">
@@ -71,7 +76,7 @@ if ($pp_bien_ok) {
         <!-- BLOC 2 : formulaire de paiement + panneau récapitulatif -->
         <div class="checkout-layout">
 
-            <form class="checkout" id="checkout-form" data-garantie="6" data-annonce="<?php echo esc_attr($pp_r_titre); ?>" data-hote="<?php echo esc_attr($pp_r_hote); ?>">
+            <form class="checkout" id="checkout-form" data-garantie="6" data-capacite="<?php echo esc_attr($pp_r_capacite); ?>" data-annonce="<?php echo esc_attr($pp_r_titre); ?>" data-hote="<?php echo esc_attr($pp_r_hote); ?>">
 
                 <!-- Coordonnées du locataire : indispensables pour que
                      l'hôte reçoive la demande et puisse répondre -->
@@ -307,14 +312,14 @@ if ($pp_bien_ok) {
                 <button type="button" class="popup__close" aria-label="Fermer" data-popup-fermer></button>
                 <h2 class="popup__title" id="popup-invites-titre">Modifiez le nombre d'invités</h2>
                 <div class="popup__body">
-                    <p class="popup-aide">Cet espace accueille 6 personnes au maximum, sans compter les bébés. Les enfants restent sous la surveillance d'un adulte.</p>
+                    <p class="popup-aide">Cet espace accueille <?php echo esc_html($pp_r_capacite); ?> personnes au maximum, sans compter les bébés. Les enfants restent sous la surveillance d'un adulte.</p>
                     <ul class="compteur-liste">
                         <li class="compteur-ligne">
                             <div>
                                 <span class="compteur-ligne__label">Adultes</span>
                                 <span class="compteur-ligne__aide">13 ans et +</span>
                             </div>
-                            <div class="compteur" data-compteur="adultes" data-min="1" data-max="6">
+                            <div class="compteur" data-compteur="adultes" data-min="1" data-max="<?php echo esc_attr($pp_r_capacite); ?>">
                                 <button type="button" class="compteur__btn" data-action="moins" aria-label="Retirer un adulte">-</button>
                                 <span class="compteur__valeur" aria-live="polite">2</span>
                                 <button type="button" class="compteur__btn" data-action="plus" aria-label="Ajouter un adulte">+</button>
@@ -325,7 +330,7 @@ if ($pp_bien_ok) {
                                 <span class="compteur-ligne__label">Enfants</span>
                                 <span class="compteur-ligne__aide">De 2 à 12 ans</span>
                             </div>
-                            <div class="compteur" data-compteur="enfants" data-min="0" data-max="6">
+                            <div class="compteur" data-compteur="enfants" data-min="0" data-max="<?php echo esc_attr(max(0, $pp_r_capacite - 1)); ?>">
                                 <button type="button" class="compteur__btn" data-action="moins" aria-label="Retirer un enfant">-</button>
                                 <span class="compteur__valeur" aria-live="polite">2</span>
                                 <button type="button" class="compteur__btn" data-action="plus" aria-label="Ajouter un enfant">+</button>

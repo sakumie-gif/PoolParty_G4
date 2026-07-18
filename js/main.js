@@ -3040,6 +3040,32 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Tranches horaires proposées pour chaque formule, partagées entre
+    // le panneau de la fiche produit et la pop-up de la page réservation
+    var CRENEAUX_PAR_FORMULE = {
+        'heure': ['9h - 10h', '10h - 11h', '11h - 12h', '14h - 15h', '15h - 16h', '16h - 17h', '17h - 18h', '18h - 19h', '19h - 20h'],
+        'demi-journee': ['Matin 9h-13h', 'Après-midi 14h-18h', 'Soirée 18h-22h'],
+        'journee': ['Journée 9h-17h', 'Journée 10h-18h', 'Journée 12h-20h']
+    };
+
+    // Date au format JJ/MM/AAAA
+    var formaterDateFr = function (d) {
+        return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear();
+    };
+
+    // Vraie date JJ/MM/AAAA non passée : les valeurs préremplies des
+    // gabarits vieillissent, on les remplace alors par la date du jour
+    var dateResaValide = function (valeur) {
+        var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(valeur || '');
+        if (!m) {
+            return false;
+        }
+        var date = new Date(parseInt(m[3], 10), parseInt(m[2], 10) - 1, parseInt(m[1], 10));
+        var aujourdhui = new Date();
+        aujourdhui.setHours(0, 0, 0, 0);
+        return date.getTime() >= aujourdhui.getTime();
+    };
+
     // Page produit : panneau de réservation. La formule, le créneau et
     // les compteurs de voyageurs pilotent le récapitulatif TTC ;
     // Réserver poursuit vers la page Confirmer et payer avec le choix
@@ -3052,7 +3078,11 @@ document.addEventListener('DOMContentLoaded', function () {
         var formules = Array.prototype.slice.call(resaForm.querySelectorAll('.resa-formule'));
         var steppers = Array.prototype.slice.call(resaForm.querySelectorAll('.resa-stepper'));
         var voyageurs = { adultes: 2, enfants: 2, bebes: 0 };
-        var CAPACITE_PISCINE = 6; // adultes + enfants, les bébés ne comptent pas
+        // Capacité réelle du bien, posée par le gabarit (repli 6) ;
+        // adultes + enfants, les bébés ne comptent pas
+        var CAPACITE_PISCINE = parseInt(resaForm.getAttribute('data-capacite'), 10) || 6;
+        voyageurs.adultes = Math.min(voyageurs.adultes, CAPACITE_PISCINE);
+        voyageurs.enfants = Math.min(voyageurs.enfants, Math.max(0, CAPACITE_PISCINE - voyageurs.adultes));
 
         var resaLibelle = resaForm.querySelector('[data-resa="libelle"]');
         var resaSousTotal = resaForm.querySelector('[data-resa="sous-total"]');
@@ -3144,6 +3174,11 @@ document.addEventListener('DOMContentLoaded', function () {
         // Champ Date : le calendrier partagé écrit "15/07/2026, 9h - 12h" ;
         // le créneau a son propre champ, on ne garde donc que la date
         if (resaDate) {
+            // La date préremplie du gabarit peut être déjà passée : on
+            // repart alors sur la date du jour
+            if (!dateResaValide(resaDate.value)) {
+                resaDate.value = formaterDateFr(new Date());
+            }
             resaDate.addEventListener('change', function () {
                 resaDate.value = resaDate.value.split(',')[0];
             });
@@ -3156,12 +3191,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // à chaque changement de formule.
         var creneauChamp = resaForm.querySelector('.resa__creneau');
         var creneauListe = document.getElementById('resa-creneau-liste');
-
-        var CRENEAUX_PAR_FORMULE = {
-            'heure': ['9h - 10h', '10h - 11h', '11h - 12h', '14h - 15h', '15h - 16h', '16h - 17h', '17h - 18h', '18h - 19h', '19h - 20h'],
-            'demi-journee': ['Matin 9h-13h', 'Après-midi 14h-18h', 'Soirée 18h-22h'],
-            'journee': ['Journée 9h-17h', 'Journée 10h-18h', 'Journée 12h-20h']
-        };
 
         // Reconstruit la liste déroulante pour la formule donnée. Le
         // paramètre « prefere » permet de conserver la tranche déjà
@@ -3287,7 +3316,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (checkoutForm) {
         var ckPrixGarantie = parseFloat(checkoutForm.getAttribute('data-garantie')) || 0;
-        var CAPACITE_MAX = 6; // adultes + enfants, les bébés ne comptent pas
+        // Capacité réelle du bien, posée par le gabarit (repli 6) ;
+        // adultes + enfants, les bébés ne comptent pas
+        var CAPACITE_MAX = parseInt(checkoutForm.getAttribute('data-capacite'), 10) || 6;
 
         // Mêmes formules que le panneau de la page produit : la formule
         // à l'heure se calcule par personne, les forfaits sont privatifs
@@ -3410,7 +3441,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 FORMULES[formuleType].prix = prixUrl;
             }
         }
-        if (champDate && paramsUrl.get('date') && /^\d{2}\/\d{2}\/\d{4}$/.test(paramsUrl.get('date'))) {
+        // La date reçue doit être bien formée ET non passée
+        if (champDate && dateResaValide(paramsUrl.get('date'))) {
             champDate.value = paramsUrl.get('date');
         }
         if (champCreneau && paramsUrl.get('creneau')) {
@@ -3431,6 +3463,11 @@ document.addEventListener('DOMContentLoaded', function () {
         // Le calendrier partagé écrit "15/07/2026, 9h - 12h" dans le
         // champ Date ; le créneau a sa propre liste, on ne garde que la date
         if (champDate) {
+            // La date préremplie du gabarit peut être déjà passée : on
+            // repart alors sur la date du jour
+            if (!dateResaValide(champDate.value)) {
+                champDate.value = formaterDateFr(new Date());
+            }
             champDate.addEventListener('change', function () {
                 champDate.value = champDate.value.split(',')[0];
             });
@@ -3442,28 +3479,37 @@ document.addEventListener('DOMContentLoaded', function () {
         var creneauListeCk = document.getElementById('checkout-creneau-liste');
 
         if (creneauPill && creneauListeCk && champCreneau) {
-            var creneauItemsCk = Array.prototype.slice.call(creneauListeCk.querySelectorAll('.dropdown-item'));
-
-            // L'item actif suit le créneau reçu dans l'URL
-            creneauItemsCk.forEach(function (item) {
-                item.classList.toggle('is-active', item.textContent.trim() === champCreneau.value);
+            // Le HTML de départ ne porte que les tranches demi-journée :
+            // la liste est régénérée selon la formule reçue dans l'URL,
+            // comme sur la fiche produit. Un créneau étranger à la
+            // formule (URL modifiée) retombe sur la première tranche.
+            var creneauxCk = CRENEAUX_PAR_FORMULE[formuleType] || CRENEAUX_PAR_FORMULE['demi-journee'];
+            if (creneauxCk.indexOf(champCreneau.value) === -1) {
+                champCreneau.value = creneauxCk[0];
+            }
+            creneauListeCk.innerHTML = '';
+            creneauxCk.forEach(function (libelle) {
+                var li = document.createElement('li');
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'dropdown-item' + (libelle === champCreneau.value ? ' is-active' : '');
+                btn.textContent = libelle;
+                btn.addEventListener('click', function () {
+                    champCreneau.value = libelle;
+                    creneauListeCk.querySelectorAll('.dropdown-item').forEach(function (autre) {
+                        autre.classList.toggle('is-active', autre === btn);
+                    });
+                    creneauListeCk.hidden = true;
+                    creneauPill.classList.remove('is-open');
+                });
+                li.appendChild(btn);
+                creneauListeCk.appendChild(li);
             });
 
             creneauPill.addEventListener('click', function () {
                 var ouvrir = creneauListeCk.hidden;
                 creneauListeCk.hidden = !ouvrir;
                 creneauPill.classList.toggle('is-open', ouvrir);
-            });
-
-            creneauItemsCk.forEach(function (item) {
-                item.addEventListener('click', function () {
-                    champCreneau.value = item.textContent.trim();
-                    creneauItemsCk.forEach(function (autre) {
-                        autre.classList.toggle('is-active', autre === item);
-                    });
-                    creneauListeCk.hidden = true;
-                    creneauPill.classList.remove('is-open');
-                });
             });
 
             document.addEventListener('click', function (event) {
