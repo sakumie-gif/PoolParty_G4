@@ -54,6 +54,11 @@ function poolparty_g4_importer_pages() {
     if (get_option('pp_pages_seed_version') === PP_PAGES_SEED_VERSION) {
         return;
     }
+    // Prise de verrou atomique : une seule requête lance l'import de
+    // cette version (add_option échoue si l'option existe déjà).
+    if (!add_option('pp_pages_seed_claim_' . PP_PAGES_SEED_VERSION, 1, '', false)) {
+        return;
+    }
 
     foreach (poolparty_g4_seed_pages() as $slug => $titre) {
         if (get_page_by_path($slug, OBJECT, 'page')) {

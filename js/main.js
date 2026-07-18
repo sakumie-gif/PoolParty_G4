@@ -2420,16 +2420,28 @@ document.addEventListener('DOMContentLoaded', function () {
             return div;
         };
 
+        // Sécurise un lien ou une photo relus du localStorage : http(s)
+        // et les chemins relatifs passent, tout autre schéma (javascript:,
+        // data:...) est écarté ; même garde que favoris et réservations.
+        var lienMsgSur = function (lien, repli) {
+            lien = String(lien || '');
+            var schema = /^([a-z][a-z0-9+.-]*):/i.exec(lien);
+            if (!lien || (schema && !/^https?$/i.test(schema[1]))) {
+                return repli;
+            }
+            return lien;
+        };
+
         // Affiche le fil d'une conversation dans le panneau de droite
         var rendreFil = function (conv) {
             if (msgFilTete) { msgFilTete.hidden = false; }
             if (msgVideFil) { msgVideFil.hidden = true; }
             if (msgSaisie) { msgSaisie.hidden = false; }
-            if (msgFilPhoto) { msgFilPhoto.src = conv.photo || ''; }
+            if (msgFilPhoto) { msgFilPhoto.src = lienMsgSur(conv.photo, ''); }
             if (msgFilHote) { msgFilHote.textContent = conv.hote; }
             if (msgFilBien) {
                 msgFilBien.textContent = conv.bienTitre;
-                msgFilBien.href = conv.bienLien || '#';
+                msgFilBien.href = lienMsgSur(conv.bienLien, (window.ppData && window.ppData.catalogueUrl) || '#');
             }
             msgMessages.innerHTML = '';
             conv.messages.forEach(function (message) {

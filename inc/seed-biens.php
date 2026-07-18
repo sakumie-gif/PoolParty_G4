@@ -233,6 +233,12 @@ function poolparty_g4_importer_biens() {
     if (get_option('pp_biens_seed_version') === PP_BIENS_SEED_VERSION) {
         return;
     }
+    // Prise de verrou atomique : add_option échoue si l'option existe
+    // déjà (contrainte UNIQUE en base), une seule requête peut donc
+    // lancer l'import de cette version, même sous chargements simultanés.
+    if (!add_option('pp_biens_seed_claim_' . PP_BIENS_SEED_VERSION, 1, '', false)) {
+        return;
+    }
 
     // 1. Catégories (termes de la taxonomie categorie_bien)
     foreach (poolparty_g4_seed_categories() as $slug => $nom) {

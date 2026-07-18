@@ -117,6 +117,11 @@ function poolparty_g4_importer_articles() {
     if (get_option('pp_articles_seed_version') === PP_ARTICLES_SEED_VERSION) {
         return;
     }
+    // Prise de verrou atomique : une seule requête lance l'import de
+    // cette version (add_option échoue si l'option existe déjà).
+    if (!add_option('pp_articles_seed_claim_' . PP_ARTICLES_SEED_VERSION, 1, '', false)) {
+        return;
+    }
 
     // 1. Catégories (taxonomie native)
     foreach (poolparty_g4_seed_categories_articles() as $slug => $nom) {

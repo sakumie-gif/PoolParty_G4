@@ -339,6 +339,26 @@ function poolparty_g4_enregistrer_bien($post_id) {
 }
 add_action('save_post_bien', 'poolparty_g4_enregistrer_bien');
 
+/**
+ * Filet de sécurité du tri : le tri par défaut (et prix/distance) repose
+ * sur une clause EXISTS, un bien publié sans ces métas disparaîtrait du
+ * catalogue en silence. On complète donc à zéro toute méta de tri absente,
+ * quel que soit le chemin d'enregistrement (méta-box, REST, wp-cli).
+ */
+function poolparty_g4_completer_metas_tri($post_id) {
+    foreach (array('pp_note', 'pp_prix_heure', 'pp_distance_km') as $meta) {
+        if (get_post_meta($post_id, $meta, true) === '') {
+            update_post_meta($post_id, $meta, '0');
+        }
+    }
+}
+add_action('save_post_bien', 'poolparty_g4_completer_metas_tri', 20);
+
+function poolparty_g4_completer_metas_tri_rest($post) {
+    poolparty_g4_completer_metas_tri($post->ID);
+}
+add_action('rest_after_insert_bien', 'poolparty_g4_completer_metas_tri_rest');
+
 /* =============================================================
    3bis. COLONNE IMAGE DANS LA LISTE DES BIENS (wp-admin)
    Affiche la photo de chaque bien dans le tableau d'administration
@@ -456,9 +476,12 @@ function poolparty_g4_repartition_avis($note, $nb_avis) {
     } elseif ($note >= 3) {
         $c[4] = min($n, max(0, (int) round($n * ($note - 3))));
         $c[3] = $n - $c[4];
-    } else {
+    } elseif ($note >= 2) {
         $c[3] = min($n, max(0, (int) round($n * ($note - 2))));
         $c[2] = $n - $c[3];
+    } else {
+        $c[2] = min($n, max(0, (int) round($n * ($note - 1))));
+        $c[1] = $n - $c[2];
     }
     return $c;
 }
