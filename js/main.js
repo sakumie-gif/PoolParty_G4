@@ -1645,7 +1645,7 @@ document.addEventListener('DOMContentLoaded', function () {
             image: photo.getAttribute('src'),
             alt: photo.alt,
             titre: titre ? titre.textContent.trim() : 'Annonce',
-            lien: 'produit.html',
+            lien: window.location.pathname + window.location.search,
             note: '',
             avis: '',
             tag: '',
@@ -1827,10 +1827,12 @@ document.addEventListener('DOMContentLoaded', function () {
             var carte = document.createElement('article');
             carte.className = 'card-product';
 
-            // Le lien relu du localStorage doit rester une adresse relative
-            // du site : un schéma (javascript:, data:...) est écarté
-            if (/^[a-z][a-z0-9+.-]*:/i.test(annonce.lien || '')) {
-                annonce.lien = 'produit.html';
+            // Le lien relu du localStorage doit rester une adresse du site :
+            // http(s) (permaliens WordPress absolus) et les liens relatifs
+            // passent, un schéma dangereux (javascript:, data:...) est écarté
+            var schemaLien = /^([a-z][a-z0-9+.-]*):/i.exec(annonce.lien || '');
+            if (!annonce.lien || (schemaLien && !/^https?$/i.test(schemaLien[1]))) {
+                annonce.lien = (window.ppData && window.ppData.catalogueUrl) || 'produit.html';
             }
 
             var html =
@@ -4588,7 +4590,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 var valeur = parseInt(champPrix.value, 10) || 0;
                 prixRevenu.textContent = valeur + ' €';
-                prixAffiche.textContent = Math.round(valeur * 1.1) + ' €';
+                prixAffiche.textContent = Math.round(valeur * 1.15) + ' €';
                 majNavigation();
             };
 

@@ -111,9 +111,22 @@ function poolparty_g4_query_biens($query) {
         $tri       = isset($_GET['tri'])       ? sanitize_text_field(wp_unslash($_GET['tri'])) : '';
 
         if ($quoi !== '') {
-            // Recherche plein texte sur le titre et le contenu du bien
-            // (les titres contiennent la catégorie : « Piscine… », « Spa… »).
-            $query->set('s', $quoi);
+            // Le champ Quoi propose un type d'espace : si la valeur correspond
+            // à une catégorie (Piscine, Spa...), on filtre par taxonomie ; la
+            // recherche plein texte ne sert qu'au texte libre (elle ratait les
+            // biens sans le mot dans le titre, et « Spa » matchait « espace »).
+            $terme = get_term_by('slug', sanitize_title($quoi), 'categorie_bien');
+            if ($terme) {
+                $tax_query   = (array) $query->get('tax_query');
+                $tax_query[] = array(
+                    'taxonomy' => 'categorie_bien',
+                    'field'    => 'term_id',
+                    'terms'    => $terme->term_id,
+                );
+                $query->set('tax_query', $tax_query);
+            } else {
+                $query->set('s', $quoi);
+            }
         }
 
         $meta_query = array('relation' => 'AND');
