@@ -345,3 +345,26 @@ function poolparty_g4_favicon() {
     echo '<link rel="icon" type="image/png" href="' . esc_url(pp_asset('assets/images/logo/favicon.png')) . '">' . "\n";
 }
 add_action('wp_head', 'poolparty_g4_favicon');
+
+/**
+ * Google Analytics 4 (gtag.js). Non chargé sur l'environnement Local
+ * (.local) pour que les tests ne polluent pas les statistiques de la prod.
+ */
+function poolparty_g4_google_analytics() {
+    $hote = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+    if (substr($hote, -6) === '.local') {
+        return;
+    }
+    $id = 'G-3GD5HL9WYH';
+    ?>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_attr($id); ?>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '<?php echo esc_js($id); ?>');
+    </script>
+    <?php
+}
+add_action('wp_head', 'poolparty_g4_google_analytics');
