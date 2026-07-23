@@ -355,7 +355,7 @@ function poolparty_g4_google_analytics() {
     if (substr($hote, -6) === '.local') {
         return;
     }
-    $id = 'G-3GD5HL9WYH';
+    $id = 'G-6YNBKZHM0Y';
     ?>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_attr($id); ?>"></script>
