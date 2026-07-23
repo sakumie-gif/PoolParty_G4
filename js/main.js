@@ -6,6 +6,38 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
+    // --- Suivi GA4 : événements personnalisés (clic_cta, form_submit,
+    // reservation_complete). ppTrackGA n'envoie rien si le tag gtag est
+    // absent (environnement local, ou page mot de passe côté visiteur).
+    function ppTrackGA(nom, params) {
+        if (typeof window.gtag === 'function') {
+            window.gtag('event', nom, params || {});
+        }
+    }
+
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest) {
+            return;
+        }
+        var cta = event.target.closest('.header-cta, .cta-hote__btn, .resa__submit, .resa-barre__btn, [class*="-cta__actions"] a');
+        if (cta) {
+            ppTrackGA('clic_cta', {
+                cta_texte: (cta.textContent || '').trim().slice(0, 100),
+                page: window.location.pathname
+            });
+        }
+    });
+
+    document.addEventListener('submit', function (event) {
+        var form = event.target;
+        if (form && form.matches && form.matches('.contact-form, .partenaire-form')) {
+            ppTrackGA('form_submit', {
+                formulaire: form.classList.contains('contact-form') ? 'contact' : 'partenaire',
+                page: window.location.pathname
+            });
+        }
+    });
+
     // --- Astérisque sur les champs obligatoires (tout le site)
     // Ajoute une étoile au libellé de chaque champ qu'il faut remplir pour
     // valider un formulaire ou passer à l'écran suivant. On se base sur
@@ -3772,6 +3804,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (popupConfirmation && texteConfirmation) {
                     texteConfirmation.textContent = messageEnvoye;
                     popupConfirmation.hidden = false;
+                    ppTrackGA('reservation_complete', { page: window.location.pathname });
                     var actionConfirmation = popupConfirmation.querySelector('.popup__actions .btn-primary');
                     if (actionConfirmation) {
                         actionConfirmation.focus();
