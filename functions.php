@@ -243,7 +243,6 @@ function poolparty_g4_scripts() {
         'demandesUrl'     => home_url('/demandes/'),
         // AJAX : point d'entrée commun + jetons protégeant chaque appel.
         'ajaxUrl'         => admin_url('admin-ajax.php'),
-        'resaNonce'       => wp_create_nonce('pp_resa_email'),
         'authNonce'       => wp_create_nonce('pp_auth'),
         'reservationNonce' => wp_create_nonce('pp_reservation'),
         // État d'authentification réel (WordPress) : main.js s'appuie

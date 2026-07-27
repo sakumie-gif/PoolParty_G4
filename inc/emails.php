@@ -267,50 +267,11 @@ function poolparty_g4_email_bien_transition($nouveau, $ancien, $post) {
 add_action('transition_post_status', 'poolparty_g4_email_bien_transition', 10, 3);
 
 /* ------------------------------------------------------------------ *
- *  RÉSERVATION (accusé au locataire, via AJAX depuis main.js)
- * ------------------------------------------------------------------ */
-
-/**
- * Accusé de demande de réservation envoyé au locataire. Déclenché par une
- * requête AJAX de main.js au moment de l'envoi du checkout (l'e-mail à
- * l'hôte, lui, part déjà côté client via FormSubmit). Le jeton pp_resa_email
- * protège l'appel ; l'adresse vient du compte connecté (transmise par le JS).
+ *  RÉSERVATION
+ * ------------------------------------------------------------------ *
+ * Les e-mails de réservation (accusé au locataire, notification à
+ * l'hôte, puis confirmation / refus) vivent dans inc/reservations.php,
+ * au plus près de l'enregistrement réel de la demande en base. Ils
+ * réutilisent le gabarit et l'expéditeur définis ci-dessus, via
+ * poolparty_g4_email_envoyer().
  */
-function poolparty_g4_email_reservation_ajax() {
-    check_ajax_referer('pp_resa_email', 'nonce');
-
-    $email   = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
-    $prenom  = isset($_POST['prenom']) ? sanitize_text_field(wp_unslash($_POST['prenom'])) : '';
-    $annonce = isset($_POST['annonce']) ? sanitize_text_field(wp_unslash($_POST['annonce'])) : '';
-    $creneau = isset($_POST['creneau']) ? sanitize_text_field(wp_unslash($_POST['creneau'])) : '';
-    $hote    = isset($_POST['hote']) ? sanitize_text_field(wp_unslash($_POST['hote'])) : '';
-    $total   = isset($_POST['total']) ? sanitize_text_field(wp_unslash($_POST['total'])) : '';
-
-    if (!is_email($email)) {
-        wp_send_json_error('email invalide');
-    }
-
-    $corps  = '<p>Bonjour ' . esc_html($prenom ? $prenom : '') . ',</p>';
-    $corps .= '<p>Votre demande de réservation a bien été prise en compte&nbsp;!</p>';
-    $corps .= '<p style="margin:16px 0;padding:14px 16px;background:#faf7f2;border-radius:10px;">';
-    if ($annonce) {
-        $corps .= '<strong>Espace&nbsp;:</strong> ' . esc_html($annonce) . '<br>';
-    }
-    if ($creneau) {
-        $corps .= '<strong>Date et créneau&nbsp;:</strong> ' . esc_html($creneau) . '<br>';
-    }
-    if ($total) {
-        $corps .= '<strong>Total&nbsp;:</strong> ' . esc_html($total);
-    }
-    $corps .= '</p>';
-    $hote_txt = $hote ? esc_html($hote) : 'L\'hôte';
-    $corps .= '<p>' . $hote_txt . ' a reçu votre demande et confirme la disponibilité de son espace sous <strong>24&nbsp;heures maximum</strong>. Vous ne serez débité qu\'après sa confirmation.</p>';
-    $corps .= '<p>Vous pouvez suivre l\'état de votre demande à tout moment dans <a href="' . esc_url(home_url('/mes-reservations/')) . '" style="color:#CA8171;">Mes réservations</a>.</p>';
-    $corps .= '<p>Belle baignade à venir,<br>L\'équipe Pool Party</p>';
-
-    poolparty_g4_email_envoyer($email, 'Votre demande de réservation est bien prise en compte', 'Demande de réservation reçue !', $corps);
-
-    wp_send_json_success();
-}
-add_action('wp_ajax_pp_resa_email', 'poolparty_g4_email_reservation_ajax');
-add_action('wp_ajax_nopriv_pp_resa_email', 'poolparty_g4_email_reservation_ajax');
