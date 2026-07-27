@@ -429,3 +429,24 @@
         max-width: 840px;
     }
 }
+
+/* =============================================================
+   TITRES DE GROUPES (espace hôte, page-demandes.php)
+   « À traiter » / « Déjà traitées » : réutilise le style de la page,
+   simple séparateur de sections au-dessus des grilles de cartes.
+   ============================================================= */
+.reservations-groupe-titre {
+    margin: var(--padding-p2) var(--padding-page-mobile) var(--padding-p4);
+    font-size: var(--fs-h3);
+}
+
+.reservations-groupe-titre:first-child {
+    margin-top: 0;
+}
+
+@media (min-width: 768px) {
+    .reservations-groupe-titre {
+        margin-left: var(--padding-page-desktop);
+        margin-right: var(--padding-page-desktop);
+    }
+}

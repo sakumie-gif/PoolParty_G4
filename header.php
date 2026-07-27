@@ -120,6 +120,9 @@
             </div>
             <div class="main-menu__section main-menu__section--connecte">
                 <a href="<?php echo esc_url(home_url('/mes-reservations/')); ?>">Mes réservations</a>
+                <?php if (function_exists('poolparty_g4_est_hote') && poolparty_g4_est_hote()) : ?>
+                <a href="<?php echo esc_url(home_url('/demandes/')); ?>">Demandes de réservation</a>
+                <?php endif; ?>
                 <a href="<?php echo esc_url(home_url('/favoris/')); ?>">Mes favoris</a>
                 <a href="<?php echo esc_url(home_url('/messages/')); ?>">Messagerie</a>
             </div>
@@ -133,7 +136,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
                     Contact
                 </a>
-                <a href="#" class="main-menu__deconnexion js-logout">Déconnexion</a>
+                <a href="<?php echo esc_url(wp_logout_url(home_url('/'))); ?>" class="main-menu__deconnexion">Déconnexion</a>
             </div>
                 </nav>
             </nav>

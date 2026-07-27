@@ -149,7 +149,7 @@ if (is_tax('categorie_bien')) {
             <label class="toggle carte-toggle">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
                 <span class="carte-toggle__texte">Afficher la carte</span>
-                <input type="checkbox" id="carte-checkbox">
+                <input type="checkbox" id="carte-checkbox" aria-label="Afficher la carte">
                 <span class="toggle__track"></span>
             </label>
         </div>
@@ -195,7 +195,7 @@ if (is_tax('categorie_bien')) {
             <!-- Panneau carte : Leaflet + OpenStreetMap, marqueurs créés en JS
                  à partir des data-lat / data-lon des cartes ci-dessus. -->
             <aside class="carte-panel" id="carte-panel" hidden>
-                <div class="carte-osm" id="carte-osm" aria-label="Carte des espaces disponibles en Île-de-France"></div>
+                <div class="carte-osm" id="carte-osm" role="region" aria-label="Carte des espaces disponibles en Île-de-France"></div>
             </aside>
         </div>
     </main>

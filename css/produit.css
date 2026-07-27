@@ -319,6 +319,7 @@ main {
 
 .galerie-popup__liste img {
     width: 100%;
+    height: auto;
     border-radius: var(--radius-r2);
 }
 

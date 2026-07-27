@@ -15,7 +15,14 @@ $pp_partenaire_envoye = (
     (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST')
     && isset($_POST['pp_partenaire_nonce'])
     && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['pp_partenaire_nonce'])), 'pp_partenaire_envoi')
+    && empty($_POST['pp_site_web'])
 );
+
+// Soumission valide : accusé de réception au candidat + notification à
+// l'équipe partenariats (voir inc/emails.php).
+if ($pp_partenaire_envoye) {
+    poolparty_g4_email_partenaire_envoi();
+}
 ?>
 
     <main id="contenu">
@@ -180,7 +187,7 @@ $pp_partenaire_envoye = (
 
             <div class="partenaire-temoignages__grille">
                 <article class="card-avis">
-                    <div class="card-avis__stars" aria-label="Note de 5 sur 5">
+                    <div class="card-avis__stars" role="img" aria-label="Note de 5 sur 5">
                         <span></span><span></span><span></span><span></span><span></span>
                     </div>
                     <blockquote class="card-avis__quote">"Mes cours d'aquagym affichent complet depuis que je suis référencée sur les annonces du secteur de Torcy. La mise en relation est simple et les clients arrivent déjà convaincus."</blockquote>
@@ -193,7 +200,7 @@ $pp_partenaire_envoye = (
                     </footer>
                 </article>
                 <article class="card-avis">
-                    <div class="card-avis__stars" aria-label="Note de 5 sur 5">
+                    <div class="card-avis__stars" role="img" aria-label="Note de 5 sur 5">
                         <span></span><span></span><span></span><span></span><span></span>
                     </div>
                     <blockquote class="card-avis__quote">"Les anniversaires au bord des piscines représentent maintenant un tiers de mon chiffre d'affaires d'été. L'équipe m'a aidé à calibrer une offre spéciale pool party."</blockquote>
@@ -206,7 +213,7 @@ $pp_partenaire_envoye = (
                     </footer>
                 </article>
                 <article class="card-avis">
-                    <div class="card-avis__stars" aria-label="Note de 5 sur 5">
+                    <div class="card-avis__stars" role="img" aria-label="Note de 5 sur 5">
                         <span></span><span></span><span></span><span></span><span></span>
                     </div>
                     <blockquote class="card-avis__quote">"Les hôtes Pool Party sont des clients réguliers et attentifs à la qualité de leur bassin. Le partenariat m'apporte une vingtaine de contrats d'entretien par an."</blockquote>
@@ -280,6 +287,7 @@ $pp_partenaire_envoye = (
                 <?php else : ?>
                 <form class="partenaire-form" action="<?php echo esc_url(get_permalink()); ?>" method="post">
                     <?php wp_nonce_field('pp_partenaire_envoi', 'pp_partenaire_nonce'); ?>
+                    <p class="pp-piege" aria-hidden="true"><label for="partenaire-site-web">Ne pas remplir ce champ</label><input type="text" id="partenaire-site-web" name="pp_site_web" tabindex="-1" autocomplete="off"></p>
 
                     <div class="partenaire-form__row">
                         <div class="form-field">

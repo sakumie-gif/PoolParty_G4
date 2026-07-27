@@ -123,6 +123,8 @@
 
                     <a href="#" class="login-popup__forgot js-forgot">Mot de passe oublié ?</a>
 
+                    <p class="login-popup__erreur" role="alert" hidden></p>
+
                     <button type="submit" class="btn btn-primary login-popup__submit" disabled>Continuer</button>
 
                     <p class="login-popup__signup">Vous n'avez pas de compte ? <a href="<?php echo esc_url(home_url('/inscription/')); ?>">Inscription</a></p>

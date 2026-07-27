@@ -79,7 +79,7 @@ get_header();
                 <button type="button" class="carousel-control carousel-control--next categories-control categories-control--next" data-carousel-next aria-label="Catégorie suivante"></button>
             </div>
 
-            <div class="categories-tabs" aria-label="Catégories">
+            <div class="categories-tabs" role="group" aria-label="Catégories">
                 <button type="button" class="categorie-tab" data-categorie="pres-de-chez-vous" aria-pressed="false">
                     <span class="progress"><span class="progress__bar"></span></span>
                     <span class="categorie-tab__label">Près de chez vous</span>
@@ -110,7 +110,7 @@ get_header();
                 <p class="coup-de-coeur__sub"><?php echo esc_html(pp_accueil_texte('coup_sub')); ?></p>
             </header>
 
-            <div class="products-track" tabindex="0" aria-label="Annonces coups de coeur">
+            <div class="products-track" role="region" tabindex="0" aria-label="Annonces coups de coeur">
                 <?php
                 // Coups de coeur : les biens mis en avant (champ « tag »),
                 // rendus avec le composant carte du catalogue pour que chaque
@@ -145,7 +145,7 @@ get_header();
             <h2 id="simplicite-titre">La simplicité avant tout</h2>
             <p class="section-sub">Trois étapes pour plonger dans le bonheur</p>
 
-            <div class="simplicite-track" tabindex="0" aria-label="Les trois étapes du parcours">
+            <div class="simplicite-track" role="region" tabindex="0" aria-label="Les trois étapes du parcours">
 
                 <article class="card-parcours">
                     <div class="card-parcours__badge">
@@ -190,7 +190,7 @@ get_header();
         <section class="temoignages-locataires" aria-labelledby="temoignages-titre">
             <h2 id="temoignages-titre">Ils ont adoré leur expérience</h2>
 
-            <div class="temoignages-track" tabindex="0" aria-label="Témoignages de locataires">
+            <div class="temoignages-track" role="region" tabindex="0" aria-label="Témoignages de locataires">
 
                 <article class="card-temoignage">
                     <blockquote class="card-temoignage__quote">"Un après-midi magnifique pour l'anniversaire de ma fille. Le cadre était somptueux et l'hôte d'une gentillesse rare."</blockquote>

@@ -4511,3 +4511,13 @@ html.pp-a11y-noanim body *::after {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
 }
+
+/* Champ piège anti-spam des formulaires : hors écran pour les humains,
+   rempli seulement par les robots (l'envoi est alors ignoré). */
+.pp-piege {
+    position: absolute !important;
+    left: -9999px !important;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}

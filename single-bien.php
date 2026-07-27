@@ -60,13 +60,12 @@ $pp_avis_demo = array(
 );
 $pp_hote_prenom = $pp_hote ? $pp_hote['prenom'] : 'votre hôte';
 
-// Image principale du bien (image à la une ou champ « image ») et son
-// texte alternatif : sert de première photo de la galerie ci-dessous.
-$pp_image   = poolparty_g4_image_url($pp_id);
-$pp_alt     = poolparty_g4_meta($pp_id, 'alt');
-if (!$pp_image) {
-    $pp_image = get_template_directory_uri() . '/assets/images/piscines/annonce-pantin.jpg';
-}
+// Galerie du bien : photos du champ « Galerie » de l'admin si présentes,
+// sinon rendu par défaut du thème. La première photo sert de grande image.
+$pp_galerie = poolparty_g4_galerie_bien($pp_id);
+$pp_total   = count($pp_galerie);
+$pp_image   = $pp_galerie[0]['url'];
+$pp_alt     = $pp_galerie[0]['alt'];
 
 // Photo et avatar de l'hôte (chemins dans les assets du thème).
 $pp_hote_photo = ($pp_hote && !empty($pp_hote['photo']))
@@ -160,53 +159,36 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
             <!-- Carrousel mobile : une photo par écran, défilement horizontal -->
             <div class="galerie__mobile">
                 <div class="galerie__carrousel" role="group" aria-roledescription="carrousel" aria-label="Faites défiler les photos">
-                    <button type="button" class="galerie__diapo" aria-haspopup="dialog" aria-controls="galerie-popup" aria-label="Agrandir : <?php echo esc_attr($pp_alt); ?>">
-                        <img src="<?php echo esc_url($pp_image); ?>" alt="" loading="lazy" decoding="async" width="800" height="533">
+                    <?php foreach ($pp_galerie as $i => $photo) : ?>
+                    <button type="button" class="galerie__diapo" aria-haspopup="dialog" aria-controls="galerie-popup" aria-label="Agrandir : <?php echo esc_attr($photo['alt']); ?>">
+                        <img src="<?php echo esc_url($photo['url']); ?>" alt="" loading="<?php echo $i === 0 ? 'eager' : 'lazy'; ?>" decoding="async" width="<?php echo esc_attr($photo['w']); ?>" height="<?php echo esc_attr($photo['h']); ?>">
                     </button>
-                    <button type="button" class="galerie__diapo" aria-haspopup="dialog" aria-controls="galerie-popup" aria-label="Agrandir : la vue dégagée depuis le bord du bassin">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-champs.jpg'); ?>" alt="" loading="lazy" decoding="async" width="800" height="533">
-                    </button>
-                    <button type="button" class="galerie__diapo" aria-haspopup="dialog" aria-controls="galerie-popup" aria-label="Agrandir : le coin détente avec transats sur la terrasse en bois">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-croissy.jpg'); ?>" alt="" loading="lazy" decoding="async" width="800" height="533">
-                    </button>
-                    <button type="button" class="galerie__diapo" aria-haspopup="dialog" aria-controls="galerie-popup" aria-label="Agrandir : le jardin planté de palmiers et de graminées vu de la maison">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-lagny.jpg'); ?>" alt="" loading="lazy" decoding="async" width="1024" height="728">
-                    </button>
-                    <button type="button" class="galerie__diapo" aria-haspopup="dialog" aria-controls="galerie-popup" aria-label="Agrandir : l'allée gravillonnée qui mène au portillon d'accès de la piscine">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-chelles.jpg'); ?>" alt="" loading="lazy" decoding="async" width="800" height="597">
-                    </button>
+                    <?php endforeach; ?>
                 </div>
                 <div class="galerie__points" aria-hidden="true">
-                    <span class="galerie__point is-active"></span>
-                    <span class="galerie__point"></span>
-                    <span class="galerie__point"></span>
-                    <span class="galerie__point"></span>
-                    <span class="galerie__point"></span>
+                    <?php foreach ($pp_galerie as $i => $photo) : ?>
+                    <span class="galerie__point<?php echo $i === 0 ? ' is-active' : ''; ?>"></span>
+                    <?php endforeach; ?>
                 </div>
-                <button type="button" class="galerie__compteur" aria-haspopup="dialog" aria-controls="galerie-popup">1 / 5</button>
+                <button type="button" class="galerie__compteur" aria-haspopup="dialog" aria-controls="galerie-popup">1 / <?php echo esc_html($pp_total); ?></button>
             </div>
 
             <figure class="galerie__principale">
-                <img src="<?php echo esc_url($pp_image); ?>" alt="<?php echo esc_attr($pp_alt); ?>" id="galerie-photo" decoding="async" fetchpriority="high" width="800" height="533">
+                <img src="<?php echo esc_url($pp_galerie[0]['url']); ?>" alt="<?php echo esc_attr($pp_galerie[0]['alt']); ?>" id="galerie-photo" decoding="async" fetchpriority="high" width="<?php echo esc_attr($pp_galerie[0]['w']); ?>" height="<?php echo esc_attr($pp_galerie[0]['h']); ?>">
             </figure>
+            <?php if ($pp_total > 1) : ?>
             <div class="galerie__vignettes" role="group" aria-label="Choisir la photo affichée en grand">
+                <?php foreach (array_slice($pp_galerie, 1, 4) as $photo) : ?>
                 <button type="button" class="galerie__vignette" aria-label="Afficher cette photo en grand">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-champs.jpg'); ?>" alt="La vue dégagée depuis le bord du bassin" loading="lazy" decoding="async" width="800" height="533">
+                    <img src="<?php echo esc_url($photo['url']); ?>" alt="<?php echo esc_attr($photo['alt']); ?>" loading="lazy" decoding="async" width="<?php echo esc_attr($photo['w']); ?>" height="<?php echo esc_attr($photo['h']); ?>">
                 </button>
-                <button type="button" class="galerie__vignette" aria-label="Afficher cette photo en grand">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-croissy.jpg'); ?>" alt="Le coin détente avec transats sur la terrasse en bois" loading="lazy" decoding="async" width="800" height="533">
-                </button>
-                <button type="button" class="galerie__vignette" aria-label="Afficher cette photo en grand">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-lagny.jpg'); ?>" alt="Le jardin planté de palmiers et de graminées vu de la maison" loading="lazy" decoding="async" width="1024" height="728">
-                </button>
-                <button type="button" class="galerie__vignette" aria-label="Afficher cette photo en grand">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-chelles.jpg'); ?>" alt="L'allée gravillonnée qui mène au portillon d'accès de la piscine" loading="lazy" decoding="async" width="800" height="597">
-                </button>
+                <?php endforeach; ?>
             </div>
             <button type="button" class="galerie__toutes" aria-haspopup="dialog" aria-controls="galerie-popup">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg>
                 Afficher toutes les photos
             </button>
+            <?php endif; ?>
         </section>
 
         <!-- Pop-up de la galerie complète -->
@@ -215,11 +197,9 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
                 <button type="button" class="popup__close" aria-label="Fermer la galerie"></button>
                 <h2 class="popup__title" id="galerie-popup-titre">Toutes les photos</h2>
                 <div class="popup__body galerie-popup__liste">
-                    <img src="<?php echo esc_url($pp_image); ?>" alt="<?php echo esc_attr($pp_alt); ?>" loading="lazy" decoding="async" width="800" height="533">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-champs.jpg'); ?>" alt="La vue dégagée depuis le bord du bassin" loading="lazy" decoding="async" width="800" height="533">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-croissy.jpg'); ?>" alt="Le coin détente avec transats sur la terrasse en bois" loading="lazy" decoding="async" width="800" height="533">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-lagny.jpg'); ?>" alt="Le jardin planté de palmiers et de graminées vu de la maison" loading="lazy" decoding="async" width="1024" height="728">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/piscines/annonce-chelles.jpg'); ?>" alt="L'allée gravillonnée qui mène au portillon d'accès de la piscine" loading="lazy" decoding="async" width="800" height="597">
+                    <?php foreach ($pp_galerie as $photo) : ?>
+                    <img src="<?php echo esc_url($photo['url']); ?>" alt="<?php echo esc_attr($photo['alt']); ?>" loading="lazy" decoding="async" width="<?php echo esc_attr($photo['w']); ?>" height="<?php echo esc_attr($photo['h']); ?>">
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>

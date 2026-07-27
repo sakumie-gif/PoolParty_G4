@@ -47,6 +47,23 @@ require get_template_directory() . '/inc/reservations-demo.php';
 // depuis le back-office sans toucher au code.
 require get_template_directory() . '/inc/customizer.php';
 
+// E-mails transactionnels (contact, partenaire, dépôt de bien,
+// réservation) envoyés via wp_mail. L'envoi effectif dépend de la
+// configuration SMTP du site (WP Mail SMTP en production).
+require get_template_directory() . '/inc/emails.php';
+
+// Authentification réelle des membres (connexion, inscription, mot de
+// passe oublié) via WordPress : remplace la connexion simulée.
+require get_template_directory() . '/inc/auth.php';
+
+// Réservations réelles (type de contenu « reservation ») : enregistrées
+// en base, rattachées au locataire et à l'hôte, acceptées / refusées.
+require get_template_directory() . '/inc/reservations.php';
+
+// Compte hôte de démonstration + rattachement des 16 biens à ce compte,
+// pour que les demandes de réservation arrivent à un vrai destinataire.
+require get_template_directory() . '/inc/seed-hote.php';
+
 /**
  * Raccourci vers un fichier du thème (images, icônes, polices...).
  * Exemple : pp_asset('assets/images/logo/logo-full.png')
@@ -171,6 +188,7 @@ function poolparty_g4_styles() {
         'inscription'        => array('inscription'),
         'favoris'            => array('favoris'),
         'mes-reservations'   => array('mes-reservations'),
+        'demandes'           => array('mes-reservations'),
         'messages'           => array('messages'),
         'proposer'           => array('proposer'),
         'reservation'        => array('reservation'),
@@ -215,22 +233,37 @@ function poolparty_g4_scripts() {
     // Le carrousel de catégories de l'accueil et le tunnel de réservation
     // ciblaient des fichiers .html : on leur fournit les vrais permaliens
     // (catalogue des biens, page réservation) pour éviter les 404.
+    $utilisateur = wp_get_current_user();
     wp_localize_script('pp-main', 'ppData', array(
         'catalogueUrl'    => get_post_type_archive_link('bien'),
         'reservationUrl'  => home_url('/reservation/'),
         'favorisUrl'      => home_url('/favoris/'),
         'reservationsUrl' => home_url('/mes-reservations/'),
         'messagesUrl'     => home_url('/messages/'),
+        'demandesUrl'     => home_url('/demandes/'),
+        // AJAX : point d'entrée commun + jetons protégeant chaque appel.
+        'ajaxUrl'         => admin_url('admin-ajax.php'),
+        'resaNonce'       => wp_create_nonce('pp_resa_email'),
+        'authNonce'       => wp_create_nonce('pp_auth'),
+        'reservationNonce' => wp_create_nonce('pp_reservation'),
+        // État d'authentification réel (WordPress) : main.js s'appuie
+        // dessus au lieu de la connexion simulée. L'identité prérremplit
+        // le tunnel de réservation.
+        'isLoggedIn'      => is_user_logged_in(),
+        'isHote'          => poolparty_g4_est_hote(),
+        'userPrenom'      => is_user_logged_in() ? ($utilisateur->first_name ?: $utilisateur->display_name) : '',
+        'userEmail'       => is_user_logged_in() ? $utilisateur->user_email : '',
+        'logoutUrl'       => wp_logout_url(home_url('/')),
         // Conversations de démonstration de la messagerie interne,
         // amorcées dans le localStorage au premier affichage connecté.
         // On ne monte le jeu de données (qui interroge la base) que sur
         // la page Messages, seule à le consommer.
         'messagerie'      => is_page('messages') ? poolparty_g4_messagerie_seed() : array(),
-        // Réservations de démonstration, amorcées dans le localStorage au
-        // premier affichage connecté. Comme la messagerie, on ne monte le
-        // jeu de données (qui interroge la base) que sur la page qui le
-        // consomme, Mes réservations.
-        'reservationsDemo' => is_page('mes-reservations') ? poolparty_g4_reservations_demo() : array(),
+        // Vraies réservations du membre connecté, servies à la page
+        // « Mes réservations » (remplace l'ancienne démo localStorage).
+        'reservations'    => (is_page('mes-reservations') && is_user_logged_in())
+            ? poolparty_g4_reservations_pour_js(get_current_user_id())
+            : array(),
     ));
 }
 add_action('wp_enqueue_scripts', 'poolparty_g4_scripts');
@@ -330,13 +363,52 @@ add_filter('body_class', 'poolparty_g4_body_class');
  * on demande aux moteurs de ne pas les indexer.
  */
 function poolparty_g4_noindex($robots) {
-    if (is_page(array('favoris', 'mes-reservations', 'messages', 'inscription', 'proposer', 'reservation'))) {
+    if (is_page(array('favoris', 'mes-reservations', 'demandes', 'messages', 'inscription', 'proposer', 'reservation'))) {
         $robots['noindex']  = true;
         $robots['nofollow'] = true;
     }
     return $robots;
 }
 add_filter('wp_robots', 'poolparty_g4_noindex');
+
+/**
+ * Nettoyage du doublon « Piscine » de la taxonomie (slug piscine-2, vide) :
+ * les biens éventuels sont réaffectés au terme légitime (slug piscine), le
+ * doublon est supprimé et le terme conservé reprend le nom « Piscine ».
+ * Verrouillé par version pour ne s'exécuter qu'une fois par environnement.
+ */
+function poolparty_g4_nettoyage_taxo() {
+    if (get_option('pp_taxo_fix_version') === '1') {
+        return;
+    }
+    $bon     = get_term_by('slug', 'piscine', 'categorie_bien');
+    $doublon = get_term_by('slug', 'piscine-2', 'categorie_bien');
+    if ($bon && $doublon) {
+        foreach (get_objects_in_term($doublon->term_id, 'categorie_bien') as $pid) {
+            wp_set_object_terms((int) $pid, (int) $bon->term_id, 'categorie_bien', true);
+        }
+        wp_delete_term($doublon->term_id, 'categorie_bien');
+    }
+    if ($bon && $bon->name !== 'Piscine') {
+        wp_update_term($bon->term_id, 'categorie_bien', array('name' => 'Piscine'));
+    }
+    if ($bon) {
+        update_option('pp_taxo_fix_version', '1');
+    }
+}
+add_action('init', 'poolparty_g4_nettoyage_taxo', 30);
+
+/**
+ * Redirection permanente de l'ancienne adresse de l'archive Piscine.
+ */
+function poolparty_g4_redirection_piscine2() {
+    $uri = isset($_SERVER['REQUEST_URI']) ? wp_unslash($_SERVER['REQUEST_URI']) : '';
+    if (strpos($uri, '/categorie/piscine-2') === 0) {
+        wp_safe_redirect(home_url('/categorie/piscine/'), 301);
+        exit;
+    }
+}
+add_action('template_redirect', 'poolparty_g4_redirection_piscine2');
 
 /**
  * Favicon, identique au site statique.

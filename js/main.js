@@ -108,71 +108,29 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Connexion simulée : aucun compte réel (projet fictif). L'état est
-    // conservé le temps de la session du navigateur. La classe is-connected
-    // posée sur body bascule les sections visiteur / connecté du menu.
-    // Accès au stockage protégés : si le navigateur le bloque (cookies
-    // refusés, navigation privée stricte), un accès direct lèverait une
-    // exception et stopperait tout le script.
+    // Connexion réelle (WordPress) : l'état d'authentification est fourni
+    // par le serveur (ppData.isLoggedIn) et la classe is-connected est
+    // déjà posée sur <body> par PHP quand un membre est connecté. Ces
+    // aides restent disponibles pour les modules JS (favoris, réservations,
+    // messagerie) qui testent l'état de connexion.
     var lireConnecte = function () {
-        try {
-            return sessionStorage.getItem('pp-connecte') === '1';
-        } catch (erreur) {
-            return false;
-        }
+        return !!(window.ppData && window.ppData.isLoggedIn);
     };
 
-    var ecrireConnecte = function (actif) {
-        try {
-            if (actif) {
-                sessionStorage.setItem('pp-connecte', '1');
-            } else {
-                sessionStorage.removeItem('pp-connecte');
-            }
-        } catch (erreur) {
-            // Stockage indisponible : l'état vivra le temps de la page
-        }
-    };
+    // Anciennes écritures de l'état simulé : neutralisées, l'authentification
+    // réelle est gérée par le cookie WordPress (connexion / déconnexion).
+    var ecrireConnecte = function () {};
+    var ecrireIdentite = function () {};
+    var effacerIdentite = function () {};
 
-    // Identité simulée mémorisée à la connexion / inscription : sert à
-    // préremplir le checkout et à rattacher la demande au bon compte.
-    var ecrireIdentite = function (prenom, email) {
-        try {
-            if (prenom) { sessionStorage.setItem('pp-prenom', prenom); }
-            if (email) { sessionStorage.setItem('pp-email', email); }
-        } catch (erreur) {}
-    };
-
-    var effacerIdentite = function () {
-        try {
-            sessionStorage.removeItem('pp-prenom');
-            sessionStorage.removeItem('pp-email');
-        } catch (erreur) {}
-    };
-
+    // Filet de sécurité : si le serveur signale un membre connecté mais que
+    // la classe n'a pas été posée, on l'ajoute (PHP le fait déjà en principe).
     if (lireConnecte()) {
         document.body.classList.add('is-connected');
     }
 
-    document.querySelectorAll('.js-logout').forEach(function (link) {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-            ecrireConnecte(false);
-            effacerIdentite();
-            document.body.classList.remove('is-connected');
-            // Prévient les autres modules (favoris) du changement d'état
-            document.dispatchEvent(new CustomEvent('pp-deconnexion'));
-            if (mainMenu) {
-                mainMenu.hidden = true;
-            }
-            if (burger) {
-                burger.setAttribute('aria-expanded', 'false');
-            }
-            // Confirme la déconnexion (montrerToast est défini plus bas,
-            // il est disponible au moment du clic)
-            montrerToast('Vous avez bien été déconnecté. À bientôt !', false);
-        });
-    });
+    // La déconnexion passe par un vrai lien WordPress (wp_logout_url dans
+    // header.php) : plus de gestion JS ici.
 
     // Liens de fonctionnalités pas encore livrées (ex. « Messages » de
     // l'espace compte). Plutôt que de renvoyer vers « # » — qui remonte la
@@ -485,29 +443,62 @@ document.addEventListener('DOMContentLoaded', function () {
             champ.addEventListener('input', majSubmit);
         });
 
-        // Aucun compte réel : la soumission active l'état connecté
-        // simulé (menu version connectée) puis referme la fenêtre.
-        // L'événement pp-connexion prévient les autres modules (favoris).
+        // Connexion réelle : on vérifie l'e-mail et le mot de passe côté
+        // serveur (WordPress, action AJAX pp_login). En cas de succès on
+        // recharge la page pour que le serveur rende l'état connecté
+        // (menu, checkout...). En cas d'échec, message d'erreur dans la
+        // fenêtre. Plus aucune connexion simulée.
         if (form) {
+            var loginErreur = overlay.querySelector('.login-popup__erreur');
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
-                // Un coup de coeur mis en attente affichera son propre
-                // toast à la connexion : on ne double pas la confirmation
-                var favoriEnAttente = favorisEnAttente;
-                var champEmailConnexion = form.querySelector('input[name="email"]');
-                ecrireConnecte(true);
-                ecrireIdentite('', champEmailConnexion ? champEmailConnexion.value.trim() : '');
-                document.body.classList.add('is-connected');
-                // pp-connexion d'abord : le coup de coeur en attente est
-                // appliqué avant que la fermeture ne l'abandonne
-                document.dispatchEvent(new CustomEvent('pp-connexion'));
-                fermer();
-                // Confirme la connexion, sauf si un favori vient déjà
-                // de déclencher son toast (montrerToast est défini plus bas,
-                // il est disponible au moment de la soumission)
-                if (!favoriEnAttente) {
-                    montrerToast('Connexion réussie. Bon retour parmi nous !', false);
+                if (!window.ppData || !ppData.ajaxUrl || !ppData.authNonce) {
+                    return;
                 }
+                var champEmailConnexion = form.querySelector('input[name="email"]');
+                var champMdpConnexion = form.querySelector('input[name="password"]');
+                if (loginErreur) {
+                    loginErreur.hidden = true;
+                    loginErreur.textContent = '';
+                }
+                if (submit) {
+                    submit.disabled = true;
+                    submit.textContent = 'Connexion...';
+                }
+
+                var afficherErreurLogin = function (message) {
+                    if (loginErreur) {
+                        loginErreur.textContent = message;
+                        loginErreur.hidden = false;
+                    }
+                    if (submit) {
+                        submit.disabled = false;
+                        submit.textContent = 'Continuer';
+                    }
+                };
+
+                var corpsLogin = new URLSearchParams({
+                    action: 'pp_login',
+                    nonce: ppData.authNonce,
+                    email: champEmailConnexion ? champEmailConnexion.value.trim() : '',
+                    password: champMdpConnexion ? champMdpConnexion.value : ''
+                });
+
+                fetch(ppData.ajaxUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: corpsLogin.toString()
+                }).then(function (reponse) {
+                    return reponse.json();
+                }).then(function (rep) {
+                    if (rep && rep.success) {
+                        window.location.reload();
+                    } else {
+                        afficherErreurLogin((rep && rep.data && rep.data.message) ? rep.data.message : 'E-mail ou mot de passe incorrect.');
+                    }
+                }).catch(function () {
+                    afficherErreurLogin('Connexion impossible pour le moment. Réessayez.');
+                });
             });
         }
 
@@ -559,13 +550,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
             reset.addEventListener('submit', function (event) {
                 event.preventDefault();
-                if (resetConfirm && resetEmail) {
-                    resetConfirm.hidden = false;
-                    resetConfirm.textContent = 'Si un compte est associé à ' + resetEmail.value.trim() +
-                        ', un e-mail avec un lien de réinitialisation vient de partir.';
-                }
                 if (resetSubmit) {
                     resetSubmit.disabled = true;
+                }
+                var afficherConfirmReset = function (message) {
+                    if (resetConfirm) {
+                        resetConfirm.hidden = false;
+                        resetConfirm.textContent = message;
+                    }
+                };
+                var repli = 'Si un compte est associé à cette adresse, un e-mail avec un lien de réinitialisation vient de partir.';
+
+                // Vraie procédure WordPress : l'e-mail de réinitialisation
+                // part réellement (fonctionnel en production avec le SMTP).
+                if (window.ppData && ppData.ajaxUrl && ppData.authNonce && resetEmail) {
+                    var corpsReset = new URLSearchParams({
+                        action: 'pp_reset',
+                        nonce: ppData.authNonce,
+                        email: resetEmail.value.trim()
+                    });
+                    fetch(ppData.ajaxUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: corpsReset.toString()
+                    }).then(function (reponse) {
+                        return reponse.json();
+                    }).then(function (rep) {
+                        afficherConfirmReset((rep && rep.data && rep.data.message) ? rep.data.message : repli);
+                    }).catch(function () {
+                        afficherConfirmReset(repli);
+                    });
+                } else {
+                    afficherConfirmReset(repli);
                 }
             });
         }
@@ -670,17 +686,59 @@ document.addEventListener('DOMContentLoaded', function () {
 
         inscriptionForm.addEventListener('submit', function (event) {
             event.preventDefault();
-            clearInterval(inscriptionVeille);
-            ecrireConnecte(true);
-            ecrireIdentite(
-                inscriptionPrenom ? inscriptionPrenom.value.trim() : '',
-                inscriptionEmail ? inscriptionEmail.value.trim() : ''
-            );
-            document.body.classList.add('is-connected');
-            inscriptionForm.hidden = true;
-            if (inscriptionSucces) {
-                inscriptionSucces.hidden = false;
+            if (!window.ppData || !ppData.ajaxUrl || !ppData.authNonce) {
+                return;
             }
+
+            var afficherErreurInscription = function (message) {
+                if (inscriptionManque) {
+                    inscriptionManque.hidden = false;
+                    inscriptionManque.textContent = message;
+                }
+                if (inscriptionSubmit) {
+                    inscriptionSubmit.disabled = false;
+                    inscriptionSubmit.textContent = 'Créer mon compte';
+                }
+            };
+
+            if (inscriptionSubmit) {
+                inscriptionSubmit.disabled = true;
+                inscriptionSubmit.textContent = 'Création du compte...';
+            }
+
+            var honeypot = inscriptionForm.querySelector('input[name="pp_site_web"]');
+            var corpsInscription = new URLSearchParams({
+                action: 'pp_register',
+                nonce: ppData.authNonce,
+                prenom: inscriptionPrenom ? inscriptionPrenom.value.trim() : '',
+                nom: inscriptionNom ? inscriptionNom.value.trim() : '',
+                email: inscriptionEmail ? inscriptionEmail.value.trim() : '',
+                password: inscriptionMdp ? inscriptionMdp.value : '',
+                cgu: (inscriptionCgu && inscriptionCgu.checked) ? '1' : '',
+                pp_site_web: honeypot ? honeypot.value : ''
+            });
+
+            fetch(ppData.ajaxUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: corpsInscription.toString()
+            }).then(function (reponse) {
+                return reponse.json();
+            }).then(function (rep) {
+                if (rep && rep.success) {
+                    // Compte réellement créé et session ouverte : on affiche
+                    // l'écran de bienvenue (le membre est connecté côté serveur).
+                    clearInterval(inscriptionVeille);
+                    inscriptionForm.hidden = true;
+                    if (inscriptionSucces) {
+                        inscriptionSucces.hidden = false;
+                    }
+                } else {
+                    afficherErreurInscription((rep && rep.data && rep.data.message) ? rep.data.message : 'La création du compte a échoué. Réessayez.');
+                }
+            }).catch(function () {
+                afficherErreurInscription('Création impossible pour le moment. Réessayez.');
+            });
         });
     }
 
@@ -2110,11 +2168,21 @@ document.addEventListener('DOMContentLoaded', function () {
             var lien = echapperResa(lienSur(resa.lien));
             var dateCreneau = echapperResa((resa.date || '') + (resa.creneau ? ' · ' + resa.creneau : ''));
 
-            // Statut : demande en attente pour une réservation à venir,
-            // séjour terminé pour une réservation passée.
-            var statut = passee
-                ? '<span class="tag reservation-card__statut">Terminée</span>'
-                : '<span class="tag tag--top-vente reservation-card__statut">En attente de confirmation</span>';
+            // Statut réel de la demande (réponse de l'hôte) : confirmée,
+            // non retenue, ou en attente. Une demande passée et confirmée
+            // devient « Terminée ».
+            var statut;
+            if (resa.statut === 'acceptee') {
+                statut = passee
+                    ? '<span class="tag reservation-card__statut">Terminée</span>'
+                    : '<span class="tag tag--succes reservation-card__statut">Confirmée par l\'hôte</span>';
+            } else if (resa.statut === 'refusee') {
+                statut = '<span class="tag reservation-card__statut">Non retenue</span>';
+            } else if (passee) {
+                statut = '<span class="tag reservation-card__statut">Terminée</span>';
+            } else {
+                statut = '<span class="tag tag--top-vente reservation-card__statut">En attente de confirmation</span>';
+            }
 
             var html =
                 '<a class="reservation-card__media" href="' + lien + '">' +
@@ -2157,9 +2225,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 html += '<p class="reservation-card__total">Total<strong>' + echapperResa(resa.total) + '</strong></p>';
             }
 
+            // « Annuler la demande » : proposé tant qu'elle n'est pas passée
+            // ni déjà refusée (une demande confirmée reste annulable).
+            var annulable = !passee && resa.statut !== 'refusee';
             html += '<div class="reservation-card__actions">' +
                 '<a class="btn btn-tertiary btn-small" href="' + lien + '">' + (passee ? 'Réserver à nouveau' : 'Voir l\'annonce') + '</a>' +
-                (passee ? '' : '<button type="button" class="btn btn-tertiary btn-small reservation-card__annuler">Annuler la demande</button>') +
+                (annulable ? '<button type="button" class="btn btn-tertiary btn-small reservation-card__annuler">Annuler la demande</button>' : '') +
                 '</div>' +
             '</div>' +
             '</div>';
@@ -2224,12 +2295,35 @@ document.addEventListener('DOMContentLoaded', function () {
                         return;
                     }
                     var id = resaAAnnuler.id;
-                    ecrireReservations(lireReservations().filter(function (r) {
-                        return r.id !== id;
-                    }));
-                    montrerToast('Demande de réservation annulée.', false);
-                    fermerAnnulation();
-                    rendreReservationsPage();
+                    if (!window.ppData || !ppData.ajaxUrl || !ppData.reservationNonce) {
+                        return;
+                    }
+                    // Annulation réelle en base, puis rechargement pour
+                    // refléter l'état à jour.
+                    var corpsAnnul = new URLSearchParams({
+                        action: 'pp_maj_reservation',
+                        nonce: ppData.reservationNonce,
+                        resa_id: id,
+                        statut: 'annuler'
+                    });
+                    fetch(ppData.ajaxUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: corpsAnnul.toString()
+                    }).then(function (reponse) {
+                        return reponse.json();
+                    }).then(function (rep) {
+                        fermerAnnulation();
+                        if (rep && rep.success) {
+                            montrerToast('Demande de réservation annulée.', false);
+                            window.location.reload();
+                        } else {
+                            montrerToast(rep && rep.data && rep.data.message ? rep.data.message : 'Annulation impossible.', false);
+                        }
+                    }).catch(function () {
+                        fermerAnnulation();
+                        montrerToast('Annulation impossible pour le moment.', false);
+                    });
                 });
             }
 
@@ -2250,10 +2344,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         rendreReservationsPage = function () {
             var connecte = estConnecte();
-            // Une fois connecté, la liste est amorcée avec les demandes de
-            // démonstration au premier affichage ; ensuite elle reflète le
-            // localStorage (vraies demandes du tunnel, annulations...).
-            var reservations = connecte ? amorcerReservations() : [];
+            // Vraies demandes du membre connecté, fournies par le serveur
+            // (ppData.reservations, type de contenu « reservation »).
+            // Plus de démo localStorage.
+            var reservations = (connecte && window.ppData && Array.isArray(ppData.reservations))
+                ? ppData.reservations
+                : [];
 
             if (resaConnexion) {
                 resaConnexion.hidden = connecte;
@@ -2323,6 +2419,56 @@ document.addEventListener('DOMContentLoaded', function () {
 
         rendreReservationsPage();
     }
+
+    // =========================================================
+    // ESPACE HÔTE : demandes de réservation (page /demandes/)
+    // Boutons Accepter / Refuser d'une carte de demande : mettent à jour
+    // le statut en base (action AJAX pp_maj_reservation, réservée à l'hôte
+    // du bien), puis rechargent la page pour refléter le nouveau statut.
+    // =========================================================
+    document.querySelectorAll('.js-demande-action').forEach(function (bouton) {
+        bouton.addEventListener('click', function () {
+            var resaId = bouton.getAttribute('data-resa-id');
+            var action = bouton.getAttribute('data-action');
+            if (!resaId || !action || !window.ppData || !ppData.ajaxUrl || !ppData.reservationNonce) {
+                return;
+            }
+
+            // Verrouille les deux boutons de la carte le temps de l'appel.
+            var carte = bouton.closest('.reservation-card');
+            var boutons = carte ? carte.querySelectorAll('.js-demande-action') : [bouton];
+            boutons.forEach(function (b) { b.disabled = true; });
+            bouton.textContent = action === 'accepter' ? 'Acceptation...' : 'Refus...';
+
+            var corps = new URLSearchParams({
+                action: 'pp_maj_reservation',
+                nonce: ppData.reservationNonce,
+                resa_id: resaId,
+                statut: action
+            });
+
+            fetch(ppData.ajaxUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: corps.toString()
+            }).then(function (reponse) {
+                return reponse.json();
+            }).then(function (rep) {
+                if (rep && rep.success) {
+                    montrerToast(action === 'accepter' ? 'Demande acceptée. Le locataire est prévenu.' : 'Demande refusée. Le locataire est prévenu.', false);
+                    window.location.reload();
+                } else {
+                    boutons.forEach(function (b) { b.disabled = false; });
+                    bouton.textContent = action === 'accepter' ? 'Accepter' : 'Refuser';
+                    montrerToast(rep && rep.data && rep.data.message ? rep.data.message : 'Action impossible.', false);
+                }
+            }).catch(function () {
+                boutons.forEach(function (b) { b.disabled = false; });
+                bouton.textContent = action === 'accepter' ? 'Accepter' : 'Refuser';
+                montrerToast('Action impossible pour le moment.', false);
+            });
+        });
+    });
 
     // =========================================================
     // MESSAGERIE INTERNE (page Messages)
@@ -3388,13 +3534,13 @@ document.addEventListener('DOMContentLoaded', function () {
         // remplit le résumé et on adapte le bouton d'envoi selon l'état ;
         // la bascule des blocs visiteur / connecté se fait en CSS via la
         // classe is-connected du body.
+        // Identité réelle du membre connecté, fournie par le serveur
+        // (ppData). Remplace l'ancienne identité simulée en sessionStorage.
         var lireIdentite = function () {
-            var id = { prenom: '', email: '' };
-            try {
-                id.prenom = sessionStorage.getItem('pp-prenom') || '';
-                id.email = sessionStorage.getItem('pp-email') || '';
-            } catch (erreur) {}
-            return id;
+            return {
+                prenom: (window.ppData && ppData.userPrenom) ? ppData.userPrenom : '',
+                email: (window.ppData && ppData.userEmail) ? ppData.userEmail : ''
+            };
         };
 
         var majEtatCompte = function () {
@@ -3706,16 +3852,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         // ---- Envoi de la demande de réservation --------------------------
-        // Modèle Airbnb : la soumission n'est pas une confirmation mais une
-        // demande. Un e-mail est réellement envoyé à l'hôte (via le service
-        // FormSubmit, sans backend) pour qu'il confirme la disponibilité de
-        // son espace ; le locataire est prévenu qu'il ne sera débité qu'après
-        // cette confirmation. Le site restant fictif, l'écran de demande
-        // envoyée s'affiche même si le service est injoignable.
-        // Alias FormSubmit de l'adresse de l'hôte : évite d'exposer
-        // l'adresse e-mail en clair dans le code source publié.
-        var HOTE_EMAIL_ENDPOINT = 'https://formsubmit.co/ajax/26aa38cbbdb858a800ab9b41ca816ab2';
-
+        // Modèle Airbnb : la soumission est une demande, pas une
+        // confirmation. La demande est réellement enregistrée en base
+        // (WordPress, action AJAX pp_creer_reservation) et rattachée au
+        // locataire connecté et à l'hôte du bien ; les deux reçoivent un
+        // e-mail. Le locataire ne sera débité qu'après acceptation de l'hôte.
         checkoutForm.addEventListener('submit', function (event) {
             event.preventDefault();
 
@@ -3731,7 +3872,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var bouton = checkoutForm.querySelector('.checkout-submit');
             var note = checkoutForm.querySelector('.checkout-note');
-            var identite = lireIdentite();
             var message = document.getElementById('checkout-message');
             var echeance = checkoutForm.querySelector('input[name="echeance"]:checked');
             var paiement = checkoutForm.querySelector('input[name="paiement"]:checked');
@@ -3742,57 +3882,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 bouton.textContent = 'Envoi de la demande...';
             }
 
-            // Contenu de l'e-mail reçu par l'hôte : le récapitulatif complet
-            // de la demande, avec l'adresse du locataire (issue du compte)
-            // en répondre à.
-            var demande = {
-                _subject: 'Pool Party : nouvelle demande de réservation de ' + identite.prenom,
-                _template: 'table',
-                _captcha: 'false',
-                email: identite.email,
-                prenom: identite.prenom,
-                // Nom de l'espace réservé, posé par page-reservation.php
-                // (data-annonce) d'après le bien transmis dans l'URL ;
-                // repli générique si la page est ouverte sans bien.
-                annonce: checkoutForm.getAttribute('data-annonce') || 'Espace Pool Party',
-                date_et_creneau: ck('recap-date').textContent,
-                invites: ck('recap-invites').textContent,
-                formule: ck('libelle').textContent,
-                total: ck('total').textContent,
-                echeance: echeance && echeance.value === 'trois-fois' ? 'Paiement en 3 fois' : 'Paiement comptant',
-                mode_de_paiement: paiement && paiement.value === 'paypal' ? 'PayPal' : 'Carte bancaire',
-                garantie_annulation: garantieBtn && garantieBtn.getAttribute('aria-pressed') === 'true' ? 'Oui' : 'Non',
-                message_pour_l_hote: message && message.value ? message.value : '(aucun message)'
-            };
-
             var afficherDemandeEnvoyee = function () {
                 var hote = checkoutForm.getAttribute('data-hote') || 'L\'hôte';
+                var messageEnvoye = hote + ' vient de recevoir votre demande pour son espace le ' +
+                    ck('recap-date').textContent + '. Sa réponse vous parviendra sous 24h maximum et vous ne serez débité qu\'après sa confirmation. Retrouvez votre demande dans « Mes réservations ».';
 
-                // Mémorise la demande pour la page Mes réservations : elle
-                // y apparaît « en attente de confirmation » (modèle Airbnb).
-                // Les informations sont relues du récapitulatif à l'écran.
-                var media = document.querySelector('.recap__annonce img');
-                var lienAnnonce = document.querySelector('.checkout-retour');
-                enregistrerReservation({
-                    id: 'r' + Date.now(),
-                    titre: checkoutForm.getAttribute('data-annonce') || 'Espace Pool Party',
-                    image: media ? media.getAttribute('src') : '',
-                    alt: media ? media.getAttribute('alt') : '',
-                    lien: lienAnnonce ? lienAnnonce.getAttribute('href') : '',
-                    hote: hote,
-                    date: champDate ? champDate.value : '',
-                    creneau: champCreneau ? champCreneau.value : '',
-                    invites: ck('recap-invites') ? ck('recap-invites').textContent : '',
-                    formule: ck('libelle') ? ck('libelle').textContent : '',
-                    total: ck('total') ? ck('total').textContent : '',
-                    statut: 'en-attente'
-                });
-
-                var messageEnvoye = hote + ' vient de recevoir un e-mail pour confirmer la disponibilité de son espace le ' +
-                    ck('recap-date').textContent + '. Sa réponse vous parviendra sous 24h maximum et vous ne serez débité qu\'après sa confirmation.';
-
-                // Verrouille le formulaire : la demande est partie, on
-                // empêche un second envoi et on l'indique sur le bouton.
                 if (bouton) {
                     bouton.disabled = true;
                     bouton.textContent = 'Demande envoyée';
@@ -3810,7 +3904,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         actionConfirmation.focus();
                     }
                 } else {
-                    // Repli si la pop-up est absente : message en ligne.
                     var confirmation = document.createElement('p');
                     confirmation.className = 'checkout-confirmation';
                     confirmation.setAttribute('role', 'status');
@@ -3824,23 +3917,52 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             };
 
-            // L'e-mail à l'hôte part en arrière-plan (FormSubmit) : on ne
-            // bloque plus la confirmation sur la réponse du service, qui
-            // peut tarder. La demande est déjà mémorisée ; l'écran de
-            // confirmation apparaît juste après un court délai, le temps
-            // que le bouton « Envoi de la demande... » soit perçu.
-            fetch(HOTE_EMAIL_ENDPOINT, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(demande)
-            }).catch(function (erreur) {
-                console.warn('Envoi de l\'e-mail à l\'hôte impossible :', erreur);
+            var afficherEchecEnvoi = function (msg) {
+                if (bouton) {
+                    bouton.disabled = false;
+                    bouton.textContent = 'Demander la réservation';
+                }
+                montrerToast(msg || 'Impossible d\'envoyer votre demande pour le moment. Réessayez.', false);
+            };
+
+            if (!window.ppData || !ppData.ajaxUrl || !ppData.reservationNonce) {
+                afficherEchecEnvoi();
+                return;
+            }
+
+            // Enregistrement réel de la demande en base. L'hôte est déduit
+            // côté serveur d'après le bien (data-bien-id) ; l'identité du
+            // locataire vient du compte connecté (jamais du navigateur).
+            var corpsResa = new URLSearchParams({
+                action: 'pp_creer_reservation',
+                nonce: ppData.reservationNonce,
+                bien_id: checkoutForm.getAttribute('data-bien-id') || '0',
+                date: champDate ? champDate.value : '',
+                creneau: champCreneau ? champCreneau.value : '',
+                invites: ck('recap-invites') ? ck('recap-invites').textContent : '',
+                formule: ck('libelle') ? ck('libelle').textContent : '',
+                total: ck('total') ? ck('total').textContent : '',
+                echeance: echeance && echeance.value === 'trois-fois' ? 'Paiement en 3 fois' : 'Paiement comptant',
+                paiement: paiement && paiement.value === 'paypal' ? 'PayPal' : 'Carte bancaire',
+                garantie: garantieBtn && garantieBtn.getAttribute('aria-pressed') === 'true' ? 'Oui' : 'Non',
+                message: message && message.value ? message.value : ''
             });
 
-            setTimeout(afficherDemandeEnvoyee, 350);
+            fetch(ppData.ajaxUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: corpsResa.toString()
+            }).then(function (reponse) {
+                return reponse.json();
+            }).then(function (rep) {
+                if (rep && rep.success) {
+                    afficherDemandeEnvoyee();
+                } else {
+                    afficherEchecEnvoi(rep && rep.data && rep.data.message ? rep.data.message : '');
+                }
+            }).catch(function () {
+                afficherEchecEnvoi();
+            });
         });
 
         // État initial : récapitulatif calculé et libellés synchronisés
@@ -4003,6 +4125,18 @@ document.addEventListener('DOMContentLoaded', function () {
         contactForm.addEventListener('submit', function (event) {
             event.preventDefault();
 
+            // Envoi en arrière-plan au serveur (même URL que le formulaire,
+            // jeton et anti-spam inclus) : WordPress traite le POST et
+            // déclenche les e-mails (accusé au visiteur + notification à
+            // l'équipe, voir inc/emails.php). La réponse HTML est ignorée,
+            // on affiche notre confirmation sans recharger la page.
+            if (window.fetch) {
+                fetch(contactForm.action, {
+                    method: 'POST',
+                    body: new FormData(contactForm)
+                }).catch(function () {});
+            }
+
             var confirmation = document.createElement('p');
             confirmation.className = 'contact-form__confirmation';
             confirmation.setAttribute('role', 'status');
@@ -4018,6 +4152,16 @@ document.addEventListener('DOMContentLoaded', function () {
     if (partenaireForm) {
         partenaireForm.addEventListener('submit', function (event) {
             event.preventDefault();
+
+            // Envoi en arrière-plan au serveur : WordPress traite le POST et
+            // déclenche les e-mails (accusé au candidat + notification à
+            // l'équipe partenariats, voir inc/emails.php).
+            if (window.fetch) {
+                fetch(partenaireForm.action, {
+                    method: 'POST',
+                    body: new FormData(partenaireForm)
+                }).catch(function () {});
+            }
 
             var confirmation = document.createElement('p');
             confirmation.className = 'partenaire-form__confirmation';

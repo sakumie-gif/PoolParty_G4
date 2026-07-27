@@ -65,7 +65,7 @@ get_header();
         <section class="messagerie" id="messagerie" aria-label="Boîte de réception" hidden>
 
             <!-- Panneau gauche : liste des conversations -->
-            <div class="messagerie__liste" aria-label="Vos conversations">
+            <div class="messagerie__liste" role="region" aria-label="Vos conversations">
                 <ul class="messagerie__convos" id="messagerie-convos"></ul>
             </div>
 

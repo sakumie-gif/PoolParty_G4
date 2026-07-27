@@ -70,6 +70,11 @@ get_header();
                             <span>J'accepte les <a href="<?php echo esc_url(home_url('/cgu/')); ?>">conditions d'utilisation</a> et la <a href="<?php echo esc_url(home_url('/mentions-legales/')); ?>">politique de confidentialité</a>.</span>
                         </label>
 
+                        <!-- Anti-spam : champ appât masqué, ignoré des humains -->
+                        <p class="inscription-hp" aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden">
+                            <label>Ne pas remplir<input type="text" name="pp_site_web" tabindex="-1" autocomplete="off"></label>
+                        </p>
+
                         <p class="inscription-manque" data-manque aria-live="polite" hidden></p>
 
                         <button type="submit" class="btn btn-primary inscription-form__submit" disabled>Créer mon compte</button>

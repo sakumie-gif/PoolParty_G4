@@ -345,14 +345,29 @@
     padding: 0 var(--padding-page-mobile) var(--padding-p1);
 }
 
-/* En-tête de section visible uniquement en mode carte */
+/* En-tête de section : hors mode carte il reste lisible par les
+   lecteurs d'écran (la grille garde ainsi un h2 avant les h3 des
+   cartes), mais masqué visuellement ; le mode carte l'affiche. */
 .resultats__head {
-    display: none;
-    margin-bottom: var(--padding-p2);
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 .categorie-layout.is-carte .resultats__head {
-    display: block;
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0 0 var(--padding-p2);
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
 }
 
 .resultats__head h2 {

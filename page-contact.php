@@ -15,7 +15,15 @@ $pp_contact_envoye = (
     (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST')
     && isset($_POST['pp_contact_nonce'])
     && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['pp_contact_nonce'])), 'pp_contact_envoi')
+    && empty($_POST['pp_site_web'])
 );
+
+// Soumission valide : accusé de réception au visiteur + notification à
+// l'équipe (voir inc/emails.php). Sans JavaScript, ce POST est la seule
+// occasion d'envoyer ; avec JS, main.js soumet aussi la page en arrière-plan.
+if ($pp_contact_envoye) {
+    poolparty_g4_email_contact_envoi();
+}
 ?>
 
     <main id="contenu">
@@ -96,6 +104,7 @@ $pp_contact_envoye = (
                 <?php else : ?>
                 <form class="contact-form" action="<?php echo esc_url(get_permalink()); ?>" method="post">
                     <?php wp_nonce_field('pp_contact_envoi', 'pp_contact_nonce'); ?>
+                    <p class="pp-piege" aria-hidden="true"><label for="contact-site-web">Ne pas remplir ce champ</label><input type="text" id="contact-site-web" name="pp_site_web" tabindex="-1" autocomplete="off"></p>
 
                     <div class="contact-form__row">
                         <div class="form-field">

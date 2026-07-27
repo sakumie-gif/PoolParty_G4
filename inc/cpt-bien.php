@@ -277,6 +277,18 @@ function poolparty_g4_enregistrer_meta_bien() {
             },
         ));
     }
+
+    // Galerie du bien : liste d'identifiants de médias (photos de la
+    // médiathèque) séparés par des virgules, gérée par sa propre méta-box.
+    register_post_meta('bien', 'pp_galerie', array(
+        'type'         => 'string',
+        'single'       => true,
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function () {
+            return current_user_can('edit_posts');
+        },
+    ));
 }
 add_action('init', 'poolparty_g4_enregistrer_meta_bien');
 
@@ -285,6 +297,14 @@ add_action('init', 'poolparty_g4_enregistrer_meta_bien');
    ============================================================= */
 
 function poolparty_g4_metabox_bien() {
+    add_meta_box(
+        'pp_galerie_bien',
+        'Galerie du bien (photos)',
+        'poolparty_g4_afficher_metabox_galerie',
+        'bien',
+        'normal',
+        'high'
+    );
     add_meta_box(
         'pp_details_bien',
         'Détails du bien',
@@ -295,6 +315,53 @@ function poolparty_g4_metabox_bien() {
     );
 }
 add_action('add_meta_boxes', 'poolparty_g4_metabox_bien');
+
+/**
+ * Charge le sélecteur de médias de WordPress et le script de la galerie
+ * uniquement sur l'écran d'édition d'un bien.
+ */
+function poolparty_g4_admin_galerie_assets($hook) {
+    if ($hook !== 'post.php' && $hook !== 'post-new.php') {
+        return;
+    }
+    $ecran = get_current_screen();
+    if (!$ecran || $ecran->post_type !== 'bien') {
+        return;
+    }
+    wp_enqueue_media();
+    wp_enqueue_script(
+        'pp-admin-galerie',
+        get_template_directory_uri() . '/js/admin-galerie.js',
+        array('jquery', 'jquery-ui-sortable'),
+        pp_version('js/admin-galerie.js'),
+        true
+    );
+}
+add_action('admin_enqueue_scripts', 'poolparty_g4_admin_galerie_assets');
+
+/**
+ * Méta-box « Galerie du bien » : choix de plusieurs photos dans la
+ * médiathèque, réordonnables. Enregistre leurs identifiants dans pp_galerie.
+ */
+function poolparty_g4_afficher_metabox_galerie($post) {
+    wp_nonce_field('pp_enregistrer_galerie', 'pp_galerie_nonce');
+    $ids = array_filter(array_map('absint', explode(',', (string) get_post_meta($post->ID, 'pp_galerie', true))));
+    echo '<style>.pp-galerie-liste{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;padding:0;list-style:none}.pp-galerie-liste li{position:relative;width:110px;height:82px;cursor:move}.pp-galerie-liste img{width:100%;height:100%;object-fit:cover;border-radius:4px;display:block}.pp-galerie-suppr{position:absolute;top:-8px;right:-8px;width:22px;height:22px;line-height:20px;padding:0;border:0;border-radius:50%;background:#b32d2e;color:#fff;font-size:16px;cursor:pointer}</style>';
+    echo '<div class="pp-galerie-admin" data-pp-galerie>';
+    echo '<input type="hidden" class="pp-galerie-ids" name="pp_galerie" value="' . esc_attr(implode(',', $ids)) . '">';
+    echo '<ul class="pp-galerie-liste">';
+    foreach ($ids as $id) {
+        $apercu = wp_get_attachment_image_url($id, 'thumbnail');
+        if (!$apercu) {
+            continue;
+        }
+        echo '<li data-id="' . esc_attr($id) . '"><img src="' . esc_url($apercu) . '" alt=""><button type="button" class="pp-galerie-suppr" aria-label="Retirer cette photo">&times;</button></li>';
+    }
+    echo '</ul>';
+    echo '<button type="button" class="button button-secondary pp-galerie-ajouter">Ajouter ou modifier les photos</button>';
+    echo '<p class="description">Ces photos remplacent la galerie de la fiche du bien. Glissez-les pour changer l\'ordre : la première est la grande photo. Laissez vide pour garder la galerie par défaut du thème.</p>';
+    echo '</div>';
+}
 
 function poolparty_g4_afficher_metabox_bien($post) {
     wp_nonce_field('pp_enregistrer_bien', 'pp_bien_nonce');
@@ -338,6 +405,26 @@ function poolparty_g4_enregistrer_bien($post_id) {
     }
 }
 add_action('save_post_bien', 'poolparty_g4_enregistrer_bien');
+
+/**
+ * Enregistre les identifiants de photos de la galerie (méta-box dédiée).
+ */
+function poolparty_g4_enregistrer_galerie($post_id) {
+    if (!isset($_POST['pp_galerie_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['pp_galerie_nonce'])), 'pp_enregistrer_galerie')) {
+        return;
+    }
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    if (isset($_POST['pp_galerie'])) {
+        $ids = array_filter(array_map('absint', explode(',', sanitize_text_field(wp_unslash($_POST['pp_galerie'])))));
+        update_post_meta($post_id, 'pp_galerie', implode(',', $ids));
+    }
+}
+add_action('save_post_bien', 'poolparty_g4_enregistrer_galerie');
 
 /**
  * Filet de sécurité du tri : le tri par défaut (et prix/distance) repose
@@ -625,4 +712,56 @@ function poolparty_g4_image_url($post_id) {
     }
     $image = poolparty_g4_meta($post_id, 'image');
     return $image ? pp_asset($image) : '';
+}
+
+/**
+ * Photos de la galerie d'un bien, sous forme de tableau d'éléments
+ * array('url', 'w', 'h', 'alt'). Si le champ « Galerie du bien » contient
+ * des médias, ce sont eux (dans l'ordre choisi). Sinon on retombe sur le
+ * rendu historique du thème (image principale + photos d'illustration),
+ * pour ne rien casser sur les biens sans galerie personnalisée.
+ */
+function poolparty_g4_galerie_bien($post_id) {
+    $photos = array();
+    $ids = array_filter(array_map('absint', explode(',', (string) get_post_meta($post_id, 'pp_galerie', true))));
+    foreach ($ids as $id) {
+        $src = wp_get_attachment_image_src($id, 'large');
+        if (!$src) {
+            continue;
+        }
+        $photos[] = array(
+            'url' => $src[0],
+            'w'   => $src[1] ? $src[1] : 800,
+            'h'   => $src[2] ? $src[2] : 533,
+            'alt' => trim((string) get_post_meta($id, '_wp_attachment_image_alt', true)),
+        );
+    }
+    if (!empty($photos)) {
+        return $photos;
+    }
+
+    // Repli : rendu d'origine (photo principale + 4 photos d'illustration).
+    $base = get_template_directory_uri() . '/assets/images/piscines/';
+    $principale = poolparty_g4_image_url($post_id);
+    if (!$principale) {
+        $principale = $base . 'annonce-pantin.jpg';
+    }
+    // Dimensions réelles de la photo principale (varie selon le bien)
+    $pw = 800;
+    $ph = 533;
+    $chemin = str_replace(get_template_directory_uri(), get_template_directory(), $principale);
+    if ($chemin !== $principale && file_exists($chemin)) {
+        $dims = @getimagesize($chemin);
+        if ($dims) {
+            $pw = $dims[0];
+            $ph = $dims[1];
+        }
+    }
+    return array(
+        array('url' => $principale,               'w' => $pw,  'h' => $ph, 'alt' => trim((string) poolparty_g4_meta($post_id, 'alt'))),
+        array('url' => $base . 'annonce-champs.jpg',  'w' => 800,  'h' => 533, 'alt' => 'La vue dégagée depuis le bord du bassin'),
+        array('url' => $base . 'annonce-croissy.jpg', 'w' => 800,  'h' => 533, 'alt' => 'Le coin détente avec transats sur la terrasse en bois'),
+        array('url' => $base . 'annonce-lagny.jpg',   'w' => 1024, 'h' => 728, 'alt' => 'Le jardin planté de palmiers et de graminées vu de la maison'),
+        array('url' => $base . 'annonce-chelles.jpg', 'w' => 800,  'h' => 597, 'alt' => "L'allée gravillonnée qui mène au portillon d'accès de la piscine"),
+    );
 }

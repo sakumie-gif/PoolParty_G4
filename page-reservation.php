@@ -76,7 +76,7 @@ $pp_r_capacite = $pp_bien_ok ? max(1, (int) poolparty_g4_meta($pp_bien_id, 'capa
         <!-- BLOC 2 : formulaire de paiement + panneau récapitulatif -->
         <div class="checkout-layout">
 
-            <form class="checkout" id="checkout-form" data-garantie="6" data-capacite="<?php echo esc_attr($pp_r_capacite); ?>" data-annonce="<?php echo esc_attr($pp_r_titre); ?>" data-hote="<?php echo esc_attr($pp_r_hote); ?>">
+            <form class="checkout" id="checkout-form" data-garantie="6" data-capacite="<?php echo esc_attr($pp_r_capacite); ?>" data-annonce="<?php echo esc_attr($pp_r_titre); ?>" data-hote="<?php echo esc_attr($pp_r_hote); ?>" data-bien-id="<?php echo esc_attr($pp_bien_ok ? $pp_bien_id : 0); ?>">
 
                 <!-- Coordonnées du locataire : indispensables pour que
                      l'hôte reçoive la demande et puisse répondre -->
