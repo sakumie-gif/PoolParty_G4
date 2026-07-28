@@ -168,6 +168,38 @@ main {
     color: var(--color-corail);
 }
 
+/* Bulle « Lien copié ! » affichée en bas d'écran, le bouton
+   Partager garde son libellé (JS) */
+.produit-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translate(-50%, 8px);
+    padding: 12px 24px;
+    background: var(--color-white);
+    color: var(--color-dark-green-blue);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    border-radius: 999px;
+    box-shadow: var(--shadow-1);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+    z-index: 1100; /* au-dessus du bandeau cookies (1000), sous le widget a11y (1200) */
+}
+
+.produit-toast.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* Mobile : la bulle se pose au-dessus de la barre Réserver fixée en bas */
+@media (max-width: 767px) {
+    .produit-toast {
+        bottom: 96px;
+    }
+}
+
 /* Carrousel mobile : une photo par écran, défilement aimanté */
 .galerie__mobile {
     position: relative;

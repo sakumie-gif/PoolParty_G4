@@ -46,6 +46,19 @@ function poolparty_g4_ajax_login() {
         wp_send_json_error(array('message' => 'Merci d\'indiquer votre e-mail et votre mot de passe.'));
     }
 
+    // On repère d'abord si un compte existe pour cette adresse afin de
+    // renvoyer un message utile (créer un compte vs mot de passe erroné).
+    $compte_existe = false;
+    if (is_email($identifiant)) {
+        $compte_existe = (bool) get_user_by('email', $identifiant);
+    } else {
+        $compte_existe = (bool) get_user_by('login', $identifiant);
+    }
+
+    if (!$compte_existe) {
+        wp_send_json_error(array('message' => 'Aucun compte n\'est associé à cette adresse. Créez-en un via « Inscription ».'));
+    }
+
     // wp_signon accepte l'e-mail ou l'identifiant : WordPress teste les deux.
     $user = wp_signon(array(
         'user_login'    => $identifiant,
@@ -54,7 +67,7 @@ function poolparty_g4_ajax_login() {
     ), is_ssl());
 
     if (is_wp_error($user)) {
-        wp_send_json_error(array('message' => 'E-mail ou mot de passe incorrect.'));
+        wp_send_json_error(array('message' => 'Mot de passe incorrect. Réessayez ou utilisez « Mot de passe oublié ? ».'));
     }
 
     wp_send_json_success(array('message' => 'Connexion réussie.'));
@@ -126,7 +139,15 @@ function poolparty_g4_ajax_register() {
     wp_set_current_user($user_id);
     wp_set_auth_cookie($user_id, true);
 
-    wp_send_json_success(array('message' => 'Votre compte est créé.'));
+    // Jetons frais pour le nouvel utilisateur : les jetons émis pour le
+    // visiteur non connecté ne seraient plus valides après connexion (ils
+    // dépendent de l'identifiant du compte). Utile au tunnel « Proposer »
+    // qui enchaîne inscription puis publication de l'annonce.
+    wp_send_json_success(array(
+        'message'          => 'Votre compte est créé.',
+        'bienNonce'        => wp_create_nonce('pp_bien'),
+        'reservationNonce' => wp_create_nonce('pp_reservation'),
+    ));
 }
 add_action('wp_ajax_nopriv_pp_register', 'poolparty_g4_ajax_register');
 add_action('wp_ajax_pp_register', 'poolparty_g4_ajax_register');
@@ -157,15 +178,55 @@ add_action('wp_ajax_nopriv_pp_reset', 'poolparty_g4_ajax_reset');
 add_action('wp_ajax_pp_reset', 'poolparty_g4_ajax_reset');
 
 /**
- * Est-ce que l'utilisateur courant est un hôte (peut recevoir des
- * demandes de réservation) ? Vrai pour le rôle Hôte et pour l'admin.
+ * Renvoie des jetons frais pour la session courante. Utile après une
+ * connexion / inscription programmatique : les jetons émis dans la même
+ * requête que wp_set_auth_cookie() ne sont pas fiables (le token de session
+ * n'est lu qu'à la requête suivante). Le tunnel « Proposer » appelle ce
+ * point d'entrée juste après l'inscription pour obtenir un jeton pp_bien
+ * valide avant de publier. Renvoyer un jeton n'est pas sensible : il est lié
+ * à la session de l'appelant.
+ */
+function poolparty_g4_ajax_nonce() {
+    wp_send_json_success(array(
+        'bienNonce'        => wp_create_nonce('pp_bien'),
+        'reservationNonce' => wp_create_nonce('pp_reservation'),
+        'authNonce'        => wp_create_nonce('pp_auth'),
+    ));
+}
+add_action('wp_ajax_pp_nonce', 'poolparty_g4_ajax_nonce');
+add_action('wp_ajax_nopriv_pp_nonce', 'poolparty_g4_ajax_nonce');
+
+/**
+ * Peut accéder à l'espace « Demandes de réservation » (gérer ses annonces) ?
+ * Modèle unifié type Airbnb : un seul type de membre, à la fois locataire ET
+ * hôte potentiel. Tout membre connecté y a droit ; il n'y verra toutefois que
+ * les demandes portant sur SES propres annonces (contrôle par la propriété du
+ * bien, côté serveur, dans inc/reservations.php). Aucun rôle spécial requis.
  */
 function poolparty_g4_est_hote($user = null) {
     if ($user === null) {
-        $user = wp_get_current_user();
+        return is_user_logged_in();
     }
-    if (!$user || !$user->exists()) {
-        return false;
-    }
-    return in_array('hote', (array) $user->roles, true) || user_can($user, 'manage_options');
+    return $user && $user->exists();
 }
+
+/* =============================================================
+   4. BACK-OFFICE RÉSERVÉ À L'ADMINISTRATEUR
+   Les membres font tout depuis le site : ils n'ont aucune raison
+   d'entrer dans WordPress. On renvoie vers l'accueil tout non-admin
+   qui tenterait d'ouvrir /wp-admin, et on masque la barre noire.
+   ============================================================= */
+
+function poolparty_g4_bloquer_backoffice() {
+    // On laisse passer les appels AJAX (admin-ajax.php) : le front en a besoin.
+    if (!current_user_can('manage_options') && !wp_doing_ajax()) {
+        wp_safe_redirect(home_url('/'));
+        exit;
+    }
+}
+add_action('admin_init', 'poolparty_g4_bloquer_backoffice');
+
+function poolparty_g4_masquer_admin_bar($show) {
+    return current_user_can('manage_options') ? $show : false;
+}
+add_filter('show_admin_bar', 'poolparty_g4_masquer_admin_bar');

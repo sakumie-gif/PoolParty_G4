@@ -344,6 +344,16 @@
     text-decoration: underline;
 }
 
+/* Lien Connexion mis en avant : bandeau en tête de carte, pour ne pas
+   avoir à faire défiler tout le formulaire quand on a déjà un compte */
+.proposer-deja--avant {
+    padding: var(--padding-p3) var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r2);
+    text-align: center;
+    font-size: var(--fs-p2);
+}
+
 .proposer-map {
     width: 100%;
     margin-top: var(--padding-p1);

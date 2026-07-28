@@ -2859,10 +2859,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Page produit : actions de l'en-tête et de la barre galerie mobile.
-    // Partager copie le lien de la page (les boutons icône seule
-    // signalent la copie par un changement de couleur) ; Favori
-    // enregistre l'annonce comme le coeur des cartes, les boutons
-    // restent synchronisés via coeursFavoris.
+    // Partager copie le lien de la page : le bouton garde son libellé,
+    // la confirmation s'affiche dans une bulle temporaire en bas
+    // d'écran ; Favori enregistre l'annonce comme le coeur des cartes,
+    // les boutons restent synchronisés via coeursFavoris.
     var partagerBoutons = Array.prototype.slice.call(document.querySelectorAll('.js-partager'));
 
     if (partagerBoutons.length) {
@@ -2895,19 +2895,32 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         };
 
+        var toastCopie = null;
+        var toastCopieTimer = null;
+        var afficherToastCopie = function () {
+            if (!toastCopie) {
+                toastCopie = document.createElement('div');
+                toastCopie.className = 'produit-toast';
+                toastCopie.setAttribute('role', 'status');
+                toastCopie.textContent = 'Lien copié !';
+                document.body.appendChild(toastCopie);
+            }
+            window.clearTimeout(toastCopieTimer);
+            toastCopie.classList.remove('is-visible');
+            void toastCopie.offsetWidth;
+            toastCopie.classList.add('is-visible');
+            toastCopieTimer = window.setTimeout(function () {
+                toastCopie.classList.remove('is-visible');
+            }, 2000);
+        };
+
         partagerBoutons.forEach(function (partager) {
-            var partagerLibelle = partager.querySelector('span');
             partager.addEventListener('click', function () {
                 var lien = window.location.href;
                 copierLien(lien).then(function () {
-                    if (partagerLibelle) {
-                        partagerLibelle.textContent = 'Lien copié !';
-                    }
+                    afficherToastCopie();
                     partager.classList.add('is-copie');
                     setTimeout(function () {
-                        if (partagerLibelle) {
-                            partagerLibelle.textContent = 'Partager';
-                        }
                         partager.classList.remove('is-copie');
                     }, 2000);
                 }).catch(function () {
@@ -4187,6 +4200,11 @@ document.addEventListener('DOMContentLoaded', function () {
         // cycle de vie) qu'à une étape déjà débloquée, pas en avant
         var maxAtteint = 0;
 
+        // Membre déjà connecté : pas de création de compte (PHP ne rend
+        // pas l'écran Compte), l'étape disparaît du rail et le tunnel
+        // commence à « Votre espace », renumérotée 1
+        var compteConnecte = document.body.classList.contains('is-connected');
+
         // Cycle de vie regroupé : le tunnel est découpé en grandes étapes,
         // chacune rassemblant plusieurs écrans qui défilent sur la même page.
         // indexCourant est l'index du GROUPE courant (et groupes.length = état
@@ -4201,6 +4219,12 @@ document.addEventListener('DOMContentLoaded', function () {
             { id: 'versement', label: 'Versement',           ecrans: ['versement'] },
             { id: 'apercu',    label: 'Aperçu',              ecrans: ['recap'] }
         ];
+
+        if (compteConnecte) {
+            groupes = groupes.filter(function (groupe) {
+                return groupe.id !== 'compte';
+            });
+        }
 
         if (stepperEl) {
             groupes.forEach(function (groupe, i) {
@@ -4293,7 +4317,8 @@ document.addEventListener('DOMContentLoaded', function () {
         var ecranEstValide = function (nom) {
             switch (nom) {
                 case 'compte':
-                    return Boolean(champCompte.prenom.value.trim() &&
+                    // Connecté : le formulaire n'existe pas, l'étape est acquise
+                    return compteConnecte || Boolean(champCompte.prenom.value.trim() &&
                         champCompte.nom.value.trim() &&
                         champCompte.email.value.indexOf('@') > 0 &&
                         champCompte.password.value.length >= 8 &&
@@ -4413,7 +4438,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Le champ mot de passe se signale dès qu'il est trop court
-            if (estCompte) {
+            if (estCompte && champCompte.password) {
                 champCompte.password.classList.toggle('has-error',
                     champCompte.password.value !== '' &&
                     champCompte.password.value.length < 8);
@@ -4467,7 +4492,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Veille anti-autofill : tant que l'étape Compte est affichée,
             // on revalide régulièrement au cas où le navigateur remplisse
             // les champs sans déclencher d'événement input
-            if (!estFin && groupes[indexCourant].id === 'compte') {
+            if (!estFin && groupes[indexCourant].id === 'compte' && !compteConnecte) {
                 if (!compteVeille) {
                     compteVeille = setInterval(function () {
                         majNavigation();
@@ -4483,7 +4508,122 @@ document.addEventListener('DOMContentLoaded', function () {
             window.scrollTo(0, 0);
         };
 
+        // Publication réelle de l'annonce : à la dernière étape, on envoie
+        // tout au serveur (création d'un « bien » en attente de validation)
+        // AVANT d'afficher l'écran de fin. Si le membre n'est pas connecté,
+        // on crée d'abord son compte avec les infos de l'écran Compte.
+        var publicationEnCours = false;
+        var publierAnnonce = function () {
+            if (publicationEnCours) {
+                return;
+            }
+            // Hors WordPress (ppData absent) : on garde l'ancien comportement.
+            if (!window.ppData || !ppData.ajaxUrl || !ppData.bienNonce) {
+                afficherGroupe(indexCourant + 1);
+                return;
+            }
+
+            publicationEnCours = true;
+            var labelInitial = navSuivant.textContent;
+            navSuivant.disabled = true;
+            navSuivant.textContent = 'Publication...';
+
+            var echec = function (message) {
+                publicationEnCours = false;
+                navSuivant.disabled = false;
+                navSuivant.textContent = labelInitial;
+                montrerToast(message || 'La publication a échoué. Réessayez.', false);
+            };
+
+            var envoyerBien = function (nonceBien) {
+                var form = new FormData();
+                form.append('action', 'pp_creer_bien');
+                form.append('nonce', nonceBien);
+                form.append('titre', champTitre ? champTitre.value.trim() : '');
+                form.append('description', champDescription ? champDescription.value.trim() : '');
+                form.append('type', annonce.choix.type || '');
+                form.append('acces', annonce.choix.acces || '');
+                form.append('reservation', annonce.choix.reservation || '');
+                form.append('commune', champAdresse.commune ? champAdresse.commune.value.trim() : '');
+                form.append('voie', champAdresse.voie ? champAdresse.voie.value.trim() : '');
+                form.append('cp', champAdresse.cp ? champAdresse.cp.value.trim() : '');
+                form.append('prix', champPrix ? champPrix.value : '');
+                form.append('invites', annonce.compteurs.invites || 0);
+                form.append('equipements', (annonce.multi.equipements || []).join(','));
+                form.append('securite', (annonce.multi.securite || []).join(','));
+                form.append('jours', (annonce.multi.jours || []).join(','));
+                annonce.photos.forEach(function (photo) {
+                    if (photo.file) {
+                        form.append('photos[]', photo.file, photo.file.name);
+                    }
+                });
+
+                fetch(ppData.ajaxUrl, { method: 'POST', body: form })
+                    .then(function (reponse) { return reponse.json(); })
+                    .then(function (rep) {
+                        if (rep && rep.success) {
+                            publicationEnCours = false;
+                            afficherGroupe(indexCourant + 1); // écran de fin
+                        } else {
+                            echec(rep && rep.data && rep.data.message ? rep.data.message : '');
+                        }
+                    })
+                    .catch(function () { echec(); });
+            };
+
+            // Membre déjà connecté : on publie directement.
+            if (document.body.classList.contains('is-connected')) {
+                envoyerBien(ppData.bienNonce);
+                return;
+            }
+
+            // Non connecté : on crée d'abord le compte (écran Compte), puis on
+            // publie avec le jeton frais renvoyé (le jeton initial, émis pour un
+            // visiteur non connecté, ne serait plus valide une fois connecté).
+            if (!ppData.authNonce || !champCompte.email) {
+                echec('Connectez-vous ou créez un compte pour publier votre annonce.');
+                return;
+            }
+            var corpsCompte = new URLSearchParams({
+                action: 'pp_register',
+                nonce: ppData.authNonce,
+                prenom: champCompte.prenom ? champCompte.prenom.value.trim() : '',
+                nom: champCompte.nom ? champCompte.nom.value.trim() : '',
+                email: champCompte.email ? champCompte.email.value.trim() : '',
+                password: champCompte.password ? champCompte.password.value : '',
+                cgu: (champCompte.cgu && champCompte.cgu.checked) ? '1' : ''
+            });
+            fetch(ppData.ajaxUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: corpsCompte.toString()
+            }).then(function (reponse) {
+                return reponse.json();
+            }).then(function (rep) {
+                if (rep && rep.success) {
+                    document.body.classList.add('is-connected');
+                    // Jeton frais valide pour la session connectée : on le
+                    // demande dans une requête séparée (le cookie est posé),
+                    // car le jeton de l'inscription n'est pas encore fiable.
+                    fetch(ppData.ajaxUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({ action: 'pp_nonce' }).toString()
+                    }).then(function (r) { return r.json(); }).then(function (repN) {
+                        envoyerBien((repN && repN.data && repN.data.bienNonce) ? repN.data.bienNonce : ppData.bienNonce);
+                    }).catch(function () { echec(); });
+                } else {
+                    echec(rep && rep.data && rep.data.message ? rep.data.message : 'La création du compte a échoué.');
+                }
+            }).catch(function () { echec(); });
+        };
+
         navSuivant.addEventListener('click', function () {
+            // Dernière étape (passage à l'écran de fin) : on publie réellement.
+            if (indexCourant + 1 === groupes.length) {
+                publierAnnonce();
+                return;
+            }
             afficherGroupe(indexCourant + 1);
             if (bandeauReprise) {
                 bandeauReprise.hidden = true;
@@ -4567,11 +4707,19 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             // Reprise au plus tard à l'étape Annonce (qui contient les photos,
-            // dont les aperçus ne survivent pas au rechargement)
+            // dont les aperçus ne survivent pas au rechargement). L'étape
+            // reprise est retrouvée par son identifiant : le nombre d'étapes
+            // varie selon l'état de connexion (pas de Compte une fois connecté)
             var indexAnnonce = groupes.findIndex(function (groupe) {
                 return groupe.id === 'annonce';
             });
-            indexInitial = Math.min(brouillon.index || 0, indexAnnonce);
+            var indexRepris = groupes.findIndex(function (groupe) {
+                return groupe.id === brouillon.groupe;
+            });
+            if (indexRepris === -1) {
+                indexRepris = brouillon.index || 0;
+            }
+            indexInitial = Math.min(indexRepris, indexAnnonce);
 
             if (bandeauReprise) {
                 bandeauReprise.hidden = false;
@@ -4602,6 +4750,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 try {
                     localStorage.setItem(CLE_BROUILLON, JSON.stringify({
                         index: indexCourant,
+                        groupe: groupes[indexCourant].id,
                         champs: champs,
                         cases: cases,
                         choix: annonce.choix,
@@ -4644,11 +4793,13 @@ document.addEventListener('DOMContentLoaded', function () {
             majNavigation();
         };
 
-        [champCompte.prenom, champCompte.nom, champCompte.email, champCompte.password].forEach(function (champ) {
-            champ.addEventListener('input', toucherCompte);
-            champ.addEventListener('change', toucherCompte);
-        });
-        champCompte.cgu.addEventListener('change', toucherCompte);
+        if (!compteConnecte) {
+            [champCompte.prenom, champCompte.nom, champCompte.email, champCompte.password].forEach(function (champ) {
+                champ.addEventListener('input', toucherCompte);
+                champ.addEventListener('change', toucherCompte);
+            });
+            champCompte.cgu.addEventListener('change', toucherCompte);
+        }
 
         var oeilCompte = parcours.querySelector('[data-ecran="compte"] .form-field__eye');
         if (oeilCompte) {
@@ -4791,7 +4942,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             photosInput.addEventListener('change', function () {
                 Array.prototype.slice.call(photosInput.files).forEach(function (fichier) {
-                    annonce.photos.push({ url: URL.createObjectURL(fichier) });
+                    // On conserve le fichier réel (file) en plus de l'aperçu :
+                    // il sera téléversé à la publication de l'annonce.
+                    annonce.photos.push({ url: URL.createObjectURL(fichier), file: fichier });
                 });
                 // Permet de resélectionner les mêmes fichiers si besoin
                 photosInput.value = '';

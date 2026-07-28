@@ -27,13 +27,18 @@ get_header('proposer');
 
         <!-- ===================================================
              ÉCRAN A : Création du compte
+             (membre connecté : écran non rendu, l'étape Compte
+             disparaît du rail côté JS et le tunnel commence à
+             « Votre espace »)
              =================================================== -->
+        <?php if (!is_user_logged_in()) : ?>
         <section class="proposer-ecran" data-ecran="compte" data-etape="0" data-avancement="0">
             <div class="proposer-centre proposer-centre--etroit">
                 <h2 class="proposer-titre">Créez votre compte Pool Party</h2>
                 <p class="proposer-sous-titre">Quelques informations suffisent pour commencer. Vous pourrez compléter votre profil plus tard.</p>
 
                 <div class="proposer-carte">
+                <p class="proposer-deja proposer-deja--avant">Vous avez déjà un compte ? <a href="#" class="js-open-login">Connexion</a></p>
                 <form class="proposer-form" novalidate>
                     <div class="proposer-row">
                         <div class="form-field">
@@ -74,10 +79,10 @@ get_header('proposer');
                     <button type="button" class="btn btn-primary proposer-carte__suivant" data-nav="suivant-carte" disabled>Continuer</button>
                 </form>
 
-                <p class="proposer-deja">Vous avez déjà un compte ? <a href="#" class="js-open-login">Connexion</a></p>
                 </div>
             </div>
         </section>
+        <?php endif; ?>
 
         <!-- Écran 1.1 : type d'espace détaillé -->
         <section class="proposer-ecran" data-ecran="type" data-etape="1" data-avancement="25" hidden>

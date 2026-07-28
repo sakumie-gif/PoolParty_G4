@@ -109,8 +109,8 @@
             <?php else : ?>
             <div class="main-menu__section">
                 <a href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>">Explorer</a>
-                <a href="<?php echo esc_url(home_url('/actualites/')); ?>">Actualités</a>
                 <a href="<?php echo esc_url(home_url('/proposer/')); ?>" class="main-menu__strong">Proposer votre espace</a>
+                <a href="<?php echo esc_url(home_url('/actualites/')); ?>">Actualités</a>
             </div>
             <?php endif; ?>
             <hr class="main-menu__sep">
@@ -119,10 +119,9 @@
                 <a href="<?php echo esc_url(home_url('/inscription/')); ?>">Inscription</a>
             </div>
             <div class="main-menu__section main-menu__section--connecte">
-                <a href="<?php echo esc_url(home_url('/mes-reservations/')); ?>">Mes réservations</a>
-                <?php if (function_exists('poolparty_g4_est_hote') && poolparty_g4_est_hote()) : ?>
-                <a href="<?php echo esc_url(home_url('/demandes/')); ?>">Demandes de réservation</a>
-                <?php endif; ?>
+                <?php // « Demandes de réservation » a fusionné dans la page
+                      // Réservations V2 (vue Hôte) : plus de lien séparé. ?>
+                <a href="<?php echo esc_url(home_url('/mes-reservations/')); ?>">Réservations</a>
                 <a href="<?php echo esc_url(home_url('/favoris/')); ?>">Mes favoris</a>
                 <a href="<?php echo esc_url(home_url('/messages/')); ?>">Messagerie</a>
             </div>

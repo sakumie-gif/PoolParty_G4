@@ -60,9 +60,16 @@ require get_template_directory() . '/inc/auth.php';
 // en base, rattachées au locataire et à l'hôte, acceptées / refusées.
 require get_template_directory() . '/inc/reservations.php';
 
+// Avis de la page Mes réservations (commentaires WordPress natifs)
+require get_template_directory() . '/inc/avis.php';
+
 // Compte hôte de démonstration + rattachement des 16 biens à ce compte,
 // pour que les demandes de réservation arrivent à un vrai destinataire.
 require get_template_directory() . '/inc/seed-hote.php';
+
+// Création d'annonces depuis le site (tunnel « Proposer votre espace ») :
+// le membre publie son bien, enregistré en attente de validation admin.
+require get_template_directory() . '/inc/proposer.php';
 
 /**
  * Raccourci vers un fichier du thème (images, icônes, polices...).
@@ -229,6 +236,12 @@ function poolparty_g4_scripts() {
 
     wp_enqueue_script('pp-main', $uri . '/js/main.js', $deps, pp_version('js/main.js'), true);
 
+    // Page Mes réservations V2 : module dédié (vues Hôte/Locataire,
+    // onglets, avis), chargé après main.js qui porte ppData.
+    if (is_page('mes-reservations')) {
+        wp_enqueue_script('pp-mes-reservations-v2', $uri . '/js/mes-reservations-v2.js', array('pp-main'), pp_version('js/mes-reservations-v2.js'), true);
+    }
+
     // URL WordPress passées à main.js (js réutilisé du site statique).
     // Le carrousel de catégories de l'accueil et le tunnel de réservation
     // ciblaient des fichiers .html : on leur fournit les vrais permaliens
@@ -245,6 +258,7 @@ function poolparty_g4_scripts() {
         'ajaxUrl'         => admin_url('admin-ajax.php'),
         'authNonce'       => wp_create_nonce('pp_auth'),
         'reservationNonce' => wp_create_nonce('pp_reservation'),
+        'bienNonce'       => wp_create_nonce('pp_bien'),
         // État d'authentification réel (WordPress) : main.js s'appuie
         // dessus au lieu de la connexion simulée. L'identité prérremplit
         // le tunnel de réservation.
@@ -263,6 +277,15 @@ function poolparty_g4_scripts() {
         'reservations'    => (is_page('mes-reservations') && is_user_logged_in())
             ? poolparty_g4_reservations_pour_js(get_current_user_id())
             : array(),
+        // Page Mes réservations V2 : demandes reçues (vue Hôte) et avis,
+        // plus le jeton des actions d'avis.
+        'reservationsHote' => (is_page('mes-reservations') && is_user_logged_in())
+            ? poolparty_g4_reservations_hote_pour_js(get_current_user_id())
+            : array(),
+        'avis'            => (is_page('mes-reservations') && is_user_logged_in())
+            ? poolparty_g4_avis_pour_js(get_current_user_id())
+            : array('locataire' => array(), 'hote' => array()),
+        'avisNonce'       => wp_create_nonce('pp_avis'),
     ));
 }
 add_action('wp_enqueue_scripts', 'poolparty_g4_scripts');
