@@ -36,11 +36,12 @@ $journal = new WP_Query(array(
             </nav>
         </div>
 
-        <!-- BLOC 2 : En-tête de page -->
-        <section class="actus-hero">
-            <p class="actus-hero__surtitre">Le journal</p>
+        <!-- BLOC 2 : En-tête de page (bandeau hero-page commun,
+             variante éditoriale alignée à gauche comme le catalogue) -->
+        <section class="hero-page">
+            <p class="hero-page__surtitre">Le journal</p>
             <h1>Les actualités Pool Party</h1>
-            <p>Nouveautés de la plateforme, conseils pour profiter de l'eau, idées de journées à partager et coulisses de la communauté : suivez tout ce qui fait vivre la location d'espaces aquatiques en Île-de-France.</p>
+            <p class="hero-page__texte">Nouveautés de la plateforme, conseils pour profiter de l'eau, idées de journées à partager et coulisses de la communauté : suivez tout ce qui fait vivre la location d'espaces aquatiques en Île-de-France.</p>
         </section>
 
         <?php if ($journal->have_posts()) : ?>

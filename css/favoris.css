@@ -79,7 +79,9 @@
    Mêmes colonnes que la grille de résultats de la page catégorie.
    ============================================================= */
 .favoris-liste {
-    padding: 0 var(--padding-page-mobile) var(--padding-p1);
+    /* 20px + les 12px réservés aux tags des cartes = 32px visuels
+       entre le bandeau hero-page et la grille */
+    padding: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
 }
 
 .favoris-grid {

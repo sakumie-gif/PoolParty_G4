@@ -883,13 +883,106 @@ a:hover {
 .dropdown-item:hover,
 .dropdown-item.is-active {
     background: var(--color-hover-sable);
-    /* Faux gras : épaissit le trait sans décaler la mise en page */
-    text-shadow: 0 0 0.5px currentColor;
+    /* Texte foncé même sur les items <a> (filtres du catalogue) :
+       sans cette ligne le a:hover global les passait en corail,
+       illisible sur le fond sable. Même comportement que le menu. */
+    color: var(--color-grey-font-1);
+}
+
+/* Seul l'item choisi passe en gras (repère « vous êtes ici ») ; le
+   survol garde le texte regular pour ne pas le confondre avec la
+   sélection en cours. */
+.dropdown-item.is-active {
+    font-weight: var(--fw-semibold);
 }
 
 /* Variante libellé en semi-gras permanent (Figma : Content=Bold) */
 .dropdown-item--bold {
     font-weight: var(--fw-semibold);
+}
+
+/* =============================================================
+   BANDEAU DE PAGE (hero commun)
+   Panneau beige arrondi + titre Garamond vert bleuté, décliné sur
+   Actualités, FAQ, Favoris, Messages (et le futur Mes réservations
+   V2), dans la lignée du bandeau du catalogue. Variante --membre :
+   contenu centré (pages de l'espace membre). Se pose sous le fil
+   d'Ariane, hors des sections déjà munies de gouttières.
+   ============================================================= */
+.hero-page {
+    margin: var(--padding-p2) var(--padding-page-mobile) 0;
+    padding: var(--padding-p1) var(--padding-p2);
+    background-color: var(--color-beige);
+    border-radius: var(--radius-r1);
+}
+
+/* Titre réduit en mobile, la taille de la charte revient en tablette */
+.hero-page h1 {
+    font-size: var(--fs-h2);
+    color: var(--color-dark-green-blue);
+}
+
+.hero-page__surtitre {
+    margin-bottom: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-sable);
+}
+
+.hero-page__texte {
+    margin-top: var(--padding-p3);
+    max-width: 75ch;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    line-height: 1.5;
+    color: var(--color-grey-font-1);
+}
+
+.hero-page__compteur {
+    margin-top: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-2);
+}
+
+.hero-page--membre {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.hero-page--membre .hero-page__texte {
+    max-width: 62ch;
+}
+
+.hero-page__recherche {
+    /* max-width et non width : le width 100% de .input-search,
+       déclaré plus bas dans la feuille, resterait prioritaire */
+    max-width: 560px;
+    margin-top: var(--padding-p2);
+}
+
+@media (min-width: 768px) {
+    .hero-page {
+        margin-left: var(--padding-page-tablet);
+        margin-right: var(--padding-page-tablet);
+    }
+
+    .hero-page h1 {
+        font-size: var(--fs-h1);
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-page {
+        margin-left: var(--padding-page-desktop);
+        margin-right: var(--padding-page-desktop);
+        padding: calc(var(--padding-p1) + var(--padding-p4)) var(--padding-p1);
+    }
 }
 
 .dropdown-item img,
@@ -2299,6 +2392,21 @@ textarea.form-field__input {
     padding-bottom: 12px;
 }
 
+/* Message d'erreur de connexion (e-mail/mot de passe incorrect) : même
+   corail que les champs en erreur, discret sous le lien « mot de passe
+   oublié ». */
+.login-popup__erreur {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-corail);
+    text-align: center;
+    margin: 0;
+}
+
+.login-popup__erreur[hidden] {
+    display: none;
+}
+
 .login-popup__signup {
     font-family: var(--font-input);
     font-weight: var(--fw-semibold);
@@ -3140,6 +3248,17 @@ textarea.form-field__input {
     flex-direction: column;
     gap: var(--padding-p4);
     z-index: 200;
+    /* Si le menu dépasse la hauteur de l'écran, il scrolle sur lui-même
+       au lieu d'entraîner la page en fond (overscroll-behavior: contain) */
+    max-height: calc(100dvh - 96px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    /* Scroll actif mais barre masquée (Firefox + Chrome/Edge/Safari) */
+    scrollbar-width: none;
+}
+
+.main-menu::-webkit-scrollbar {
+    display: none;
 }
 
 .main-menu[hidden] {

@@ -32,8 +32,14 @@ get_header();
                 </ol>
             </nav>
 
+        </section>
+
+        <!-- Bandeau hero-page commun (variante espace membre) : titre,
+             compteur rempli par main.js, phrase d'accompagnement -->
+        <section class="hero-page hero-page--membre">
             <h1>Messages</h1>
-            <p class="messages-intro__sub" id="messages-compte" aria-live="polite"></p>
+            <p class="hero-page__compteur" id="messages-compte" aria-live="polite"></p>
+            <p class="hero-page__texte">Échangez avec les hôtes et les locataires sans quitter la plateforme : vos coordonnées restent privées et un e-mail vous prévient à chaque nouveau message.</p>
         </section>
 
         <!-- BLOC 2 : État visiteur. Les conversations sont rattachées au

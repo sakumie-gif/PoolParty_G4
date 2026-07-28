@@ -23,12 +23,13 @@ get_header();
             </nav>
         </div>
 
-        <!-- BLOC 2 : En-tête de page + recherche dans la FAQ -->
-        <section class="faq-hero">
+        <!-- BLOC 2 : En-tête de page + recherche dans la FAQ (bandeau
+             hero-page commun, variante espace membre centrée) -->
+        <section class="hero-page hero-page--membre">
             <h1>Comment pouvons-nous vous aider ?</h1>
-            <p>Réservation, paiement, annulation, assurance : les réponses aux questions que vous nous posez le plus souvent.</p>
+            <p class="hero-page__texte">Réservation, paiement, annulation, assurance : les réponses aux questions que vous nous posez le plus souvent.</p>
 
-            <form class="input-search faq-hero__recherche" role="search" aria-label="Rechercher dans les questions fréquentes">
+            <form class="input-search hero-page__recherche" role="search" aria-label="Rechercher dans les questions fréquentes">
                 <label class="sr-only" for="faq-recherche">Rechercher une question</label>
                 <input type="search" id="faq-recherche" name="faq-recherche" placeholder="Rechercher une question : annulation, remboursement...">
                 <button type="submit" class="input-search__submit" aria-label="Lancer la recherche">

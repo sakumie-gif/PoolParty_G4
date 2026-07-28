@@ -56,7 +56,8 @@
 
 /* ARTICLE À LA UNE */
 .actus-featured {
-    padding: 0 var(--padding-page-mobile) var(--padding-p1);
+    /* 32px entre le bandeau hero-page et l'article à la une */
+    padding: var(--padding-p1) var(--padding-page-mobile) var(--padding-p1);
 }
 
 .actus-une {

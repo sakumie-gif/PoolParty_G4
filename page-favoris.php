@@ -22,8 +22,14 @@ get_header();
                 </ol>
             </nav>
 
+        </section>
+
+        <!-- Bandeau hero-page commun (variante espace membre) : titre,
+             compteur rempli par main.js, phrase d'accompagnement -->
+        <section class="hero-page hero-page--membre">
             <h1>Mes favoris</h1>
-            <p class="favoris-intro__sub" id="favoris-compte" aria-live="polite"></p>
+            <p class="hero-page__compteur" id="favoris-compte" aria-live="polite"></p>
+            <p class="hero-page__texte">Retrouvez les espaces que vous avez aimés, comparez-les et réservez celui qui vous ressemble.</p>
         </section>
 
         <!-- BLOC 2 : État visiteur. Les favoris sont liés au compte :
