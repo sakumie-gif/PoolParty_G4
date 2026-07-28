@@ -450,3 +450,504 @@
         margin-right: var(--padding-page-desktop);
     }
 }
+
+/* =============================================================
+   MES RÉSERVATIONS V2 (28-07-2026)
+   Page unique Hôte / Locataire d'après la maquette Figma
+   (79-15367 / 81-12014) : bascule dans le bandeau hero-page,
+   colonne d'onglets En attente / A venir / Passées / Avis,
+   bloc Bon à savoir, onglet Avis (sous-onglets, tri, filtre).
+   Les blocs plus haut dans cette feuille (états, segmented
+   control, cartes, pop-up) restent utilisés tels quels.
+   ============================================================= */
+
+.rv2-intro {
+    padding-bottom: 0;
+}
+
+/* Bascule Hôte / Locataire (maquette OptionSwitcher) : même gabarit
+   compact que les sous-onglets Avis, piste #E4DCD4 (valeur Figma) */
+.rv2-toggle {
+    display: inline-flex;
+    gap: var(--padding-p5);
+    margin-top: var(--padding-p2);
+    padding: var(--padding-p5);
+    background-color: #e4dcd4;
+    border-radius: var(--radius-pill);
+}
+
+.rv2-toggle__btn {
+    padding: var(--padding-p4) var(--padding-p2);
+    border-radius: var(--radius-pill);
+    background-color: transparent;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-dark-green-blue);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.rv2-toggle__btn.is-active {
+    background-color: var(--color-white);
+    font-weight: var(--fw-semibold);
+    box-shadow: var(--shadow-3);
+}
+
+/* Disposition : onglets + contenu */
+.rv2-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    padding: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
+}
+
+.rv2-tabs {
+    display: inline-flex;
+    gap: var(--padding-p5);
+    padding: var(--padding-p5);
+    background-color: var(--color-beige);
+    border-radius: var(--radius-pill);
+    flex-wrap: wrap;
+}
+
+.rv2-tab {
+    padding: var(--padding-p4) var(--padding-p2);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+    background: transparent;
+    cursor: pointer;
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.rv2-tab:hover {
+    color: var(--color-dark-green-blue);
+}
+
+.rv2-tab.is-active {
+    color: var(--color-dark-green-blue);
+    font-weight: var(--fw-medium);
+    background-color: var(--color-white);
+    box-shadow: var(--shadow-3);
+}
+
+.rv2-count {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-semibold);
+    color: var(--color-grey-font-1);
+}
+
+.rv2-count:empty {
+    display: none;
+}
+
+.rv2-contenu {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    min-width: 0;
+}
+
+.rv2-contenu .reservations-grid:empty {
+    display: none;
+}
+
+/* Tuiles de taille identique dans tous les onglets : hauteur imposée
+   dès la tablette (media queries plus bas), espace réparti entre les
+   sections, textes longs bornés à 2 lignes */
+.rv2-contenu .reservation-card__body {
+    justify-content: space-between;
+}
+
+.rv2-contenu .reservation-card__title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.rv2-contenu .reservation-card__info dd {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+/* Lien « Envoyer un message » : contact via la messagerie interne,
+   jamais de coordonnées personnelles affichées */
+.rv2-lien-message {
+    padding: 0;
+    background: none;
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.rv2-lien-message:hover {
+    color: var(--color-corail);
+}
+
+/* État vide illustré rendu dans la grille : on annule les marges de
+   page du composant (elles servent quand il est posé pleine page) */
+.rv2-contenu .reservations-etat {
+    margin: 0;
+}
+
+/* Onglet Avis : barre d'outils */
+.rv2-avis-outils {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--padding-p3);
+}
+
+.rv2-avis-outils[hidden] {
+    display: none;
+}
+
+.rv2-avis-soustabs {
+    background-color: #e4dcd4;
+}
+
+.rv2-avis-soustabs .reservations-tab {
+    font-family: var(--font-input);
+    color: var(--color-dark-green-blue);
+}
+
+.rv2-avis-soustabs .reservations-tab.is-active {
+    font-weight: var(--fw-semibold);
+}
+
+.rv2-avis-soustabs[hidden] {
+    display: none;
+}
+
+.rv2-avis-filtres {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--padding-p4);
+    margin-left: auto;
+}
+
+/* Pilules Trier par / Filtrer : composant menu-item + panneau
+   identique au .pilule__liste de la page Explorer (calé à droite) */
+.rv2-pilule {
+    position: relative;
+}
+
+.rv2-pilule__liste {
+    position: absolute;
+    top: calc(100% + var(--padding-p4));
+    right: 0;
+    z-index: 20;
+    min-width: 220px;
+    list-style: none;
+    margin: 0;
+    padding: var(--padding-p4);
+    display: flex;
+    flex-direction: column;
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r2);
+    box-shadow: var(--shadow-2);
+}
+
+.rv2-pilule__liste[hidden] {
+    display: none;
+}
+
+/* Cartes d'avis */
+.rv2-avis-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p3);
+    padding: var(--padding-p2);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    box-shadow: var(--shadow-3);
+}
+
+.rv2-avis-card__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--padding-p3);
+}
+
+.rv2-avis-card__bien {
+    font-family: var(--font-heading);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-semibold);
+    line-height: 1.2;
+    color: var(--color-grey-font-1);
+}
+
+.rv2-avis-card__meta {
+    margin-top: var(--padding-p5);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.rv2-avis-card__texte {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    line-height: 1.45;
+    color: var(--color-grey-font-1);
+}
+
+.rv2-avis-card__actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.rv2-avis-reponse {
+    padding: var(--padding-p3);
+    background-color: var(--color-beige);
+    border-radius: var(--radius-r2);
+}
+
+.rv2-avis-reponse__label {
+    margin-bottom: var(--padding-p5);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    font-weight: var(--fw-semibold);
+    color: var(--color-dark-green-blue);
+}
+
+.rv2-avis-reponse p:not(.rv2-avis-reponse__label) {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    line-height: 1.45;
+    color: var(--color-grey-font-1);
+}
+
+/* Étoiles de note */
+.rv2-stars {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.rv2-stars__item svg {
+    width: 18px;
+    height: 18px;
+    fill: var(--color-grey-border-2);
+}
+
+.rv2-stars__item.is-on svg {
+    fill: var(--color-star);
+}
+
+/* Sélecteur d'étoiles et champ des pop-ups */
+.rv2-popup-etoiles {
+    display: flex;
+    gap: var(--padding-p5);
+}
+
+.rv2-popup-etoiles[hidden] {
+    display: none;
+}
+
+.rv2-popup-etoiles button {
+    padding: 2px;
+    background: none;
+    cursor: pointer;
+}
+
+.rv2-popup-etoiles button svg {
+    width: 30px;
+    height: 30px;
+    fill: var(--color-grey-border-2);
+    transition: fill var(--transition-fast), transform var(--transition-fast);
+}
+
+.rv2-popup-etoiles button:hover svg {
+    transform: scale(1.1);
+}
+
+.rv2-popup-etoiles button.is-on svg {
+    fill: var(--color-star);
+}
+
+.rv2-popup-textarea {
+    width: 100%;
+    padding: var(--padding-p3);
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r2);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+    resize: vertical;
+}
+
+.rv2-popup-textarea:focus {
+    outline: 2px solid var(--color-dark-green-blue);
+    outline-offset: 1px;
+}
+
+.rv2-popup-textarea[hidden] {
+    display: none;
+}
+
+.rv2-popup-erreur {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: #a94434; /* rouge brique lisible sur blanc */
+}
+
+.rv2-popup-erreur[hidden] {
+    display: none;
+}
+
+/* Bloc Bon à savoir */
+.rv2-savoir[hidden] {
+    display: none;
+}
+
+.rv2-savoir__head {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p2);
+}
+
+.rv2-savoir__icone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border: 1.5px solid var(--color-dark-green-blue);
+    border-radius: 50%;
+    color: var(--color-dark-green-blue);
+}
+
+.rv2-savoir__icone svg {
+    width: 24px;
+    height: 24px;
+}
+
+.rv2-savoir__head h2 {
+    font-size: var(--fs-h3);
+    color: var(--color-dark-green-blue);
+}
+
+.rv2-savoir__texte {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2-2);
+    margin-top: var(--padding-p2);
+}
+
+.rv2-savoir__texte[hidden] {
+    display: none;
+}
+
+.rv2-savoir__texte p {
+    max-width: 110ch;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    line-height: 1.45;
+    color: var(--color-grey-font-1);
+}
+
+.rv2-savoir__aide {
+    margin-top: var(--padding-p2);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+}
+
+.rv2-savoir__aide a {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.rv2-savoir__aide a:hover {
+    color: var(--color-corail);
+}
+
+/* Tablette (à partir de 768px) */
+@media (min-width: 768px) {
+
+    .rv2-layout {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    /* Hauteur unique des tuiles (cartes horizontales) */
+    .rv2-contenu .reservation-card {
+        height: 340px;
+    }
+}
+
+/* Ordinateur (à partir de 1024px) : colonne d'onglets verticale */
+@media (min-width: 1024px) {
+
+    .rv2-layout {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: var(--padding-p1);
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .rv2-tabs-panel {
+        flex: 0 0 250px;
+        position: sticky;
+        top: var(--padding-p2);
+    }
+
+    .rv2-tabs {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--padding-p4);
+        min-height: 300px;
+        padding: var(--padding-p2) 0;
+        background-color: var(--color-beige);
+        border-radius: var(--radius-r1);
+    }
+
+    .rv2-tab {
+        padding: var(--padding-p4) var(--padding-p2);
+        border-left: 3px solid transparent;
+        border-radius: 0;
+        text-align: left;
+        font-family: var(--font-input);
+        font-size: var(--fs-p2);
+        color: var(--color-grey-font-1);
+        background: transparent;
+    }
+
+    .rv2-tab:hover {
+        background-color: var(--color-hover-sable);
+        color: var(--color-grey-font-1);
+    }
+
+    .rv2-tab.is-active {
+        border-left-color: var(--color-grey-font-1);
+        font-weight: var(--fw-semibold);
+        background: transparent;
+        box-shadow: none;
+        color: var(--color-grey-font-1);
+    }
+
+    .rv2-contenu {
+        flex: 1 1 auto;
+        padding-top: var(--padding-p4);
+    }
+
+    .rv2-contenu .reservation-card {
+        height: 310px;
+    }
+}

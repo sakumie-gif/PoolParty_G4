@@ -48,11 +48,27 @@ add_action('init', 'poolparty_g4_enregistrer_cpt_reservation', 5);
  */
 function poolparty_g4_statuts_reservation() {
     return array(
-        'en-attente' => 'En attente de confirmation',
-        'acceptee'   => 'Confirmée par l\'hôte',
-        'refusee'    => 'Non retenue',
-        'annulee'    => 'Annulée',
+        'en-attente'   => 'En attente de confirmation',
+        'acceptee'     => 'Confirmée par l\'hôte',
+        'refusee'      => 'Non retenue',
+        'annulee'      => 'Annulée',
+        'annulee-hote' => 'Annulée par l\'hôte',
     );
+}
+
+/**
+ * Une réservation est passée quand sa date (JJ/MM/AAAA) est antérieure
+ * à aujourd'hui ; date absente ou illisible = à venir.
+ */
+function poolparty_g4_reservation_passee($resa_id) {
+    $date = get_post_meta($resa_id, 'pp_date', true);
+    $d    = $date ? DateTime::createFromFormat('d/m/Y', $date) : false;
+    if (!$d) {
+        return false;
+    }
+    $aujourdhui = new DateTime('today');
+    $d->setTime(0, 0);
+    return $d < $aujourdhui;
 }
 
 /* =============================================================
@@ -119,6 +135,34 @@ function poolparty_g4_reservations_pour_js($user_id) {
             'formule' => get_post_meta($post->ID, 'pp_formule', true),
             'total'   => get_post_meta($post->ID, 'pp_total', true),
             'statut'  => get_post_meta($post->ID, 'pp_statut', true),
+        );
+    }
+    return $items;
+}
+
+/**
+ * Met en forme les demandes reçues par un hôte pour le JS de la page
+ * « Mes réservations » V2 (vue Hôte). Jamais d'e-mail du locataire :
+ * le contact passe par la messagerie de la plateforme.
+ */
+function poolparty_g4_reservations_hote_pour_js($user_id) {
+    $items = array();
+    foreach (poolparty_g4_reservations_hote($user_id) as $post) {
+        $bien_id   = (int) get_post_meta($post->ID, 'pp_bien_id', true);
+        $locataire = get_userdata((int) $post->post_author);
+        $items[]   = array(
+            'id'        => $post->ID,
+            'titre'     => $bien_id ? get_the_title($bien_id) : $post->post_title,
+            'image'     => $bien_id ? poolparty_g4_image_url($bien_id) : '',
+            'alt'       => $bien_id ? poolparty_g4_meta($bien_id, 'alt') : '',
+            'lien'      => $bien_id ? get_permalink($bien_id) : '',
+            'locataire' => $locataire ? $locataire->display_name : '',
+            'date'      => get_post_meta($post->ID, 'pp_date', true),
+            'creneau'   => get_post_meta($post->ID, 'pp_creneau', true),
+            'invites'   => get_post_meta($post->ID, 'pp_invites', true),
+            'total'     => get_post_meta($post->ID, 'pp_total', true),
+            'message'   => get_post_meta($post->ID, 'pp_message', true),
+            'statut'    => get_post_meta($post->ID, 'pp_statut', true),
         );
     }
     return $items;
@@ -207,7 +251,12 @@ function poolparty_g4_ajax_maj_reservation() {
         wp_send_json_error(array('message' => 'Demande introuvable.'), 404);
     }
 
-    $map = array('accepter' => 'acceptee', 'refuser' => 'refusee', 'annuler' => 'annulee');
+    $map = array(
+        'accepter'     => 'acceptee',
+        'refuser'      => 'refusee',
+        'annuler'      => 'annulee',
+        'annuler-hote' => 'annulee-hote',
+    );
     if (!isset($map[$action])) {
         wp_send_json_error(array('message' => 'Action inconnue.'), 400);
     }
@@ -217,7 +266,8 @@ function poolparty_g4_ajax_maj_reservation() {
     $auteur  = (int) $resa->post_author;
     $admin   = current_user_can('manage_options');
 
-    // Accepter / refuser : réservé à l'hôte du bien. Annuler : au locataire.
+    // Accepter / refuser / annuler côté hôte : réservé à l'hôte du bien.
+    // Annuler une demande : au locataire.
     if ($action === 'annuler') {
         if ($user_id !== $auteur && !$admin) {
             wp_send_json_error(array('message' => 'Vous ne pouvez pas annuler cette demande.'), 403);
@@ -228,9 +278,25 @@ function poolparty_g4_ajax_maj_reservation() {
         }
     }
 
+    // Annulation par l'hôte : uniquement une réservation confirmée, avec
+    // une raison obligatoire, transmise au locataire.
+    $raison = '';
+    if ($action === 'annuler-hote') {
+        if (get_post_meta($resa_id, 'pp_statut', true) !== 'acceptee') {
+            wp_send_json_error(array('message' => 'Seule une réservation confirmée peut être annulée.'), 400);
+        }
+        $raison = isset($_POST['raison']) ? sanitize_textarea_field(wp_unslash($_POST['raison'])) : '';
+        if ($raison === '') {
+            wp_send_json_error(array('message' => 'Expliquez la raison de l\'annulation au locataire.'), 400);
+        }
+        update_post_meta($resa_id, 'pp_annulation_raison', $raison);
+    }
+
     update_post_meta($resa_id, 'pp_statut', $map[$action]);
 
-    if ($action !== 'annuler') {
+    if ($action === 'annuler-hote') {
+        poolparty_g4_email_reservation_annulee_hote($resa_id, $raison);
+    } elseif ($action !== 'annuler') {
         poolparty_g4_email_reservation_statut($resa_id, $map[$action]);
     }
 
@@ -244,6 +310,10 @@ add_action('wp_ajax_pp_maj_reservation', 'poolparty_g4_ajax_maj_reservation');
 
 /** Nouvelle demande : accusé au locataire + notification à l'hôte. */
 function poolparty_g4_email_reservation_nouvelle($resa_id) {
+    // Envoi d'e-mails désactivé : la demande vit dans « Mes réservations »
+    // (locataire) et « Demandes de réservation » (hôte), pas par e-mail vers
+    // une adresse perso. Retirer ce return pour réactiver les notifications.
+    return;
     $bien_id = (int) get_post_meta($resa_id, 'pp_bien_id', true);
     $hote_id = (int) get_post_meta($resa_id, 'pp_hote_id', true);
     $auteur  = get_userdata((int) get_post_field('post_author', $resa_id));
@@ -295,6 +365,10 @@ function poolparty_g4_email_reservation_nouvelle($resa_id) {
 
 /** Réponse de l'hôte : informe le locataire de l'acceptation ou du refus. */
 function poolparty_g4_email_reservation_statut($resa_id, $statut) {
+    // Envoi d'e-mails désactivé (voir poolparty_g4_email_reservation_nouvelle) :
+    // l'acceptation / le refus se voient dans « Mes réservations », pas par
+    // e-mail. Retirer ce return pour réactiver les notifications.
+    return;
     $auteur  = get_userdata((int) get_post_field('post_author', $resa_id));
     if (!$auteur || !is_email($auteur->user_email)) {
         return;
@@ -318,6 +392,30 @@ function poolparty_g4_email_reservation_statut($resa_id, $statut) {
             . '<p>D\'autres espaces vous attendent sur Pool Party.</p>';
     }
     poolparty_g4_email_envoyer($auteur->user_email, $sujet, 'Pool Party', $corps);
+}
+
+/**
+ * Annulation par l'hôte : prévient le locataire avec la raison donnée.
+ * Envoi désactivé comme les autres notifications (voir plus haut) ;
+ * retirer le return pour réactiver.
+ */
+function poolparty_g4_email_reservation_annulee_hote($resa_id, $raison) {
+    return;
+    $auteur = get_userdata((int) get_post_field('post_author', $resa_id));
+    if (!$auteur || !is_email($auteur->user_email)) {
+        return;
+    }
+    $bien_id = (int) get_post_meta($resa_id, 'pp_bien_id', true);
+    $titre   = $bien_id ? get_the_title($bien_id) : 'votre espace';
+    $date    = get_post_meta($resa_id, 'pp_date', true);
+    $creneau = get_post_meta($resa_id, 'pp_creneau', true);
+
+    $corps = '<p>Bonjour ' . esc_html($auteur->display_name) . ',</p>'
+        . '<p>Votre hôte a dû <strong>annuler</strong> votre réservation pour <strong>' . esc_html($titre) . '</strong> le '
+        . esc_html($date . ($creneau ? ' · ' . $creneau : '')) . '. Vous serez intégralement remboursé.</p>'
+        . '<p><strong>Son message :</strong><br>' . nl2br(esc_html($raison)) . '</p>'
+        . '<p>D\'autres espaces vous attendent sur Pool Party.</p>';
+    poolparty_g4_email_envoyer($auteur->user_email, 'Votre réservation a été annulée', 'Pool Party', $corps);
 }
 
 /* =============================================================

@@ -2,6 +2,10 @@
 /**
  * Gabarit de la page « Demandes de réservation » (espace hôte).
  * -------------------------------------------------------------
+ * DÉSACTIVÉE le 28-07-2026 : les demandes ont fusionné dans la page
+ * « Mes réservations » V2 (vue Hôte). La page redirige, le gabarit
+ * d'origine est conservé ci-dessous au cas où.
+ * -------------------------------------------------------------
  * Réservée aux hôtes : liste les demandes reçues sur leurs biens et
  * permet de les accepter ou de les refuser. Composée avec les briques
  * du site (fil d'Ariane, cartes .reservation-card, boutons, badges),
@@ -9,6 +13,10 @@
  * les demandes viennent de la base (type de contenu « reservation »).
  * Page privée : noindex (voir functions.php).
  */
+
+// Redirection vers la page fusionnée, directement sur la vue Hôte.
+wp_safe_redirect(home_url('/mes-reservations/?vue=hote'), 301);
+exit;
 
 get_header();
 
@@ -89,14 +97,32 @@ $pp_total = count($pp_a_traiter) + count($pp_traitees);
 
         <?php elseif ($pp_total === 0) : ?>
 
-            <!-- Hôte sans aucune demande -->
+            <?php
+            // A-t-il déjà une annonce en ligne (ou en attente) ? On adapte le
+            // message : proposer un espace s'il n'en a aucun, patienter sinon.
+            $pp_mes_biens = get_posts(array(
+                'post_type'      => 'bien',
+                'author'         => get_current_user_id(),
+                'post_status'    => array('publish', 'pending', 'draft'),
+                'posts_per_page' => 1,
+                'fields'         => 'ids',
+            ));
+            ?>
             <section class="reservations-etat reservations-etat--vide" aria-labelledby="demandes-vide-titre">
                 <svg class="reservations-etat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M12 14v3M10.5 15.5h3"/></svg>
-                <h2 id="demandes-vide-titre">Aucune demande pour le moment</h2>
-                <p>Dès qu'un membre réservera l'un de vos espaces, sa demande apparaîtra ici et vous pourrez l'accepter ou la refuser.</p>
-                <div class="reservations-etat__actions">
-                    <a href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>" class="btn btn-primary">Voir mes espaces</a>
-                </div>
+                <?php if (empty($pp_mes_biens)) : ?>
+                    <h2 id="demandes-vide-titre">Vous n'avez pas encore d'annonce</h2>
+                    <p>Proposez votre espace en quelques minutes : dès qu'un membre le réservera, sa demande apparaîtra ici et vous pourrez l'accepter ou la refuser.</p>
+                    <div class="reservations-etat__actions">
+                        <a href="<?php echo esc_url(home_url('/proposer/')); ?>" class="btn btn-primary">Proposer mon espace</a>
+                    </div>
+                <?php else : ?>
+                    <h2 id="demandes-vide-titre">Aucune demande pour le moment</h2>
+                    <p>Dès qu'un membre réservera l'un de vos espaces, sa demande apparaîtra ici et vous pourrez l'accepter ou la refuser.</p>
+                    <div class="reservations-etat__actions">
+                        <a href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>" class="btn btn-primary">Voir les espaces</a>
+                    </div>
+                <?php endif; ?>
             </section>
 
         <?php else : ?>
