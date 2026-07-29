@@ -3241,8 +3241,10 @@ textarea.form-field__input {
 }
 
 /* Item du menu : composant Dropdown item Figma (Inter 16,
-   padding 14, radius R2, survol sable translucide) */
+   padding 14, radius R2, survol sable translucide). position:relative
+   pour ancrer la barre « page active ». */
 .main-menu a {
+    position: relative;
     font-family: var(--font-input);
     font-size: var(--fs-p2);
     color: var(--color-grey-font-1);
@@ -3261,27 +3263,58 @@ textarea.form-field__input {
     font-weight: var(--fw-semibold);
 }
 
-/* Item du menu correspondant à la page affichée : repère « vous êtes
-   ici » (fond sable persistant + semi-gras), posé par le walker WordPress
-   via la classe .is-current et l'attribut aria-current. */
-.main-menu a.is-current,
-.main-menu a[aria-current="page"] {
-    background: var(--color-hover-sable);
-    color: var(--color-grey-font-1);
-    font-weight: var(--fw-semibold);
+/* Bloc 1 mis en avant (Explorer, Proposer votre espace) : légèrement
+   plus marqué que le reste du menu (poids medium), mais sur une seule
+   ligne. */
+.main-menu .main-menu__vedette {
+    font-weight: var(--fw-medium);
+    white-space: nowrap;
 }
 
-/* Lien Aide : icône point d'interrogation devant le libellé (Figma) */
-.main-menu__aide {
+/* Item du menu correspondant à la page affichée : ni gras ni couleur,
+   juste une petite barre verticale grise qui grandit à gauche du lien
+   (repère « vous êtes ici », façon onglet). Le libellé reste gris pour
+   ne pas concurrencer ce repère. Posée via .is-current / aria-current
+   par pp_menu_lien_attr(). */
+.main-menu a.is-current::before,
+.main-menu a[aria-current="page"]::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 50%;
+    width: 3px;
+    height: 1.1em;
+    transform: translateY(-50%);
+    border-radius: var(--radius-pill);
+    background: var(--color-grey-font-1);
+    animation: pp-menu-barre var(--transition-fast) ease-out;
+}
+
+@keyframes pp-menu-barre {
+    from { height: 0; }
+    to   { height: 1.1em; }
+}
+
+/* Liens à icône devant le libellé (Actualités, Aide, Contact) */
+.main-menu__ico {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.main-menu__aide svg {
+.main-menu__ico svg {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
+}
+
+/* Bascule « Mode administrateur » : elle vit dans le header dès 768px
+   (.header-explorer--admin) ; dans le menu burger elle ne sert que de
+   repli quand il n'y a plus la place, c'est-à-dire sous 768px. */
+@media (min-width: 768px) {
+    .main-menu__admin {
+        display: none;
+    }
 }
 
 /* CONNEXION SIMULÉE
@@ -3290,16 +3323,22 @@ textarea.form-field__input {
    (raccourcis du compte et lien Déconnexion). Le modèle visuel
    reste celui du menu Figma : mêmes items, mêmes filets. */
 .main-menu__section--connecte,
+.main-menu__sep--connecte,
 .main-menu__deconnexion {
     display: none;
 }
 
-.is-connected .main-menu__section--visiteur {
+/* Connexion / Inscription : masqués une fois connecté */
+.is-connected .main-menu__visiteur {
     display: none;
 }
 
 .is-connected .main-menu__section--connecte {
     display: flex;
+}
+
+.is-connected .main-menu__sep--connecte {
+    display: block;
 }
 
 .is-connected .main-menu__deconnexion {

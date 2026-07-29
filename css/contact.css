@@ -56,11 +56,11 @@
     gap: var(--padding-p2);
 }
 
-/* Cartes beiges communes aux blocs de coordonnées ; le formulaire
-   reste sur fond blanc en mobile et tablette (maquette), sa carte
-   beige n'apparaît qu'en desktop */
+/* Cartes beiges communes aux blocs coordonnées et au formulaire :
+   fond beige, inputs blancs posés par-dessus (maquette mobile) */
 .contact-card,
-.contact-avant {
+.contact-avant,
+.contact-form-card {
     padding: var(--padding-p2);
     background: var(--color-beige);
     border-radius: var(--radius-r1);
@@ -416,28 +416,27 @@
         padding-right: var(--padding-page-desktop);
     }
 
+    /* Colonnes de hauteur égale : le bas du formulaire s'aligne sur
+       le bas de la colonne coordonnées (maquette) */
     .contact-layout {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: var(--padding-p1);
-        align-items: start;
+        align-items: stretch;
         padding-left: var(--padding-page-desktop);
         padding-right: var(--padding-page-desktop);
     }
 
+    /* « Avant de nous écrire » poussé en bas de la colonne */
     .contact-aside {
         gap: var(--padding-p1);
+        justify-content: space-between;
     }
 
     .contact-card,
-    .contact-avant {
-        padding: var(--padding-p1);
-    }
-
+    .contact-avant,
     .contact-form-card {
         padding: var(--padding-p1);
-        background: var(--color-beige);
-        border-radius: var(--radius-r1);
     }
 
     .contact-garanties {

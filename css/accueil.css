@@ -12,45 +12,43 @@
    ============================================================= */
 
 .hero {
+    position: relative;
+    min-height: 300px;
     display: flex;
     flex-direction: column;
-    gap: var(--padding-p2);
-    padding: var(--padding-p1) var(--padding-page-mobile);
+    justify-content: center;
+    padding: var(--padding-p1) var(--padding-page-mobile) 0;
+    background-image: url('../assets/images/hero/hero.webp');
+    background-size: cover;
+    background-position: 30% center;
 }
 
+/* L'image en balise est masquée : on utilise le fond, plein cadre */
+.hero-image {
+    display: none;
+}
+
+/* Titre et sous-titre blancs posés à droite, par-dessus l'image */
 .hero-content {
-    order: 1;
+    align-self: flex-end;
+    max-width: 260px;
+    text-align: right;
 }
 
 .hero-title {
     font-family: var(--font-heading);
-    font-weight: var(--fw-semibold);
+    font-weight: var(--fw-bold);
     font-size: 28px;
     line-height: 1.2;
-    color: var(--color-dark-green-blue);
+    color: var(--color-white);
 }
 
 .hero-subtitle {
     margin-top: var(--padding-p4);
-    font-family: var(--font-body);
+    font-family: var(--font-input);
+    font-weight: var(--fw-semibold);
     font-size: var(--fs-p1);
-    color: var(--color-grey-font-1);
-}
-
-.hero-image {
-    order: 2;
-    display: block;
-    border-radius: var(--radius-r1);
-    overflow: hidden;
-    box-shadow: var(--shadow-3);
-}
-
-.hero-image img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    object-position: 32% center;
-    display: block;
+    color: var(--color-white);
 }
 
 /* La barre de recherche du hero n'apparaît pas en mobile
@@ -241,8 +239,8 @@
 
 /* La piste donne la hauteur : carte (ratio 264/396) + élévation */
 .categories-track {
-    --cat-card-w: min(258px, 66vw); /* largeur de carte mobile */
-    --cat-step: 22vw;               /* décalage entre deux cartes */
+    --cat-card-w: 51vw; /* largeur de carte mobile (maquette : 200 / 393) */
+    --cat-step: 20.5vw;             /* décalage entre deux cartes (maquette : 80px) */
     position: relative;
     height: calc(var(--cat-card-w) * 1.5 + 17px);
 }
@@ -279,7 +277,7 @@
 /* Positions de l'éventail : la carte active (pos-0) est centrée,
    surélevée et passe au-dessus, les autres glissent dessous */
 .categories-slide.pos-m2 {
-    transform: translateX(calc(-50% - 2 * var(--cat-step)));
+    transform: translateX(calc(-50% - var(--cat-step-2, calc(2 * var(--cat-step)))));
     z-index: 1;
 }
 
@@ -299,8 +297,15 @@
 }
 
 .categories-slide.pos-p2 {
-    transform: translateX(calc(-50% + 2 * var(--cat-step)));
+    transform: translateX(calc(-50% + var(--cat-step-2, calc(2 * var(--cat-step)))));
     z-index: 1;
+}
+
+/* Mobile et tablette : éventail de 3 cartes contenu dans la page, comme la
+   maquette. Les deux cartes extrêmes ne réapparaissent qu'en desktop. */
+.categories-slide.pos-m2,
+.categories-slide.pos-p2 {
+    display: none;
 }
 
 /* Flèches posées sur l'éventail, centrées verticalement */
@@ -366,14 +371,25 @@
         padding-right: var(--padding-page-tablet);
     }
 
-    .categories-track {
-        --cat-card-w: 240px;
-        --cat-step: 185px;
-    }
-
     .categories-tabs {
         justify-content: center;
         gap: 56px;
+    }
+}
+
+/* TABLETTE (768px à 1023px) : éventail de 5 cartes de 264px comme la
+   maquette. Cartes extrêmes rapprochées (offset 252 au lieu de 2x168). */
+@media (min-width: 768px) and (max-width: 1023px) {
+
+    .categories-slide.pos-m2,
+    .categories-slide.pos-p2 {
+        display: block;
+    }
+
+    .categories-track {
+        --cat-card-w: 264px;
+        --cat-step: 168px;
+        --cat-step-2: 252px;
     }
 }
 
@@ -388,6 +404,12 @@
     .categories-carousel {
         max-width: 1160px;
         margin: 0 auto;
+    }
+
+    /* Éventail de 5 cartes en desktop : on rétablit les deux cartes extrêmes */
+    .categories-slide.pos-m2,
+    .categories-slide.pos-p2 {
+        display: block;
     }
 
     .categories-track {
@@ -824,6 +846,11 @@
     font-size: var(--fs-p2);
     color: var(--color-black);
     max-width: 45ch;
+}
+
+/* Le libellé passe sur deux lignes en mobile : on le centre dans le bouton */
+.cta-hote__btn {
+    text-align: center;
 }
 
 .cta-hote__img {
