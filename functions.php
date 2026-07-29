@@ -71,6 +71,10 @@ require get_template_directory() . '/inc/seed-hote.php';
 // deux côtés de la bascule Hôte / Locataire) pour la soutenance.
 require get_template_directory() . '/inc/seed-demo.php';
 
+// Avis de départ du catalogue : le décor des fiches produit devient de
+// vrais commentaires pp_avis, modérables depuis Commentaires > Avis.
+require get_template_directory() . '/inc/seed-avis.php';
+
 // Création d'annonces depuis le site (tunnel « Proposer votre espace ») :
 // le membre publie son bien, enregistré en attente de validation admin.
 require get_template_directory() . '/inc/proposer.php';

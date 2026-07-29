@@ -222,6 +222,14 @@ function poolparty_g4_ecran_avis() {
         $args['meta_key'] = 'pp_note';
         $args['orderby']  = 'meta_value_num';
     }
+    // Pagination : le jeu de départ du catalogue représente plusieurs
+    // centaines d'avis.
+    $par_page      = 40;
+    $page_en_cours = isset($_GET['pagina']) ? max(1, absint($_GET['pagina'])) : 1;
+    $total         = (int) get_comments(array_merge($args, array('count' => true)));
+    $nb_pages      = max(1, (int) ceil($total / $par_page));
+    $args['number'] = $par_page;
+    $args['offset'] = ($page_en_cours - 1) * $par_page;
     $liste = get_comments($args);
     ?>
     <div class="wrap">
@@ -258,7 +266,7 @@ function poolparty_g4_ecran_avis() {
             <button type="submit" class="button">Filtrer</button>
         </form>
 
-        <p><strong><?php echo count($liste); ?></strong> avis affiché<?php echo count($liste) > 1 ? 's' : ''; ?>.</p>
+        <p><strong><?php echo $total; ?></strong> avis au total, page <?php echo $page_en_cours; ?> sur <?php echo $nb_pages; ?>.</p>
 
         <table class="wp-list-table widefat striped">
             <thead>
@@ -312,6 +320,28 @@ function poolparty_g4_ecran_avis() {
                 <?php endforeach; ?>
             </tbody>
         </table>
+
+        <?php if ($nb_pages > 1) : ?>
+            <p style="margin-top:12px;">
+                <?php for ($p = 1; $p <= $nb_pages; $p++) :
+                    $url = add_query_arg(array(
+                        'page'   => 'pp-avis',
+                        'type'   => $type,
+                        'statut' => $statut,
+                        'note'   => $note ?: '',
+                        'tri'    => $tri,
+                        'ordre'  => strtolower($ordre),
+                        'pagina' => $p,
+                    ), admin_url('edit-comments.php'));
+                    ?>
+                    <?php if ($p === $page_en_cours) : ?>
+                        <strong style="padding:0 6px;"><?php echo $p; ?></strong>
+                    <?php else : ?>
+                        <a style="padding:0 6px;" href="<?php echo esc_url($url); ?>"><?php echo $p; ?></a>
+                    <?php endif; ?>
+                <?php endfor; ?>
+            </p>
+        <?php endif; ?>
     </div>
     <?php
 }

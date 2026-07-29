@@ -32,32 +32,38 @@ $pp_hote    = poolparty_g4_get_hote(poolparty_g4_meta($pp_id, 'id_hote'));
 $pp_rep        = poolparty_g4_repartition_avis($pp_note, $pp_nb_avis);
 $pp_similaires = poolparty_g4_biens_similaires($pp_id, 5);
 
-// Échantillon de commentaires (contenu de démonstration). On n'en affiche
-// que « nb_avis » pour que la longueur de la liste colle au compteur du
-// CMS, et le marqueur %HOTE% est remplacé par le prénom réel de l'hôte du
-// bien (avant, tous les textes citaient « Julien »). Les quatre premiers
-// sont visibles, le reste est dévoilé par le bouton « Afficher les avis ».
-$pp_avis_demo = array(
-    array('initiale' => 'M', 'nom' => 'Marie L.',   'depuis' => '9 mois', 'note' => 4, 'date' => 'Mai 2025',     'texte' => "Superbe après-midi passée dans la piscine de %HOTE%. Le cadre est magnifique, très calme et sans aucun vis-à-vis. L'eau était à une température parfaite. %HOTE% a été très accueillant tout en restant discret. Nous reviendrons !"),
-    array('initiale' => 'T', 'nom' => 'Thomas R.',  'depuis' => '1 mois', 'note' => 4, 'date' => 'Juillet 2026', 'texte' => "Tout était nickel : portillon séparé donc aucune gêne, transats confortables, douche extérieure très pratique. On a passé la journée à six adultes, l'espace était largement suffisant. Mention spéciale pour le barbecue, top pour le déjeuner."),
-    array('initiale' => 'S', 'nom' => 'Sophie B.',  'depuis' => '6 mois', 'note' => 3, 'date' => 'Juin 2026',    'texte' => "Très belle piscine, bien entretenue, et hôtes adorables. Le seul petit bémol c'est le bruit de la rue qu'on entend par moments, mais ça reste mineur. On a quand même passé un super moment, les enfants ont adoré."),
-    array('initiale' => 'Y', 'nom' => 'Yoann D.',   'depuis' => '2 ans',  'note' => 4, 'date' => 'Juin 2026',    'texte' => "On voulait fêter notre anniversaire de mariage dans un endroit calme à dix minutes de Paris. C'était exactement ça. Bassin propre, jardin bien planté, accueil parfait. %HOTE% nous a même recommandé un restaurant à côté, on a adoré."),
-    array('initiale' => 'C', 'nom' => 'Camille P.', 'depuis' => '4 mois', 'note' => 5, 'date' => 'Août 2026',    'texte' => "Journée parfaite entre amis, la piscine est spacieuse et l'eau limpide. %HOTE% répond vite aux messages et donne toutes les infos avant l'arrivée. Rien à redire."),
-    array('initiale' => 'N', 'nom' => 'Nicolas F.', 'depuis' => '1 an',   'note' => 5, 'date' => 'Août 2026',    'texte' => "Endroit idéal pour couper de l'agitation parisienne sans partir loin. Le jardin est bien entretenu et très fleuri, on se croirait en vacances."),
-    array('initiale' => 'A', 'nom' => 'Aurélie M.', 'depuis' => '7 mois', 'note' => 4, 'date' => 'Juillet 2026', 'texte' => "Super moment en famille, les enfants ne voulaient plus sortir de l'eau. Un peu de mal à se garer le samedi, mais l'accueil compense largement."),
-    array('initiale' => 'K', 'nom' => 'Karim B.',   'depuis' => '2 ans',  'note' => 5, 'date' => 'Juillet 2026', 'texte' => "Le coin est très propre et le portillon indépendant assure une vraie intimité. Douche extérieure appréciable après la baignade. Je recommande sans hésiter."),
-    array('initiale' => 'L', 'nom' => 'Léa V.',     'depuis' => '5 mois', 'note' => 5, 'date' => 'Juillet 2026', 'texte' => "On a réservé pour un anniversaire, tout était impeccable. Transats confortables, coin ombragé bienvenu en pleine chaleur. Merci %HOTE% pour ta disponibilité."),
-    array('initiale' => 'A', 'nom' => 'Antoine G.', 'depuis' => '3 mois', 'note' => 4, 'date' => 'Juin 2026',    'texte' => "Belle piscine chauffée, cadre agréable et calme. Le seul bémol reste l'accès un peu étroit, mais une fois sur place on oublie tout."),
-    array('initiale' => 'F', 'nom' => 'Fatou D.',   'depuis' => '8 mois', 'note' => 5, 'date' => 'Juin 2026',    'texte' => "Cadre reposant, on a passé un après-midi au calme à lire au bord de l'eau. %HOTE% nous a laissé profiter en toute tranquillité."),
-    array('initiale' => 'M', 'nom' => 'Mathieu L.', 'depuis' => '1 an',   'note' => 5, 'date' => 'Juin 2026',    'texte' => "Parfait pour un déjeuner entre collègues, le barbecue est un vrai plus. Espace suffisant à sept adultes, on reviendra pour la rentrée."),
-    array('initiale' => 'C', 'nom' => 'Chloé R.',   'depuis' => '2 mois', 'note' => 3, 'date' => 'Mai 2026',     'texte' => "Piscine agréable et hôte sympathique. On entend un peu la circulation aux heures de pointe, mais rien de rédhibitoire pour une baignade."),
-    array('initiale' => 'S', 'nom' => 'Sarah K.',   'depuis' => '6 mois', 'note' => 5, 'date' => 'Mai 2026',     'texte' => "Un havre de paix à deux pas de Paris. Le jardin est superbe et très bien tenu. Nous avons adoré, l'adresse est notée pour l'été prochain."),
-    array('initiale' => 'R', 'nom' => 'Romain C.',  'depuis' => '10 mois','note' => 4, 'date' => 'Avril 2026',   'texte' => "Très bon accueil et piscine nickel. Un peu frais en avril malgré le chauffage, mais l'endroit est vraiment charmant et bien pensé."),
-    array('initiale' => 'I', 'nom' => 'Inès H.',    'depuis' => '3 mois', 'note' => 5, 'date' => 'Avril 2026',   'texte' => "Escapade parfaite pour se détendre. Le cadre verdoyant fait tout de suite baisser la pression. Communication au top avant et pendant le séjour."),
-    array('initiale' => 'P', 'nom' => 'Paul E.',    'depuis' => '1 an',   'note' => 5, 'date' => 'Mars 2026',    'texte' => "Séance de nage matinale magnifique dans un jardin calme. %HOTE% pense à tout, serviettes et boissons fraîches mises à disposition. Bravo."),
-    array('initiale' => 'M', 'nom' => 'Manon S.',   'depuis' => '5 mois', 'note' => 4, 'date' => 'Mars 2026',    'texte' => "Endroit agréable et propre, hôte aux petits soins. On aurait aimé un peu plus de rangements pour les affaires, mais rien de gênant."),
-    array('initiale' => 'J', 'nom' => 'Julie A.',   'depuis' => '9 mois', 'note' => 5, 'date' => 'Février 2026', 'texte' => "Bassin impeccable et ambiance très reposante, même en hiver le coin est agréable. %HOTE% est arrangeant sur les horaires, un vrai plaisir."),
-);
+// Avis du bien : vrais commentaires WordPress (type pp_avis, approuvés).
+// Le jeu de départ est importé en base par inc/seed-avis.php et les avis
+// déposés par les membres depuis « Mes réservations » s'y ajoutent.
+// Masquer un avis dans l'admin (Commentaires > Avis) le retire d'ici.
+$pp_avis_liste = array();
+foreach (get_comments(array('post_id' => $pp_id, 'type' => 'pp_avis', 'status' => 'approve')) as $pp_avis_c) {
+    $pp_avis_nom = $pp_avis_c->comment_author;
+    if (!$pp_avis_nom && $pp_avis_c->user_id) {
+        $pp_avis_membre = get_userdata((int) $pp_avis_c->user_id);
+        $pp_avis_nom    = $pp_avis_membre ? $pp_avis_membre->display_name : '';
+    }
+    $pp_avis_nom = $pp_avis_nom ?: 'Un membre';
+
+    // Ancienneté : celle du jeu de départ, sinon calculée depuis la date
+    // d'inscription du membre.
+    $pp_avis_depuis = get_comment_meta($pp_avis_c->comment_ID, 'pp_depuis', true);
+    if (!$pp_avis_depuis && $pp_avis_c->user_id) {
+        $pp_avis_membre = get_userdata((int) $pp_avis_c->user_id);
+        $pp_avis_depuis = $pp_avis_membre ? human_time_diff(strtotime($pp_avis_membre->user_registered)) : '';
+    }
+
+    $pp_avis_label = get_comment_meta($pp_avis_c->comment_ID, 'pp_date_label', true);
+
+    $pp_avis_liste[] = array(
+        'initiale' => mb_strtoupper(mb_substr($pp_avis_nom, 0, 1)),
+        'nom'      => $pp_avis_nom,
+        'depuis'   => $pp_avis_depuis ?: 'nouveau',
+        'note'     => (int) get_comment_meta($pp_avis_c->comment_ID, 'pp_note', true),
+        'date'     => $pp_avis_label ?: ucfirst(date_i18n('F Y', strtotime($pp_avis_c->comment_date))),
+        'texte'    => $pp_avis_c->comment_content,
+    );
+}
 $pp_hote_prenom = $pp_hote ? $pp_hote['prenom'] : 'votre hôte';
 
 // Galerie du bien : photos du champ « Galerie » de l'admin si présentes,
@@ -464,12 +470,12 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
 
                     // On n'affiche que « nb_avis » commentaires pour coller au
                     // compteur du CMS ; l'aperçu montre les 4 premiers.
-                    $pp_avis_visibles = min($pp_nb_avis_int, count($pp_avis_demo));
+                    $pp_avis_visibles = min($pp_nb_avis_int, count($pp_avis_liste));
                     $pp_avis_apercu   = min(4, $pp_avis_visibles);
                     ?>
                     <div class="commentaires" id="avis-liste">
                         <?php for ($pp_i = 0; $pp_i < $pp_avis_apercu; $pp_i++) : ?>
-                            <?php $pp_render_avis($pp_avis_demo[$pp_i]); ?>
+                            <?php $pp_render_avis($pp_avis_liste[$pp_i]); ?>
                         <?php endfor; ?>
                     </div>
 
@@ -518,7 +524,7 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
                                      reste dévoilé par le bouton du bas) -->
                                 <div class="commentaires avis-popup__liste">
                                     <?php for ($pp_i = 0; $pp_i < $pp_avis_visibles; $pp_i++) : ?>
-                                        <?php $pp_render_avis($pp_avis_demo[$pp_i], $pp_i >= $pp_avis_apercu); ?>
+                                        <?php $pp_render_avis($pp_avis_liste[$pp_i], $pp_i >= $pp_avis_apercu); ?>
                                     <?php endfor; ?>
                                 </div>
 
