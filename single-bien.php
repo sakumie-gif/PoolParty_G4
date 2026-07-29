@@ -601,9 +601,10 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
                 </section>
 
                 <!-- Pop-up : écrire un message à l'hôte. Reprend le fond de la
-                     pop-up de connexion (login-popup) ; la soumission envoie
-                     réellement un e-mail à l'hôte (service FormSubmit, sans
-                     backend), comme la demande de réservation. -->
+                     pop-up de connexion (login-popup). Le message part dans la
+                     messagerie interne du site (aucune adresse e-mail échangée) :
+                     l'hôte le retrouve dans sa boîte de réception, réservé aux
+                     membres connectés. -->
                 <div class="popup-overlay" id="message-hote-popup" hidden>
                     <div class="login-popup">
                         <div class="login-popup__card" role="dialog" aria-modal="true" aria-labelledby="message-hote-titre">
@@ -614,20 +615,13 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
                                 </button>
                             </div>
 
-                            <form class="login-popup__form" data-hote="<?php echo esc_attr($pp_hote_prenom); ?>" data-annonce="<?php echo esc_attr($pp_titre); ?>" novalidate>
+                            <form class="login-popup__form" data-hote="<?php echo esc_attr($pp_hote_prenom); ?>" data-annonce="<?php echo esc_attr($pp_titre); ?>" data-bien-id="<?php echo esc_attr($pp_id); ?>" data-bien-lien="<?php echo esc_url(get_permalink()); ?>" data-hote-photo="<?php echo esc_url($pp_hote_photo); ?>" novalidate>
                                 <div class="login-popup__fields">
-                                    <div class="form-field">
-                                        <label class="form-field__label" for="message-hote-prenom">Votre prénom</label>
-                                        <input class="form-field__input" type="text" id="message-hote-prenom" name="prenom" placeholder="Tapez votre prénom" autocomplete="given-name">
-                                    </div>
-                                    <div class="form-field">
-                                        <label class="form-field__label" for="message-hote-email">Votre adresse e-mail</label>
-                                        <input class="form-field__input" type="email" id="message-hote-email" name="email" placeholder="Pour recevoir la réponse de l'hôte" autocomplete="email">
-                                    </div>
                                     <div class="form-field">
                                         <label class="form-field__label" for="message-hote-texte">Votre message</label>
                                         <textarea class="form-field__input" id="message-hote-texte" name="message" rows="5" placeholder="Bonjour, votre espace est-il disponible le..." required></textarea>
                                     </div>
+                                    <p class="login-popup__signup">Votre message part dans la messagerie Pool Party. <?php echo esc_html($pp_hote_prenom); ?> vous répond dans votre boîte de réception, sans échange d'adresse e-mail.</p>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary login-popup__submit" disabled>Envoyer le message</button>

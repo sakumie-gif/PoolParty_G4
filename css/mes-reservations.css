@@ -901,10 +901,11 @@
         padding-right: var(--padding-page-desktop);
     }
 
+    /* Le panneau s'étire sur toute la hauteur de la liste (demande
+       d'Audrey : la piste beige descend jusqu'en bas de la page). */
     .rv2-tabs-panel {
         flex: 0 0 250px;
-        position: sticky;
-        top: var(--padding-p2);
+        align-self: stretch;
     }
 
     .rv2-tabs {
@@ -913,6 +914,7 @@
         align-items: stretch;
         gap: var(--padding-p4);
         min-height: 300px;
+        height: 100%;
         padding: var(--padding-p2) 0;
         background-color: var(--color-beige);
         border-radius: var(--radius-r1);

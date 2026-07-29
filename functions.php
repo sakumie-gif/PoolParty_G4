@@ -37,11 +37,6 @@ require get_template_directory() . '/inc/seed-articles.php';
 // vit dans main.js / localStorage, comme les favoris et réservations).
 require get_template_directory() . '/inc/messagerie.php';
 
-// Réservations de démonstration (page Mes réservations) : quelques
-// demandes pré-remplies injectées au premier affichage connecté (le
-// circuit lui-même vit dans main.js / localStorage, comme la messagerie).
-require get_template_directory() . '/inc/reservations-demo.php';
-
 // Personnalisateur : textes éditables de l'accueil (Apparence >
 // Personnaliser), pour que le contenu de front-page.php soit modifiable
 // depuis le back-office sans toucher au code.
@@ -67,6 +62,10 @@ require get_template_directory() . '/inc/avis.php';
 // pour que les demandes de réservation arrivent à un vrai destinataire.
 require get_template_directory() . '/inc/seed-hote.php';
 
+// Compte administrateur de démonstration : sert à présenter la console
+// d'administration côté site (page /administration/) le jour de la soutenance.
+require get_template_directory() . '/inc/seed-admin-demo.php';
+
 // Jeu de démonstration de « Mes réservations » (réservations et avis des
 // deux côtés de la bascule Hôte / Locataire) pour la soutenance.
 require get_template_directory() . '/inc/seed-demo.php';
@@ -82,6 +81,16 @@ require get_template_directory() . '/inc/proposer.php';
 // Confort du back-office : méta-box des détails d'une réservation,
 // colonnes et filtre de la liste des réservations, écran Avis.
 require get_template_directory() . '/inc/back-office.php';
+
+// Console d'administration côté site (page /administration/) : tableau de
+// bord, validation des annonces, suivi des réservations, membres et avis.
+// Réservée à l'administrateur (manage_options) ; aucune donnée nouvelle,
+// elle s'appuie sur les fonctions existantes.
+require get_template_directory() . '/inc/admin-site.php';
+
+// Espace « Mes annonces » (page /mes-annonces/) : l'hôte retrouve ses
+// annonces et les modifie quand aucune réservation n'est en cours.
+require get_template_directory() . '/inc/mes-annonces.php';
 
 /**
  * Raccourci vers un fichier du thème (images, icônes, polices...).
@@ -211,6 +220,8 @@ function poolparty_g4_styles() {
         'messages'           => array('messages'),
         'proposer'           => array('proposer'),
         'reservation'        => array('reservation'),
+        'administration'     => array('administration'),
+        'mes-annonces'       => array('mes-annonces'),
     );
     foreach ($pages_css as $slug => $feuilles) {
         if (is_page($slug)) {
@@ -397,7 +408,7 @@ add_filter('body_class', 'poolparty_g4_body_class');
  * on demande aux moteurs de ne pas les indexer.
  */
 function poolparty_g4_noindex($robots) {
-    if (is_page(array('favoris', 'mes-reservations', 'demandes', 'messages', 'inscription', 'proposer', 'reservation'))) {
+    if (is_page(array('favoris', 'mes-reservations', 'demandes', 'messages', 'inscription', 'proposer', 'reservation', 'administration', 'mes-annonces'))) {
         $robots['noindex']  = true;
         $robots['nofollow'] = true;
     }

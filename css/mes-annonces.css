@@ -1,0 +1,305 @@
+/* =============================================================
+   POOL PARTY - PAGE MES ANNONCES (espace hôte)
+   Tuiles des annonces du membre (photo, statut, prix, actions) et
+   formulaire de modification. Style de l'espace membre : bandeau
+   beige (hero-page de global.css), cartes blanches, boutons du
+   design system.
+   ============================================================= */
+
+.mes-annonces-intro {
+    padding: var(--padding-p2) var(--padding-page-mobile) 0;
+}
+
+.mes-annonces {
+    padding: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
+}
+
+/* -------- Message de confirmation / alerte -------- */
+.mes-annonces__flash {
+    margin-bottom: var(--padding-p2);
+    padding: var(--padding-p3) var(--padding-p2);
+    border-radius: var(--radius-r2);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    background: rgba(21, 107, 103, 0.10);
+    color: var(--color-accent-bleu-green);
+    border: 1px solid rgba(21, 107, 103, 0.22);
+}
+
+.mes-annonces__flash--alerte {
+    background: rgba(202, 129, 113, 0.12);
+    color: var(--color-corail-hover);
+    border-color: rgba(202, 129, 113, 0.30);
+}
+
+/* -------- État vide / connexion requise -------- */
+.mes-annonces__etat-vide {
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+    padding: var(--padding-p1) var(--padding-p2);
+    text-align: center;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+.mes-annonces__etat-vide h2 {
+    font-size: var(--fs-h3);
+    color: var(--color-dark-green-blue);
+    margin-bottom: var(--padding-p4);
+}
+
+.mes-annonces__etat-vide p {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-2);
+    line-height: 1.5;
+    margin-bottom: var(--padding-p2);
+}
+
+/* -------- Grille de tuiles -------- */
+.mes-annonces__grille {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--padding-p2);
+}
+
+.mes-annonces__carte {
+    background: var(--color-white);
+    border-radius: var(--radius-r1);
+    box-shadow: var(--shadow-3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Cadre photo : ratio verrouillé par l'image en position absolue, sinon
+   une photo très haute étire la carte et casse l'alignement des tuiles
+   (constaté avec les visuels du catalogue, plus grands que les vignettes). */
+.mes-annonces__media {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--color-beige);
+}
+
+.mes-annonces__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.mes-annonces__etat {
+    position: absolute;
+    top: var(--padding-p3);
+    left: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    font-weight: var(--fw-semibold);
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    background: var(--color-white);
+}
+
+.mes-annonces__etat--ok      { color: var(--color-accent-bleu-green); }
+.mes-annonces__etat--attente { color: var(--color-yellow-tag); }
+.mes-annonces__etat--refus   { color: var(--color-corail-hover); }
+.mes-annonces__etat--neutre  { color: var(--color-grey-font-2); }
+
+.mes-annonces__corps {
+    padding: var(--padding-p2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p4);
+    flex-grow: 1;
+}
+
+.mes-annonces__titre {
+    font-size: var(--fs-h4);
+    color: var(--color-grey-font-1);
+}
+
+.mes-annonces__infos {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.mes-annonces__motif {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-corail-hover);
+    background: rgba(202, 129, 113, 0.10);
+    border-radius: var(--radius-r2);
+    padding: var(--padding-p4) var(--padding-p3);
+}
+
+.mes-annonces__actions {
+    margin-top: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--padding-p4);
+}
+
+.mes-annonces__verrou {
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+/* Bouton corbeille de la tuile (icône trash Font Awesome embarquée).
+   Suit le composant Button Tertiary du design system, comme les autres
+   boutons de la carte : contour vert bleuté, icône Accent Bleu Green,
+   même hauteur que les boutons Voir / Modifier voisins. */
+.mes-annonces__trash {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 37px;
+    height: 37px;
+    padding: 0;
+    background: transparent;
+    border: 1px solid var(--color-dark-green-blue);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-btn-outline);
+    color: var(--color-accent-bleu-green);
+    cursor: pointer;
+    transition: box-shadow var(--transition-fast);
+}
+
+.mes-annonces__trash svg {
+    width: 16px;
+    height: 16px;
+}
+
+.mes-annonces__trash:hover {
+    box-shadow: var(--shadow-btn-outline), inset 0 0 0 1px var(--color-dark-green-blue);
+    color: var(--color-accent-bleu-green);
+}
+
+/* -------- Formulaire de modification (centré dans la page) -------- */
+.mes-annonces__form {
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r1);
+    box-shadow: var(--shadow-3);
+    padding: var(--padding-p2);
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.mes-annonces__champ {
+    margin-bottom: var(--padding-p2-2);
+}
+
+.mes-annonces__champ label {
+    display: block;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    font-weight: var(--fw-semibold);
+    color: var(--color-grey-font-1);
+    margin-bottom: var(--padding-p5);
+}
+
+.mes-annonces__champ input[type="text"],
+.mes-annonces__champ input[type="number"],
+.mes-annonces__champ textarea {
+    width: 100%;
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r2);
+    padding: 10px var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    background: var(--color-white);
+}
+
+.mes-annonces__champ textarea {
+    resize: vertical;
+}
+
+.mes-annonces__champ input[type="file"] {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+}
+
+.mes-annonces__aide {
+    margin-top: var(--padding-p5);
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+.mes-annonces__rangee {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0 var(--padding-p2-2);
+}
+
+/* Mobile : Enregistrer au-dessus d'Annuler (l'action principale d'abord) ;
+   à partir de la tablette, Annuler à gauche puis Enregistrer. */
+.mes-annonces__form-actions {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--padding-p3);
+    margin-top: var(--padding-p2);
+}
+
+.mes-annonces__form-actions .btn {
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .mes-annonces__form-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .mes-annonces__form-actions .btn {
+        width: auto;
+    }
+}
+
+/* =============================================================
+   TABLETTE ET DESKTOP
+   ============================================================= */
+@media (min-width: 768px) {
+    .mes-annonces-intro {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .mes-annonces {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .mes-annonces__grille {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mes-annonces__rangee {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 1024px) {
+    .mes-annonces-intro {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .mes-annonces {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .mes-annonces__grille {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('PP_PAGES_SEED_VERSION', '8');
+define('PP_PAGES_SEED_VERSION', '10');
 
 /**
  * Pages à créer : slug => titre affiché (menu, onglet, fil d'Ariane).
@@ -45,6 +45,8 @@ function poolparty_g4_seed_pages() {
         'messages'           => 'Messages',
         'proposer'           => 'Proposer votre espace',
         'reservation'        => 'Réservation',
+        'administration'     => 'Administration',
+        'mes-annonces'       => 'Mes annonces',
     );
 }
 

@@ -1,0 +1,700 @@
+/* =============================================================
+   POOL PARTY - ESPACE ADMINISTRATEUR (côté site)
+   Réservé à l'équipe (manage_options). Reprend le design system
+   du site (boutons, cartes, typo, ombres) mais se distingue de
+   l'espace membre par une dominante verte : fonds vert pâle
+   (voiles du token --color-green) et bandeau vert bleuté foncé.
+   Aucune couleur nouvelle : tout vient de variables.css.
+   Préfixe pp-admin- pour ne rien percuter ailleurs.
+   ============================================================= */
+
+.pp-admin {
+    /* Voile vert pâle qui remplace le beige de l'espace membre */
+    background: rgba(142, 168, 163, 0.13);
+    padding-bottom: var(--padding-p1);
+}
+
+/* Pas de max-width ici : la gouttière --padding-page-desktop est calculée
+   en % de la largeur du parent et plafonne déjà le contenu à 1766px comme
+   sur le reste du site. Combiner les deux faisait s'effondrer la console
+   au-delà de 1926px de large (padding plus grand que la largeur maxi). */
+.pp-admin__inner {
+    padding: var(--padding-p2) var(--padding-page-mobile) 0;
+}
+
+/* -------- En-tête épuré de la console --------
+   Pas de barre de recherche ni de burger : le logo à gauche, le badge
+   Administration et la ligne de session à droite, sur une seule ligne. */
+.pp-admin-entete__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--padding-p2);
+    flex-wrap: wrap;
+}
+
+/* -------- Barre connexion / déconnexion -------- */
+.pp-admin__topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--padding-p3);
+    padding: var(--padding-p3) 0;
+}
+
+.pp-admin__topbar--entete {
+    padding: 0;
+    gap: var(--padding-p2);
+    justify-content: flex-end;
+}
+
+.pp-admin__badge {
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-white);
+    background: var(--color-dark-green-blue-2);
+    padding: 5px 14px;
+    border-radius: var(--radius-pill);
+}
+
+.pp-admin__session {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p2);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.pp-admin__session strong {
+    color: var(--color-dark-green-blue);
+    font-weight: var(--fw-semibold);
+}
+
+.pp-admin__session a {
+    color: var(--color-accent-bleu-green);
+    text-decoration: none;
+}
+
+.pp-admin__session a:hover {
+    text-decoration: underline;
+}
+
+/* -------- Bandeau de page (variante B : vert foncé, titre blanc) -------- */
+.pp-admin__hero {
+    background: var(--color-dark-green-blue);
+    border-radius: var(--radius-r1);
+    padding: var(--padding-p1) var(--padding-p2);
+    color: var(--color-white);
+}
+
+.pp-admin__surtitre {
+    margin-bottom: var(--padding-p4);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-green);
+}
+
+.pp-admin__hero h1 {
+    font-size: var(--fs-h2);
+    color: var(--color-white);
+}
+
+.pp-admin__hero-texte {
+    margin-top: var(--padding-p3);
+    max-width: 75ch;
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.88);
+}
+
+/* -------- Message d'action (bandeau de confirmation) -------- */
+.pp-admin__flash {
+    margin-top: var(--padding-p2);
+    padding: var(--padding-p3) var(--padding-p2);
+    border-radius: var(--radius-r2);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    background: rgba(21, 107, 103, 0.10);
+    color: var(--color-accent-bleu-green);
+    border: 1px solid rgba(21, 107, 103, 0.22);
+}
+
+.pp-admin__flash--refus {
+    background: rgba(202, 129, 113, 0.12);
+    color: var(--color-corail-hover);
+    border-color: rgba(202, 129, 113, 0.30);
+}
+
+/* -------- Structure : menu latéral + contenu -------- */
+.pp-admin__layout {
+    margin-top: var(--padding-p2);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--padding-p2);
+}
+
+.pp-admin__nav {
+    background: var(--color-white);
+    border-radius: var(--radius-r1);
+    padding: var(--padding-p4);
+    box-shadow: var(--shadow-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--padding-p5);
+    align-self: start;
+}
+
+.pp-admin__nav a {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-p4);
+    padding: var(--padding-p3) var(--padding-p2-2);
+    border-radius: var(--radius-r2);
+    font-family: var(--font-body);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.pp-admin__nav a:hover {
+    background: rgba(142, 168, 163, 0.18);
+    color: var(--color-grey-font-1);
+}
+
+.pp-admin__nav a.is-active {
+    background: var(--color-dark-green-blue);
+    color: var(--color-white);
+    font-weight: var(--fw-medium);
+}
+
+.pp-admin__pastille {
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    font-weight: var(--fw-semibold);
+    background: var(--color-corail);
+    color: var(--color-white);
+    min-width: 22px;
+    text-align: center;
+    padding: 2px 7px;
+    border-radius: var(--radius-pill);
+}
+
+.pp-admin__nav a.is-active .pp-admin__pastille {
+    background: var(--color-white);
+    color: var(--color-dark-green-blue);
+}
+
+.pp-admin__content {
+    min-width: 0; /* évite le débordement des tableaux dans la grille */
+}
+
+/* -------- Cartes chiffres -------- */
+.pp-admin__stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--padding-p3);
+    margin-bottom: var(--padding-p2);
+}
+
+.pp-admin__stat {
+    background: var(--color-white);
+    border-radius: var(--radius-r1);
+    padding: var(--padding-p2);
+    box-shadow: var(--shadow-3);
+}
+
+.pp-admin__stat-valeur {
+    font-family: var(--font-heading);
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-semibold);
+    color: var(--color-dark-green-blue);
+    line-height: 1.1;
+}
+
+.pp-admin__stat--alerte .pp-admin__stat-valeur {
+    color: var(--color-corail);
+}
+
+.pp-admin__stat-libelle {
+    margin-top: var(--padding-p5);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+/* -------- Sections -------- */
+.pp-admin__bloc {
+    background: var(--color-white);
+    border-radius: var(--radius-r1);
+    padding: var(--padding-p2);
+    box-shadow: var(--shadow-3);
+    margin-bottom: var(--padding-p2);
+}
+
+.pp-admin__bloc-entete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--padding-p3);
+    margin-bottom: var(--padding-p2-2);
+}
+
+.pp-admin__bloc h2 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-h3-inter);
+    font-weight: var(--fw-semibold);
+    color: var(--color-dark-green-blue);
+}
+
+.pp-admin__bloc-lien {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-accent-bleu-green);
+    text-decoration: none;
+}
+
+.pp-admin__bloc-lien:hover {
+    text-decoration: underline;
+}
+
+.pp-admin__vide {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-2);
+    padding: var(--padding-p3) 0;
+}
+
+/* -------- Ligne d'annonce à valider -------- */
+.pp-admin__annonce {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--padding-p3);
+    padding: var(--padding-p2-2) 0;
+    border-top: 1px solid var(--color-grey-border);
+}
+
+.pp-admin__annonce:first-of-type {
+    border-top: none;
+    padding-top: 0;
+}
+
+.pp-admin__annonce-media {
+    display: flex;
+    gap: var(--padding-p3);
+    align-items: center;
+}
+
+.pp-admin__annonce-photo {
+    width: 88px;
+    height: 66px;
+    flex-shrink: 0;
+    border-radius: var(--radius-r2);
+    object-fit: cover;
+    background: rgba(142, 168, 163, 0.25);
+}
+
+.pp-admin__annonce-titre {
+    font-family: var(--font-body);
+    font-size: var(--fs-p2);
+    font-weight: var(--fw-medium);
+    color: var(--color-grey-font-1);
+}
+
+.pp-admin__annonce-titre a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.pp-admin__annonce-titre a:hover {
+    color: var(--color-dark-green-blue);
+}
+
+.pp-admin__annonce-infos {
+    margin-top: 3px;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+}
+
+.pp-admin__annonce-infos strong {
+    color: var(--color-accent-bleu-green);
+    font-weight: var(--fw-semibold);
+}
+
+.pp-admin__annonce-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--padding-p4);
+}
+
+/* -------- Tableaux (réservations, membres, avis) -------- */
+.pp-admin__table-wrap {
+    overflow-x: auto;
+}
+
+.pp-admin__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+}
+
+.pp-admin__table th {
+    text-align: left;
+    font-weight: var(--fw-semibold);
+    color: var(--color-grey-font-2);
+    padding: var(--padding-p4) var(--padding-p3);
+    border-bottom: 1px solid var(--color-grey-border-2);
+    white-space: nowrap;
+}
+
+.pp-admin__table td {
+    padding: var(--padding-p3);
+    border-bottom: 1px solid var(--color-grey-border);
+    color: var(--color-grey-font-1);
+    vertical-align: middle;
+}
+
+.pp-admin__table a {
+    color: var(--color-accent-bleu-green);
+    text-decoration: none;
+}
+
+.pp-admin__table a:hover {
+    text-decoration: underline;
+}
+
+.pp-admin__note {
+    color: var(--color-star);
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+/* -------- Badges d'état -------- */
+.pp-admin__etat {
+    display: inline-block;
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    font-weight: var(--fw-semibold);
+    padding: 3px 12px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+}
+
+.pp-admin__etat--attente {
+    background: rgba(210, 129, 29, 0.14);
+    color: var(--color-yellow-tag);
+}
+
+.pp-admin__etat--ok {
+    background: rgba(21, 107, 103, 0.12);
+    color: var(--color-accent-bleu-green);
+}
+
+.pp-admin__etat--neutre {
+    background: var(--color-grey-border);
+    color: var(--color-grey-font-2);
+}
+
+.pp-admin__etat--refus {
+    background: rgba(202, 129, 113, 0.14);
+    color: var(--color-corail-hover);
+}
+
+/* Actions en ligne dans les tableaux (formulaires POST) */
+.pp-admin__inline-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--padding-p4);
+    align-items: center;
+}
+
+.pp-admin__lien-action {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-accent-bleu-green);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.pp-admin__lien-action:hover {
+    text-decoration: underline;
+}
+
+.pp-admin__lien-action--danger {
+    color: var(--color-corail-hover);
+}
+
+/* Bouton icône corbeille des lignes de tableau (SVG embarqué) */
+.pp-admin__trash {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: var(--radius-r3);
+    color: var(--color-corail-hover);
+    cursor: pointer;
+}
+
+.pp-admin__trash svg {
+    width: 16px;
+    height: 16px;
+}
+
+.pp-admin__trash:hover {
+    color: var(--color-corail);
+    background: rgba(202, 129, 113, 0.10);
+}
+
+/* -------- Filtres --------
+   Selects habillés comme les pilules de recherche du site (composant
+   Input Chevron : pilule blanche, ombre légère, chevron vers le bas). */
+.pp-admin__filtres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--padding-p3);
+    align-items: center;
+    margin-bottom: var(--padding-p2);
+}
+
+.pp-admin__filtres select {
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    padding: 10px 44px 10px var(--padding-p2);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23454343' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 16px center / 18px;
+    box-shadow: var(--shadow-search-small);
+    cursor: pointer;
+}
+
+.pp-admin__filtres select:focus-visible {
+    outline: 2px solid var(--color-dark-green-blue-2);
+    outline-offset: 2px;
+}
+
+/* -------- Cartes de réglages -------- */
+.pp-admin__reglages {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--padding-p3);
+}
+
+.pp-admin__reglage {
+    display: block;
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-r2);
+    padding: var(--padding-p2);
+    text-decoration: none;
+    transition: box-shadow var(--transition-fast);
+}
+
+.pp-admin__reglage:hover {
+    box-shadow: var(--shadow-3);
+}
+
+.pp-admin__reglage h3 {
+    font-family: var(--font-body);
+    font-size: var(--fs-p1);
+    font-weight: var(--fw-semibold);
+    color: var(--color-dark-green-blue);
+    margin-bottom: var(--padding-p5);
+}
+
+.pp-admin__reglage p {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+    line-height: 1.5;
+}
+
+/* -------- Écran d'accès réservé (non connecté / non admin) -------- */
+.pp-admin__garde {
+    background: var(--color-white);
+    border-radius: var(--radius-r1);
+    box-shadow: var(--shadow-3);
+    padding: var(--padding-p1) var(--padding-p2);
+    text-align: center;
+    max-width: 560px;
+    margin: var(--padding-p2) auto var(--padding-p1);
+}
+
+.pp-admin__garde h2 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-h3);
+    color: var(--color-dark-green-blue);
+    margin-bottom: var(--padding-p4);
+}
+
+.pp-admin__garde p {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-2);
+    line-height: 1.5;
+    margin-bottom: var(--padding-p2);
+}
+
+/* -------- Pop-up de refus (style login épuré du site) -------- */
+.pp-admin__modale {
+    position: fixed;
+    inset: 0;
+    background: var(--color-voile-photo);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--padding-p2-2);
+    z-index: 1000;
+}
+
+.pp-admin__modale[hidden] {
+    display: none;
+}
+
+.pp-admin__modale-carte {
+    position: relative;
+    background: var(--color-white);
+    border-radius: var(--radius-r1);
+    box-shadow: var(--shadow-popup);
+    width: 100%;
+    max-width: 480px;
+    padding: var(--padding-p1);
+}
+
+.pp-admin__modale-croix {
+    position: absolute;
+    top: var(--padding-p2-2);
+    right: var(--padding-p2);
+    font-size: 20px;
+    line-height: 1;
+    color: var(--color-grey-font-2);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.pp-admin__modale h3 {
+    font-family: var(--font-heading);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-semibold);
+    color: var(--color-dark-green-blue);
+    margin-bottom: var(--padding-p4);
+}
+
+.pp-admin__modale p {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+    line-height: 1.5;
+    margin-bottom: var(--padding-p2-2);
+}
+
+.pp-admin__modale label {
+    display: block;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    font-weight: var(--fw-semibold);
+    color: var(--color-grey-font-1);
+    margin-bottom: var(--padding-p5);
+}
+
+.pp-admin__modale textarea {
+    width: 100%;
+    min-height: 96px;
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r2);
+    padding: var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    resize: vertical;
+}
+
+.pp-admin__modale-champ {
+    width: 100%;
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r2);
+    padding: 9px var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    background: var(--color-white);
+    margin-bottom: var(--padding-p3);
+}
+
+.pp-admin__modale-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--padding-p4);
+    margin-top: var(--padding-p2-2);
+}
+
+/* =============================================================
+   TABLETTE ET DESKTOP
+   ============================================================= */
+@media (min-width: 768px) {
+    .pp-admin__inner {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+
+    .pp-admin__hero h1 {
+        font-size: var(--fs-h1);
+    }
+
+    .pp-admin__stats {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .pp-admin__annonce {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+    }
+
+    .pp-admin__reglages {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .pp-admin__inner {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
+
+    .pp-admin__layout {
+        grid-template-columns: 236px 1fr;
+        align-items: start;
+    }
+
+    .pp-admin__nav {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: var(--padding-p5);
+    }
+
+    .pp-admin__nav a {
+        justify-content: space-between;
+    }
+}

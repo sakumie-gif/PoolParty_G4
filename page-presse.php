@@ -97,7 +97,7 @@ $presse_dir = trailingslashit(get_template_directory_uri()) . 'assets/presse/';
                         </div>
                         <div class="presse-communique__complet" id="communique-2" hidden>
                             <p>Dix-huit mois après ses débuts, Pool Party dépasse les 300 espaces disponibles à la réservation en Île-de-France. La plateforme, qui avait ouvert avec une centaine d'annonces concentrées en petite couronne, couvre désormais l'ensemble des départements franciliens.</p>
-                            <p>La croissance est particulièrement marquée en grande couronne : la Seine-et-Marne et les Yvelines représentent à elles seules près d'un tiers des nouvelles annonces du trimestre. Les catégories bien-être — spas, saunas et hammams — connaissent la plus forte progression, signe d'un usage qui s'étend au-delà de la seule baignade estivale.</p>
+                            <p>La croissance est particulièrement marquée en grande couronne : la Seine-et-Marne et les Yvelines représentent à elles seules près d'un tiers des nouvelles annonces du trimestre. Les catégories bien-être (spas, saunas et hammams) connaissent la plus forte progression, signe d'un usage qui s'étend au-delà de la seule baignade estivale.</p>
                             <p>« Chaque nouvel hôte, c'est un jardin, une terrasse ou un espace détente qui trouve une seconde vie et complète les revenus de son propriétaire », souligne l'équipe de Pool Party. Pour accompagner cette montée en charge, la plateforme a renforcé son processus de vérification des annonces et son accompagnement des nouveaux hôtes.</p>
                         </div>
                     </article>
@@ -115,7 +115,7 @@ $presse_dir = trailingslashit(get_template_directory_uri()) . 'assets/presse/';
                         </div>
                         <div class="presse-communique__complet" id="communique-3" hidden>
                             <p>Pool Party annonce la clôture d'un premier tour de financement d'amorçage de 1,5 million d'euros, mené auprès de business angels et d'un fonds spécialisé dans l'économie du partage. L'opération valide un modèle qui, en un an, a démontré l'appétit des Franciliens pour la location d'espaces aquatiques entre particuliers.</p>
-                            <p>Les fonds seront alloués à trois priorités : le doublement de l'équipe — produit, opérations et relation hôtes —, le renforcement de la couverture assurantielle incluse dans chaque réservation, et l'élargissement du catalogue aux espaces bien-être (spas, saunas, hammams) déjà plébiscités par les utilisateurs.</p>
+                            <p>Les fonds seront alloués à trois priorités : le doublement de l'équipe (produit, opérations et relation hôtes), le renforcement de la couverture assurantielle incluse dans chaque réservation, et l'élargissement du catalogue aux espaces bien-être (spas, saunas, hammams) déjà plébiscités par les utilisateurs.</p>
                             <p>« Cette levée nous donne les moyens de nos ambitions tout en gardant notre exigence : la confiance. Un paiement sécurisé, une assurance systématique et des hôtes vérifiés restent au cœur de l'expérience », indique la direction de Pool Party. La plateforme confirme son objectif de couvrir toute l'Île-de-France avant d'envisager d'autres métropoles.</p>
                         </div>
                     </article>

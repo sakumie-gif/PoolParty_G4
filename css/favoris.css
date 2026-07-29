@@ -142,3 +142,13 @@
         grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
+
+/* =============================================================
+   BOUTON « RETIRER DES FAVORIS »
+   En plus du coeur posé sur la photo (peu visible selon les
+   images), un bouton explicite dans le corps de la carte.
+   ============================================================= */
+.card-product__retirer {
+    margin-top: var(--padding-p4);
+    align-self: flex-start;
+}

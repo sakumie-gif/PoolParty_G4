@@ -78,7 +78,13 @@
             </form>
             <!-- Navigation -->
             <nav class="header-nav" aria-label="Navigation principale">
-                <a href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>" class="header-explorer">Explorer</a>
+                <?php if (current_user_can('manage_options')) : ?>
+                    <?php // Bascule façon Airbnb : l'admin n'a pas besoin d'« Explorer »
+                          // (déjà dans le menu burger), il bascule vers sa console. ?>
+                    <a href="<?php echo esc_url(home_url('/administration/')); ?>" class="header-explorer header-explorer--admin">Mode admin</a>
+                <?php else : ?>
+                    <a href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>" class="header-explorer">Explorer</a>
+                <?php endif; ?>
                 <a href="<?php echo esc_url(home_url('/proposer/')); ?>" class="btn btn-secondary header-cta">Proposer votre espace</a>
                 <button type="button" class="btn btn-tertiary header-burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="main-menu">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -119,11 +125,19 @@
                 <a href="<?php echo esc_url(home_url('/inscription/')); ?>">Inscription</a>
             </div>
             <div class="main-menu__section main-menu__section--connecte">
-                <?php // « Demandes de réservation » a fusionné dans la page
-                      // Réservations V2 (vue Hôte) : plus de lien séparé. ?>
-                <a href="<?php echo esc_url(home_url('/mes-reservations/')); ?>">Réservations</a>
-                <a href="<?php echo esc_url(home_url('/favoris/')); ?>">Mes favoris</a>
+                <?php // Ordre validé par Audrey : Messagerie, Réservations,
+                      // Mes annonces (si le membre a déposé une annonce),
+                      // Mes favoris. « Demandes » a fusionné dans Réservations V2. ?>
                 <a href="<?php echo esc_url(home_url('/messages/')); ?>">Messagerie</a>
+                <a href="<?php echo esc_url(home_url('/mes-reservations/')); ?>">Réservations</a>
+                <?php if (function_exists('poolparty_g4_membre_a_des_annonces') && poolparty_g4_membre_a_des_annonces()) : ?>
+                    <a href="<?php echo esc_url(home_url('/mes-annonces/')); ?>">Mes annonces</a>
+                <?php endif; ?>
+                <a href="<?php echo esc_url(home_url('/favoris/')); ?>">Mes favoris</a>
+                <?php // Accès à la console d'administration, réservé à l'équipe. ?>
+                <?php if (current_user_can('manage_options')) : ?>
+                    <a href="<?php echo esc_url(home_url('/administration/')); ?>" class="main-menu__strong">Administration</a>
+                <?php endif; ?>
             </div>
             <hr class="main-menu__sep">
             <div class="main-menu__section">

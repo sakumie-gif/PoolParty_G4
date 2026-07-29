@@ -168,6 +168,47 @@ function poolparty_g4_reservations_hote_pour_js($user_id) {
     return $items;
 }
 
+/**
+ * Total d'une demande, calculé côté serveur à partir du prix réel du
+ * bien (méta prix_heure) et non des montants envoyés par le navigateur.
+ * Reproduit exactement le barème de la fiche bien (single-bien.php) et
+ * du tunnel : forfaits demi-journée = 4 h, journée = 7,5 h, formule à
+ * l'heure facturée par occupant ; frais de service de 15 % ; garantie
+ * annulation optionnelle de 6 € (data-garantie du gabarit réservation).
+ * Retourne un montant numérique (float).
+ */
+function poolparty_g4_reservation_total($bien_id, $formule_type, $occupants, $garantie_oui) {
+    $prix_heure   = (float) poolparty_g4_meta($bien_id, 'prix_heure');
+    $prix_demi    = round($prix_heure * 4);
+    $prix_journee = round($prix_heure * 7.5);
+    $occupants    = max(1, (int) $occupants);
+
+    switch ($formule_type) {
+        case 'heure':
+            $sous_total = $prix_heure * $occupants;
+            break;
+        case 'journee':
+            $sous_total = $prix_journee;
+            break;
+        case 'demi-journee':
+        default:
+            $sous_total = $prix_demi;
+            break;
+    }
+
+    $frais    = $sous_total * 0.15;
+    $garantie = $garantie_oui ? 6 : 0;
+    return $sous_total + $frais + $garantie;
+}
+
+/**
+ * Met en forme un montant comme le tunnel (« 204,00€ », virgule décimale,
+ * sans séparateur de milliers).
+ */
+function poolparty_g4_reservation_format_montant($montant) {
+    return number_format((float) $montant, 2, ',', '') . '€';
+}
+
 /* =============================================================
    3. AJAX : création d'une demande
    ============================================================= */
@@ -188,12 +229,20 @@ function poolparty_g4_ajax_creer_reservation() {
     $hote_id = (int) get_post_field('post_author', $bien_id);
     $titre   = get_the_title($bien_id);
 
+    // Total recalculé côté serveur : jamais celui envoyé par le navigateur.
+    // Le type de formule et le nombre d'occupants sont les seules valeurs
+    // reçues qui entrent dans le calcul ; le prix vient de la base.
+    $formule_type  = isset($_POST['formule_type']) ? sanitize_key($_POST['formule_type']) : '';
+    $occupants     = isset($_POST['occupants']) ? absint($_POST['occupants']) : 0;
+    $garantie_oui  = (isset($_POST['garantie']) && sanitize_text_field(wp_unslash($_POST['garantie'])) === 'Oui');
+    $total_calcule = poolparty_g4_reservation_total($bien_id, $formule_type, $occupants, $garantie_oui);
+
     $champs = array(
         'pp_date'     => isset($_POST['date']) ? sanitize_text_field(wp_unslash($_POST['date'])) : '',
         'pp_creneau'  => isset($_POST['creneau']) ? sanitize_text_field(wp_unslash($_POST['creneau'])) : '',
         'pp_invites'  => isset($_POST['invites']) ? sanitize_text_field(wp_unslash($_POST['invites'])) : '',
         'pp_formule'  => isset($_POST['formule']) ? sanitize_text_field(wp_unslash($_POST['formule'])) : '',
-        'pp_total'    => isset($_POST['total']) ? sanitize_text_field(wp_unslash($_POST['total'])) : '',
+        'pp_total'    => poolparty_g4_reservation_format_montant($total_calcule),
         'pp_echeance' => isset($_POST['echeance']) ? sanitize_text_field(wp_unslash($_POST['echeance'])) : '',
         'pp_paiement' => isset($_POST['paiement']) ? sanitize_text_field(wp_unslash($_POST['paiement'])) : '',
         'pp_garantie' => isset($_POST['garantie']) ? sanitize_text_field(wp_unslash($_POST['garantie'])) : '',
@@ -346,8 +395,7 @@ function poolparty_g4_email_reservation_nouvelle($resa_id) {
     if ($hote && is_email($hote->user_email)) {
         $corps = '<p>Bonjour ' . esc_html($hote->display_name) . ',</p>'
             . '<p>Vous avez reçu une nouvelle demande de réservation pour <strong>' . esc_html($titre) . '</strong>.</p>'
-            . '<p><strong>De :</strong> ' . esc_html($auteur ? $auteur->display_name : 'Un membre')
-            . ($auteur ? ' (' . esc_html($auteur->user_email) . ')' : '') . '<br>'
+            . '<p><strong>De :</strong> ' . esc_html($auteur ? $auteur->display_name : 'Un membre') . '<br>'
             . '<strong>Date :</strong> ' . esc_html($date . ($creneau ? ' · ' . $creneau : '')) . '<br>'
             . '<strong>Invités :</strong> ' . esc_html($invites) . '<br>'
             . '<strong>Total :</strong> ' . esc_html($total) . '</p>'
@@ -357,8 +405,7 @@ function poolparty_g4_email_reservation_nouvelle($resa_id) {
             $hote->user_email,
             'Nouvelle demande de réservation',
             'Nouvelle demande',
-            $corps,
-            $auteur ? $auteur->user_email : ''
+            $corps
         );
     }
 }

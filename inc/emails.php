@@ -66,7 +66,7 @@ function poolparty_g4_email_gabarit($titre, $corps) {
                 </tr>
                 <tr>
                     <td style="padding:22px 32px;background:#faf7f2;border-top:1px solid #ece5db;font-size:12px;line-height:1.6;color:#9b938a;">
-                        <p style="margin:0 0 6px;"><?php echo $nom; ?> — location d'espaces aquatiques entre particuliers.</p>
+                        <p style="margin:0 0 6px;"><?php echo $nom; ?>, location d'espaces aquatiques entre particuliers.</p>
                         <p style="margin:0;">Cet e-mail vous est envoyé dans le cadre d'un projet étudiant fictif ; aucune transaction réelle n'a lieu.</p>
                     </td>
                 </tr>
@@ -265,6 +265,39 @@ function poolparty_g4_email_bien_transition($nouveau, $ancien, $post) {
     }
 }
 add_action('transition_post_status', 'poolparty_g4_email_bien_transition', 10, 3);
+
+/**
+ * Refus d'une annonce par l'administration (depuis la console
+ * /administration/). Prévient le propriétaire avec le motif saisi.
+ * Appelé explicitement (le passage pending -> draft ne déclenche aucun
+ * e-mail via la transition ci-dessus).
+ *
+ * @param WP_Post $post  L'annonce refusée.
+ * @param string  $motif Motif du refus transmis au propriétaire.
+ */
+function poolparty_g4_email_bien_refuse($post, $motif = '') {
+    if (!$post || $post->post_type !== 'bien') {
+        return;
+    }
+    $auteur_email = get_the_author_meta('user_email', $post->post_author);
+    if (!is_email($auteur_email)) {
+        return;
+    }
+    $titre = get_the_title($post->ID);
+    if (!$titre) {
+        $titre = 'votre annonce';
+    }
+
+    $corps  = '<p>Bonjour,</p>';
+    $corps .= '<p>Après vérification, votre annonce <strong>« ' . esc_html($titre) . ' »</strong> n\'a pas pu être validée en l\'état et n\'est donc pas publiée pour le moment.</p>';
+    if ($motif !== '') {
+        $corps .= '<p style="margin:16px 0;padding:14px 16px;background:#faf7f2;border-radius:10px;"><strong>Motif :</strong><br>' . nl2br(esc_html($motif)) . '</p>';
+    }
+    $corps .= '<p>Vous pouvez corriger les points indiqués puis proposer de nouveau votre espace. Notre équipe reste à votre disposition si vous avez la moindre question.</p>';
+    $corps .= '<p>À bientôt,<br>L\'équipe Pool Party</p>';
+
+    poolparty_g4_email_envoyer($auteur_email, 'Votre annonce n\'a pas été retenue', 'Votre annonce n\'a pas été retenue', $corps);
+}
 
 /* ------------------------------------------------------------------ *
  *  RÉSERVATION

@@ -3597,6 +3597,40 @@ textarea.form-field__input {
 }
 
 /* =============================================================
+   BASCULE « MODE ADMIN » DU HEADER
+   Posée à la place d'Explorer pour les administrateurs connectés
+   (header.php). Même forme que le bouton Menu voisin (contour fin
+   du composant Button Tertiary), survol : fond beige, sans gras.
+   Contrairement à Explorer, qui attend les très grands écrans,
+   elle reste visible dès la tablette.
+   ============================================================= */
+@media (min-width: 768px) {
+
+    .header-explorer--admin {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--padding-p4) var(--padding-p2);
+        border-radius: 30px;
+        font-family: var(--font-body);
+        font-size: var(--fs-p2);
+        white-space: nowrap;
+        background: var(--color-white);
+        color: var(--color-accent-bleu-green);
+        transition: background-color var(--transition-medium), color var(--transition-medium);
+    }
+
+    .header-explorer--admin:hover {
+        /* survol minimal : simple soulignement, sans fond ni faux-gras
+           (text-shadow) hérité de .header-explorer:hover */
+        background: var(--color-white);
+        color: var(--color-accent-bleu-green);
+        text-shadow: none;
+        text-decoration: underline;
+    }
+}
+
+/* =============================================================
    HEADER - PAGE INDEX UNIQUEMENT
    La recherche est sur la photo du hero, donc masquée dans le
    header en haut de page. Elle apparaît en fondu au scroll, une

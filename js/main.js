@@ -132,17 +132,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // La déconnexion passe par un vrai lien WordPress (wp_logout_url dans
     // header.php) : plus de gestion JS ici.
 
-    // Liens de fonctionnalités pas encore livrées (ex. « Messages » de
-    // l'espace compte). Plutôt que de renvoyer vers « # » — qui remonte la
-    // page sans rien faire — on neutralise la navigation et on prévient
-    // l'utilisateur par le même toast que le reste du site.
-    document.querySelectorAll('.js-bientot').forEach(function (link) {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-            montrerToast('Cette fonctionnalité arrive bientôt.', false);
-        });
-    });
-
     // Page presse : « Lire le communiqué » déplie le texte complet sous le
     // résumé (le PDF reste téléchargeable par le lien voisin).
     document.querySelectorAll('.js-communique-toggle').forEach(function (bouton) {
@@ -397,15 +386,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (croix) {
             croix.addEventListener('click', fermer);
         }
-
-        // Liens internes qui referment simplement la pop-up (proposer.html :
-        // l'écran de création de compte est déjà derrière la fenêtre)
-        overlay.querySelectorAll('.js-close-popup').forEach(function (lien) {
-            lien.addEventListener('click', function (event) {
-                event.preventDefault();
-                fermer();
-            });
-        });
 
         // Clic sur le voile sombre : fermeture
         overlay.addEventListener('click', function (event) {
@@ -1636,16 +1616,24 @@ document.addEventListener('DOMContentLoaded', function () {
     // appliqué juste après la connexion, puis une confirmation
     // propose d'ouvrir la page Mes favoris.
     // =========================================================
-    var FAVORIS_CLE = 'pp-favoris';
     var favorisEnAttente = null;
 
     var estConnecte = function () {
         return document.body.classList.contains('is-connected');
     };
 
+    // La liste des favoris est rattachée au compte : la clé de stockage
+    // porte l'identifiant du membre connecté (ppData.userId). Deux membres
+    // qui se connectent sur le même navigateur ont ainsi chacun leurs
+    // favoris, sans les partager.
+    var favorisCle = function () {
+        var uid = (window.ppData && window.ppData.userId) ? window.ppData.userId : 0;
+        return 'pp-favoris:' + uid;
+    };
+
     var lireFavoris = function () {
         try {
-            var liste = JSON.parse(localStorage.getItem(FAVORIS_CLE));
+            var liste = JSON.parse(localStorage.getItem(favorisCle()));
             return Array.isArray(liste) ? liste : [];
         } catch (erreur) {
             return [];
@@ -1654,9 +1642,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var ecrireFavoris = function (liste) {
         try {
-            localStorage.setItem(FAVORIS_CLE, JSON.stringify(liste));
+            localStorage.setItem(favorisCle(), JSON.stringify(liste));
         } catch (erreur) {
             // Stockage indisponible : le coeur restera visuel, sans mémoire
+        }
+    };
+
+    // Coup de coeur cliqué avant connexion : mis en attente dans le
+    // sessionStorage pour survivre au rechargement que déclenche la
+    // connexion, puis appliqué une fois le membre connecté.
+    var ATTENTE_CLE = 'pp-favori-attente';
+
+    var lireAttente = function () {
+        try {
+            return JSON.parse(sessionStorage.getItem(ATTENTE_CLE));
+        } catch (erreur) {
+            return null;
+        }
+    };
+
+    var ecrireAttente = function (annonce) {
+        try {
+            if (annonce) {
+                sessionStorage.setItem(ATTENTE_CLE, JSON.stringify(annonce));
+            } else {
+                sessionStorage.removeItem(ATTENTE_CLE);
+            }
+        } catch (erreur) {
+            // Stockage indisponible : le favori en attente sera perdu
         }
     };
 
@@ -1858,35 +1871,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Après connexion : applique le coup de coeur mis en attente et
-    // rallume les coeurs enregistrés lors des visites précédentes
-    document.addEventListener('pp-connexion', function () {
-        if (favorisEnAttente) {
-            appliquerFavori(favorisEnAttente, true);
-            favorisEnAttente = null;
-        } else {
-            rafraichirCoeurs();
-        }
-        if (typeof rendreFavorisPage === 'function') {
-            rendreFavorisPage();
-        }
-    });
-
     // Pop-up de connexion refermée sans se connecter : le coup de
     // coeur mis en attente est abandonné, il ne doit pas s'appliquer
     // tout seul lors d'une connexion ultérieure
     document.addEventListener('pp-popup-fermee', function () {
         favorisEnAttente = null;
-    });
-
-    // À la déconnexion les coeurs s'éteignent ; la liste reste
-    // enregistrée et réapparaîtra à la prochaine connexion
-    document.addEventListener('pp-deconnexion', function () {
-        favorisEnAttente = null;
-        rafraichirCoeurs();
-        if (typeof rendreFavorisPage === 'function') {
-            rendreFavorisPage();
-        }
     });
 
     // Page Mes favoris : la grille est reconstruite depuis le
@@ -1960,17 +1949,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 html += '<p class="card-product__price">' + echapper(annonce.prix) + '</p>';
             }
 
+            // Bouton explicite en plus du coeur, plus accessible selon la
+            // photo (le coeur blanc peut se confondre avec l'image).
+            html += '<button type="button" class="btn btn-tertiary btn-small card-product__retirer">Retirer des favoris</button>';
+
             html += '</div>';
             carte.innerHTML = html;
 
-            // Le coeur retire l'annonce et fait disparaître la carte
-            carte.querySelector('.card-product__fav').addEventListener('click', function () {
+            // Le coeur et le bouton retirent l'annonce et font disparaître la carte
+            var retirerFavori = function () {
                 ecrireFavoris(lireFavoris().filter(function (f) {
                     return f.id !== annonce.id;
                 }));
                 montrerToast('Annonce retirée de vos favoris.', false);
                 rendreFavorisPage();
-            });
+            };
+            carte.querySelector('.card-product__fav').addEventListener('click', retirerFavori);
+            carte.querySelector('.card-product__retirer').addEventListener('click', retirerFavori);
 
             return carte;
         };
@@ -2006,418 +2001,6 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         rendreFavorisPage();
-    }
-
-    // =========================================================
-    // RÉSERVATIONS
-    // Le tunnel « Confirmer et payer » enregistre chaque demande
-    // envoyée à l'hôte dans le localStorage : elle survit d'une
-    // page à l'autre et se retrouve sur Mes réservations. Comme les
-    // favoris, la liste est rattachée au compte : un visiteur non
-    // connecté est d'abord invité à se connecter.
-    // =========================================================
-    var RESERVATIONS_CLE = 'pp-reservations';
-    // Marqueur de version du jeu de démonstration : tant qu'il ne
-    // correspond pas (première visite, ou après avoir tout supprimé
-    // sous une version antérieure), les exemples sont ressemés. Bumper
-    // cette valeur force une réinitialisation des demandes de démo.
-    var RESERVATIONS_SEED_CLE = 'pp-reservations-seed';
-    var RESERVATIONS_DEMO_VERSION = '2';
-
-    var lireReservations = function () {
-        try {
-            var liste = JSON.parse(localStorage.getItem(RESERVATIONS_CLE));
-            return Array.isArray(liste) ? liste : [];
-        } catch (erreur) {
-            return [];
-        }
-    };
-
-    var ecrireReservations = function (liste) {
-        try {
-            localStorage.setItem(RESERVATIONS_CLE, JSON.stringify(liste));
-        } catch (erreur) {
-            // Stockage indisponible : la demande partira quand même par e-mail
-        }
-    };
-
-    // Ajoute une demande en tête de liste (la plus récente d'abord).
-    // On pose aussi le marqueur de version pour qu'une vraie demande ne
-    // soit jamais écrasée par un futur réamorçage des exemples de démo.
-    var enregistrerReservation = function (resa) {
-        var liste = lireReservations();
-        liste.unshift(resa);
-        ecrireReservations(liste);
-        try {
-            localStorage.setItem(RESERVATIONS_SEED_CLE, RESERVATIONS_DEMO_VERSION);
-        } catch (erreur) {
-            // Stockage indisponible : sans conséquence sur l'envoi de la demande
-        }
-    };
-
-    // Lecture « brute » : distingue une liste absente (null, jamais
-    // amorcée) d'une liste vidée par l'utilisateur ([]), pour ne semer
-    // les réservations de démonstration qu'une seule fois.
-    var lireReservationsBrut = function () {
-        try {
-            var liste = JSON.parse(localStorage.getItem(RESERVATIONS_CLE));
-            return Array.isArray(liste) ? liste : null;
-        } catch (erreur) {
-            return null;
-        }
-    };
-
-    // Amorce la liste avec les réservations de démonstration du thème
-    // (window.ppData.reservationsDemo). Elles sont (re)semées quand la
-    // liste n'a jamais été amorcée, ou qu'elle est vide alors que le
-    // marqueur de version ne correspond pas — c'est ce qui restaure les
-    // exemples après les avoir tous supprimés en testant. Une liste non
-    // vide (vraies demandes) n'est jamais écrasée, et un état vide obtenu
-    // sous la version courante est conservé (le marqueur correspond).
-    var amorcerReservations = function () {
-        var version = null;
-        try {
-            version = localStorage.getItem(RESERVATIONS_SEED_CLE);
-        } catch (erreur) {
-            version = null;
-        }
-        var stockees = lireReservationsBrut();
-        var aJour = (version === RESERVATIONS_DEMO_VERSION);
-
-        if (!aJour && (stockees === null || stockees.length === 0)) {
-            stockees = (window.ppData && Array.isArray(window.ppData.reservationsDemo))
-                ? JSON.parse(JSON.stringify(window.ppData.reservationsDemo))
-                : [];
-            ecrireReservations(stockees);
-        }
-        try {
-            localStorage.setItem(RESERVATIONS_SEED_CLE, RESERVATIONS_DEMO_VERSION);
-        } catch (erreur) {
-            // Stockage indisponible : les exemples vivront le temps de la page
-        }
-        return stockees === null ? [] : stockees;
-    };
-
-    // Page Mes réservations : onglets À venir / Passées et cartes
-    // reconstruites depuis le localStorage ; trois états basculés par
-    // l'attribut hidden (visiteur, aucune réservation, liste).
-    var reservationsGrille = document.getElementById('reservations-grid');
-
-    if (reservationsGrille) {
-        var resaConnexion = document.getElementById('reservations-connexion');
-        var resaVide = document.getElementById('reservations-vide');
-        var resaListe = document.getElementById('reservations-liste');
-        var resaCompte = document.getElementById('reservations-compte');
-        var resaOngletVide = document.getElementById('reservations-onglet-vide');
-        var resaTabs = Array.prototype.slice.call(document.querySelectorAll('.reservations-tab'));
-        var resaFiltre = 'a-venir';
-        var rendreReservationsPage;
-
-        // Neutralise le HTML des valeurs relues depuis le localStorage :
-        // elles sont injectées dans des attributs (src, alt, href) et du texte.
-        var echapperResa = function (texte) {
-            return String(texte == null ? '' : texte)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
-        };
-
-        // Une demande est « passée » quand sa date (JJ/MM/AAAA) est
-        // antérieure à aujourd'hui ; une date absente ou illisible est
-        // traitée comme à venir (demande en attente).
-        var estPassee = function (resa) {
-            var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(resa.date || '');
-            if (!m) {
-                return false;
-            }
-            var jour = new Date(parseInt(m[3], 10), parseInt(m[2], 10) - 1, parseInt(m[1], 10));
-            var aujourdHui = new Date();
-            aujourdHui.setHours(0, 0, 0, 0);
-            return jour < aujourdHui;
-        };
-
-        // Valeur numérique d'une date JJ/MM/AAAA pour le tri (0 si illisible)
-        var valeurDate = function (resa) {
-            var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(resa.date || '');
-            return m ? new Date(parseInt(m[3], 10), parseInt(m[2], 10) - 1, parseInt(m[1], 10)).getTime() : 0;
-        };
-
-        // Sécurise le lien relu du localStorage : on autorise les URL
-        // http(s) (permaliens WordPress absolus) et les liens relatifs,
-        // mais on écarte les schémas dangereux (javascript:, data:...) au
-        // profit du catalogue des biens.
-        var lienSur = function (lien) {
-            var repli = (window.ppData && window.ppData.catalogueUrl) || '#';
-            lien = String(lien || '');
-            if (!lien) {
-                return repli;
-            }
-            var schema = /^([a-z][a-z0-9+.-]*):/i.exec(lien);
-            if (schema && !/^https?$/i.test(schema[1])) {
-                return repli; // schéma non autorisé
-            }
-            return lien;
-        };
-
-        var construireCarteResa = function (resa, passee) {
-            var carte = document.createElement('article');
-            carte.className = 'reservation-card' + (passee ? ' reservation-card--passee' : '');
-
-            var lien = echapperResa(lienSur(resa.lien));
-            var dateCreneau = echapperResa((resa.date || '') + (resa.creneau ? ' · ' + resa.creneau : ''));
-
-            // Statut réel de la demande (réponse de l'hôte) : confirmée,
-            // non retenue, ou en attente. Une demande passée et confirmée
-            // devient « Terminée ».
-            var statut;
-            if (resa.statut === 'acceptee') {
-                statut = passee
-                    ? '<span class="tag reservation-card__statut">Terminée</span>'
-                    : '<span class="tag tag--succes reservation-card__statut">Confirmée par l\'hôte</span>';
-            } else if (resa.statut === 'refusee') {
-                statut = '<span class="tag reservation-card__statut">Non retenue</span>';
-            } else if (passee) {
-                statut = '<span class="tag reservation-card__statut">Terminée</span>';
-            } else {
-                statut = '<span class="tag tag--top-vente reservation-card__statut">En attente de confirmation</span>';
-            }
-
-            var html =
-                '<a class="reservation-card__media" href="' + lien + '">' +
-                    '<img src="' + echapperResa(resa.image) + '" alt="' + echapperResa(resa.alt) + '">' +
-                    statut +
-                '</a>' +
-                '<div class="reservation-card__body">' +
-                    '<div class="reservation-card__head">' +
-                        '<h3 class="reservation-card__title"><a href="' + lien + '">' + echapperResa(resa.titre) + '</a></h3>';
-
-            if (resa.hote) {
-                html += '<p class="reservation-card__hote">Proposé par ' + echapperResa(resa.hote) + '</p>';
-            }
-
-            html += '</div>' +
-                '<dl class="reservation-card__infos">' +
-                    '<div class="reservation-card__info">' +
-                        '<dt>Date et créneau</dt>' +
-                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>' +
-                        '<dd>' + dateCreneau + '</dd>' +
-                    '</div>' +
-                    '<div class="reservation-card__info">' +
-                        '<dt>Invités</dt>' +
-                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>' +
-                        '<dd>' + echapperResa(resa.invites) + '</dd>' +
-                    '</div>';
-
-            if (resa.formule) {
-                html += '<div class="reservation-card__info">' +
-                    '<dt>Formule</dt>' +
-                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>' +
-                    '<dd>' + echapperResa(resa.formule) + '</dd>' +
-                '</div>';
-            }
-
-            html += '</dl>' +
-                '<div class="reservation-card__foot">';
-
-            if (resa.total) {
-                html += '<p class="reservation-card__total">Total<strong>' + echapperResa(resa.total) + '</strong></p>';
-            }
-
-            // « Annuler la demande » : proposé tant qu'elle n'est pas passée
-            // ni déjà refusée (une demande confirmée reste annulable).
-            var annulable = !passee && resa.statut !== 'refusee';
-            html += '<div class="reservation-card__actions">' +
-                '<a class="btn btn-tertiary btn-small" href="' + lien + '">' + (passee ? 'Réserver à nouveau' : 'Voir l\'annonce') + '</a>' +
-                (annulable ? '<button type="button" class="btn btn-tertiary btn-small reservation-card__annuler">Annuler la demande</button>' : '') +
-                '</div>' +
-            '</div>' +
-            '</div>';
-
-            carte.innerHTML = html;
-
-            // Annuler la demande : on demande d'abord confirmation via la
-            // pop-up (évite une suppression par erreur). Le retrait effectif
-            // n'a lieu qu'après validation, dans le pop-up ci-dessous.
-            var annuler = carte.querySelector('.reservation-card__annuler');
-            if (annuler) {
-                annuler.addEventListener('click', function () {
-                    ouvrirAnnulation(resa);
-                });
-            }
-
-            return carte;
-        };
-
-        // ---- Pop-up de confirmation d'annulation -----------------------
-        // Le bouton d'une carte mémorise la demande visée puis ouvre la
-        // pop-up ; « Conserver » (ou la croix / le fond / Échap) referme
-        // sans rien changer, « Annuler la demande » retire la réservation.
-        var popupAnnuler = document.getElementById('popup-annuler-resa');
-        var popupAnnulerTexte = document.getElementById('popup-annuler-texte');
-        var resaAAnnuler = null;
-
-        var ouvrirAnnulation = function (resa) {
-            resaAAnnuler = resa;
-            if (popupAnnulerTexte) {
-                popupAnnulerTexte.textContent = 'La demande pour « ' + resa.titre +
-                    ' » sera définitivement retirée de vos réservations. Cette action est irréversible.';
-            }
-            if (popupAnnuler) {
-                popupAnnuler.hidden = false;
-            }
-        };
-
-        var fermerAnnulation = function () {
-            resaAAnnuler = null;
-            if (popupAnnuler) {
-                popupAnnuler.hidden = true;
-            }
-        };
-
-        if (popupAnnuler) {
-            popupAnnuler.querySelectorAll('[data-resa-annuler-fermer]').forEach(function (bouton) {
-                bouton.addEventListener('click', fermerAnnulation);
-            });
-
-            // Clic sur le fond sombre : fermeture sans annuler
-            popupAnnuler.addEventListener('click', function (event) {
-                if (event.target === popupAnnuler) {
-                    fermerAnnulation();
-                }
-            });
-
-            var confirmerAnnulation = popupAnnuler.querySelector('[data-resa-annuler-confirmer]');
-            if (confirmerAnnulation) {
-                confirmerAnnulation.addEventListener('click', function () {
-                    if (!resaAAnnuler) {
-                        return;
-                    }
-                    var id = resaAAnnuler.id;
-                    if (!window.ppData || !ppData.ajaxUrl || !ppData.reservationNonce) {
-                        return;
-                    }
-                    // Annulation réelle en base, puis rechargement pour
-                    // refléter l'état à jour.
-                    var corpsAnnul = new URLSearchParams({
-                        action: 'pp_maj_reservation',
-                        nonce: ppData.reservationNonce,
-                        resa_id: id,
-                        statut: 'annuler'
-                    });
-                    fetch(ppData.ajaxUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: corpsAnnul.toString()
-                    }).then(function (reponse) {
-                        return reponse.json();
-                    }).then(function (rep) {
-                        fermerAnnulation();
-                        if (rep && rep.success) {
-                            montrerToast('Demande de réservation annulée.', false);
-                            window.location.reload();
-                        } else {
-                            montrerToast(rep && rep.data && rep.data.message ? rep.data.message : 'Annulation impossible.', false);
-                        }
-                    }).catch(function () {
-                        fermerAnnulation();
-                        montrerToast('Annulation impossible pour le moment.', false);
-                    });
-                });
-            }
-
-            document.addEventListener('keydown', function (event) {
-                if (event.key === 'Escape' && !popupAnnuler.hidden) {
-                    fermerAnnulation();
-                }
-            });
-        }
-
-        var majOngletsAria = function () {
-            resaTabs.forEach(function (tab) {
-                var actif = tab.getAttribute('data-filtre') === resaFiltre;
-                tab.classList.toggle('is-active', actif);
-                tab.setAttribute('aria-selected', String(actif));
-            });
-        };
-
-        rendreReservationsPage = function () {
-            var connecte = estConnecte();
-            // Vraies demandes du membre connecté, fournies par le serveur
-            // (ppData.reservations, type de contenu « reservation »).
-            // Plus de démo localStorage.
-            var reservations = (connecte && window.ppData && Array.isArray(ppData.reservations))
-                ? ppData.reservations
-                : [];
-
-            if (resaConnexion) {
-                resaConnexion.hidden = connecte;
-            }
-            if (resaVide) {
-                resaVide.hidden = !connecte || reservations.length > 0;
-            }
-            if (resaListe) {
-                resaListe.hidden = reservations.length === 0;
-            }
-
-            if (resaCompte) {
-                if (!connecte) {
-                    resaCompte.textContent = 'Vos réservations vous attendent après connexion';
-                } else if (reservations.length === 0) {
-                    resaCompte.textContent = 'Aucune réservation pour le moment';
-                } else if (reservations.length === 1) {
-                    resaCompte.textContent = '1 réservation';
-                } else {
-                    resaCompte.textContent = reservations.length + ' réservations';
-                }
-            }
-
-            if (reservations.length === 0) {
-                reservationsGrille.innerHTML = '';
-                return;
-            }
-
-            // Filtre selon l'onglet, puis tri : les demandes à venir de la
-            // plus proche à la plus lointaine, les passées de la plus
-            // récente à la plus ancienne.
-            var passeesOnglet = resaFiltre === 'passees';
-            var liste = reservations.filter(function (r) {
-                return estPassee(r) === passeesOnglet;
-            }).sort(function (a, b) {
-                return passeesOnglet ? valeurDate(b) - valeurDate(a) : valeurDate(a) - valeurDate(b);
-            });
-
-            majOngletsAria();
-
-            reservationsGrille.innerHTML = '';
-            liste.forEach(function (resa) {
-                reservationsGrille.appendChild(construireCarteResa(resa, passeesOnglet));
-            });
-
-            reservationsGrille.hidden = liste.length === 0;
-            if (resaOngletVide) {
-                resaOngletVide.hidden = liste.length > 0;
-                resaOngletVide.textContent = passeesOnglet
-                    ? 'Aucune réservation passée pour l\'instant.'
-                    : 'Aucune réservation à venir. Vos prochaines demandes s\'afficheront ici.';
-            }
-        };
-
-        resaTabs.forEach(function (tab) {
-            tab.addEventListener('click', function () {
-                resaFiltre = tab.getAttribute('data-filtre');
-                rendreReservationsPage();
-            });
-        });
-
-        // La connexion / déconnexion simulée rejoue l'affichage : à la
-        // connexion, les demandes de démonstration apparaissent ; à la
-        // déconnexion, on repasse sur l'invitation à se connecter.
-        document.addEventListener('pp-connexion', rendreReservationsPage);
-        document.addEventListener('pp-deconnexion', rendreReservationsPage);
-
-        rendreReservationsPage();
     }
 
     // =========================================================
@@ -2823,14 +2406,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // Se met à jour au fil des connexions / déconnexions, comme
-        // les pages favoris et réservations.
-        document.addEventListener('pp-connexion', rendreMessageriePage);
-        document.addEventListener('pp-deconnexion', function () {
-            clearTimeout(minuteurHote);
-            rendreMessageriePage();
-        });
-
         rendreMessageriePage();
     }
 
@@ -2953,41 +2528,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Page produit : pop-up « Écrire à l'hôte ». Le bouton de la carte
     // hôte ouvre une fenêtre où l'on rédige un message ; la soumission
-    // envoie réellement un e-mail à l'hôte via FormSubmit (même service
-    // que la demande de réservation), puis affiche une confirmation à la
-    // place du formulaire. Fermeture par la croix, le voile ou Échap.
+    // dépose le message dans la messagerie interne du site (clé pp-messages),
+    // sans aucun service externe ni partage d'adresse e-mail : l'hôte le
+    // retrouve dans sa boîte de réception (page Messages). Le circuit est
+    // réservé aux membres : sans compte, le bouton ouvre la connexion.
+    // Fermeture par la croix, le voile ou Échap.
     var messageHoteBtns = Array.prototype.slice.call(document.querySelectorAll('.js-message-hote'));
     var messageHotePopup = document.getElementById('message-hote-popup');
 
     if (messageHoteBtns.length && messageHotePopup) {
         var messageHoteForm = messageHotePopup.querySelector('.login-popup__form');
         var messageHoteTexte = document.getElementById('message-hote-texte');
-        var messageHoteEmail = document.getElementById('message-hote-email');
-        var messageHotePrenom = document.getElementById('message-hote-prenom');
         var messageHoteSubmit = messageHotePopup.querySelector('.login-popup__submit');
         var messageHoteStatut = document.getElementById('message-hote-statut');
         var messageHoteClose = messageHotePopup.querySelector('.login-popup__close');
-        // Même alias FormSubmit que la demande de réservation : l'adresse
-        // réelle de l'hôte n'apparaît pas en clair dans le code publié.
-        var MESSAGE_HOTE_ENDPOINT = 'https://formsubmit.co/ajax/26aa38cbbdb858a800ab9b41ca816ab2';
+        var MESSAGE_HOTE_CLE = 'pp-messages';
 
         var fermerMessageHote = function () {
             messageHotePopup.hidden = true;
         };
 
-        // Le bouton d'envoi reste grisé tant que l'e-mail et le message
-        // ne sont pas renseignés (mêmes règles souples que le reste du site).
+        // Le bouton d'envoi reste grisé tant que le message est vide.
         var majMessageHoteSubmit = function () {
             if (!messageHoteSubmit) {
                 return;
             }
-            var emailOk = messageHoteEmail && messageHoteEmail.value.indexOf('@') > 0;
             var messageOk = messageHoteTexte && messageHoteTexte.value.trim() !== '';
-            messageHoteSubmit.disabled = !(emailOk && messageOk);
+            messageHoteSubmit.disabled = !messageOk;
         };
 
         messageHoteBtns.forEach(function (btn) {
             btn.addEventListener('click', function () {
+                // Écrire à l'hôte passe par la messagerie interne, donc par
+                // un compte : sans connexion, on ouvre la fenêtre de connexion
+                // au lieu du formulaire de message.
+                if (!estConnecte()) {
+                    if (typeof ouvrirConnexion === 'function') {
+                        ouvrirConnexion();
+                    } else {
+                        montrerToast('Connectez-vous pour écrire à l\'hôte.', false);
+                    }
+                    return;
+                }
                 messageHotePopup.hidden = false;
                 if (messageHoteTexte) {
                     messageHoteTexte.focus();
@@ -3011,63 +2593,116 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        [messageHoteEmail, messageHoteTexte, messageHotePrenom].forEach(function (champ) {
-            if (champ) {
-                champ.addEventListener('input', majMessageHoteSubmit);
-            }
-        });
+        if (messageHoteTexte) {
+            messageHoteTexte.addEventListener('input', majMessageHoteSubmit);
+        }
         majMessageHoteSubmit();
+
+        // Lecture / écriture de la boîte de réception (même clé et même
+        // format que la page Messages), avec amorçage des conversations de
+        // démonstration au premier dépôt pour ne pas vider la boîte.
+        var lireBoiteHote = function () {
+            try {
+                var liste = JSON.parse(localStorage.getItem(MESSAGE_HOTE_CLE));
+                return Array.isArray(liste) ? liste : null;
+            } catch (erreur) {
+                return null;
+            }
+        };
+        var ecrireBoiteHote = function (liste) {
+            try {
+                localStorage.setItem(MESSAGE_HOTE_CLE, JSON.stringify(liste));
+            } catch (erreur) {
+                // Stockage indisponible : sans effet, le site reste utilisable
+            }
+        };
+        var amorcerBoiteHote = function () {
+            var stockees = lireBoiteHote();
+            if (stockees !== null) {
+                return stockees;
+            }
+            var seed = (window.ppData && Array.isArray(window.ppData.messagerie))
+                ? JSON.parse(JSON.stringify(window.ppData.messagerie))
+                : [];
+            seed.forEach(function (conv) {
+                var dernier = conv.messages[conv.messages.length - 1];
+                conv.lu = !(dernier && dernier.de === 'hote');
+            });
+            ecrireBoiteHote(seed);
+            return seed;
+        };
+        var horodatageHote = function () {
+            var d = new Date();
+            var hh = ('0' + d.getHours()).slice(-2);
+            var mm = ('0' + d.getMinutes()).slice(-2);
+            return "Aujourd'hui " + hh + ':' + mm;
+        };
 
         if (messageHoteForm) {
             messageHoteForm.addEventListener('submit', function (event) {
                 event.preventDefault();
 
-                var hote = messageHoteForm.getAttribute('data-hote') || 'l\'hôte';
-                var annonce = messageHoteForm.getAttribute('data-annonce') || 'Espace Pool Party';
-
-                if (messageHoteSubmit) {
-                    messageHoteSubmit.disabled = true;
-                    messageHoteSubmit.textContent = 'Envoi en cours...';
+                // Filet : le circuit reste réservé aux membres connectés.
+                if (!estConnecte()) {
+                    fermerMessageHote();
+                    if (typeof ouvrirConnexion === 'function') {
+                        ouvrirConnexion();
+                    }
+                    return;
                 }
 
-                var message = {
-                    _subject: 'Pool Party : nouveau message pour ' + hote + ' (' + annonce + ')',
-                    _template: 'table',
-                    _captcha: 'false',
-                    email: messageHoteEmail ? messageHoteEmail.value : '',
-                    prenom: messageHotePrenom ? messageHotePrenom.value : '',
-                    annonce: annonce,
-                    message: messageHoteTexte ? messageHoteTexte.value : ''
-                };
+                var texte = messageHoteTexte ? messageHoteTexte.value.trim() : '';
+                if (!texte) {
+                    return;
+                }
 
-                // Le site restant fictif, la confirmation s'affiche même si
-                // le service est injoignable (fetch en échec), comme la
-                // demande de réservation.
-                var afficherEnvoye = function () {
-                    var champs = messageHoteForm.querySelector('.login-popup__fields');
-                    if (champs) {
-                        champs.hidden = true;
-                    }
-                    if (messageHoteSubmit) {
-                        messageHoteSubmit.hidden = true;
-                    }
-                    if (messageHoteStatut) {
-                        messageHoteStatut.hidden = false;
-                        messageHoteStatut.textContent = 'Message envoyé ! ' + hote +
-                            ' vient de le recevoir par e-mail et vous répondra sous 24h maximum.';
-                    }
-                };
+                var hote = messageHoteForm.getAttribute('data-hote') || 'l\'hôte';
+                var bienId = messageHoteForm.getAttribute('data-bien-id') || '';
+                var bienTitre = messageHoteForm.getAttribute('data-annonce') || 'Espace Pool Party';
+                var bienLien = messageHoteForm.getAttribute('data-bien-lien') || '';
+                var hotePhoto = messageHoteForm.getAttribute('data-hote-photo') || '';
 
-                fetch(MESSAGE_HOTE_ENDPOINT, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(message)
-                }).catch(function (erreur) {
-                    console.warn('Envoi du message à l\'hôte impossible :', erreur);
-                }).finally(afficherEnvoye);
+                // Dépôt dans la messagerie interne : on retrouve (ou on crée)
+                // la conversation rattachée à ce bien, on y ajoute le message
+                // du membre. Aucune adresse e-mail n'est transmise.
+                var liste = amorcerBoiteHote();
+                var convId = 'conv-' + (bienId || bienTitre);
+                var conv = null;
+                for (var i = 0; i < liste.length; i++) {
+                    if (liste[i].id === convId) {
+                        conv = liste[i];
+                        break;
+                    }
+                }
+                if (!conv) {
+                    conv = {
+                        id: convId,
+                        hote: hote,
+                        photo: hotePhoto,
+                        bienId: bienId,
+                        bienTitre: bienTitre,
+                        bienLien: bienLien,
+                        messages: []
+                    };
+                    liste.push(conv);
+                }
+                conv.messages.push({ de: 'moi', texte: texte, label: horodatageHote() });
+                conv.maj = Date.now();
+                conv.lu = true;
+                ecrireBoiteHote(liste);
+
+                var champs = messageHoteForm.querySelector('.login-popup__fields');
+                if (champs) {
+                    champs.hidden = true;
+                }
+                if (messageHoteSubmit) {
+                    messageHoteSubmit.hidden = true;
+                }
+                if (messageHoteStatut) {
+                    messageHoteStatut.hidden = false;
+                    messageHoteStatut.textContent = 'Message envoyé à ' + hote +
+                        ' via la messagerie Pool Party. Retrouvez sa réponse dans votre boîte de réception, à la page Messages.';
+                }
             });
         }
     }
@@ -3574,8 +3209,6 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         majEtatCompte();
-        document.addEventListener('pp-connexion', majEtatCompte);
-        document.addEventListener('pp-deconnexion', majEtatCompte);
 
         // Compteurs de la pop-up Invités : mêmes valeurs de départ que
         // le panneau de la page produit
@@ -3954,6 +3587,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 creneau: champCreneau ? champCreneau.value : '',
                 invites: ck('recap-invites') ? ck('recap-invites').textContent : '',
                 formule: ck('libelle') ? ck('libelle').textContent : '',
+                // Type de formule et nombre d'occupants transmis à part : le
+                // serveur recalcule lui-même le total à partir du prix réel du
+                // bien (le champ « total » affiché n'est plus une source sûre).
+                formule_type: formuleType,
+                occupants: String(invites.adultes + invites.enfants),
                 total: ck('total') ? ck('total').textContent : '',
                 echeance: echeance && echeance.value === 'trois-fois' ? 'Paiement en 3 fois' : 'Paiement comptant',
                 paiement: paiement && paiement.value === 'paypal' ? 'PayPal' : 'Carte bancaire',
@@ -5168,7 +4806,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '<div class="cookies-banner__inner">' +
                 '<div class="cookies-banner__texte">' +
                     '<h2 class="cookies-banner__titre" tabindex="-1">Vos cookies, vos choix</h2>' +
-                    '<p>Nous utilisons des cookies pour mesurer l\'audience du site et retenir vos préférences de navigation. Vous pouvez tout accepter, tout refuser ou choisir catégorie par catégorie, puis changer d\'avis à tout moment depuis le lien Gérer mes cookies du pied de page. <a href="mentions-legales.html#cookies">En savoir plus</a></p>' +
+                    '<p>Nous utilisons des cookies pour mesurer l\'audience du site et retenir vos préférences de navigation. Vous pouvez tout accepter, tout refuser ou choisir catégorie par catégorie, puis changer d\'avis à tout moment depuis le lien Gérer mes cookies du pied de page. <a href="/mentions-legales/#cookies">En savoir plus</a></p>' +
                 '</div>' +
                 '<fieldset class="cookies-banner__prefs" hidden>' +
                     '<legend>Choisir par catégorie</legend>' +

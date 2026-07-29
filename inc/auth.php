@@ -108,6 +108,11 @@ function poolparty_g4_ajax_register() {
     if (email_exists($email)) {
         wp_send_json_error(array('message' => 'Un compte existe déjà avec cette adresse e-mail. Connectez-vous.'));
     }
+    // Adresse bannie par l'équipe (modération des membres) : pas de
+    // réinscription possible. Message volontairement générique.
+    if (function_exists('poolparty_g4_email_banni') && poolparty_g4_email_banni($email)) {
+        wp_send_json_error(array('message' => 'La création du compte a échoué. Contactez l\'équipe Pool Party.'));
+    }
 
     // Identifiant dérivé de l'e-mail, rendu unique.
     $base = sanitize_user(current(explode('@', $email)), true);
