@@ -121,7 +121,7 @@ get_header();
             <section id="article-9" aria-labelledby="article-9-titre">
                 <h2 id="article-9-titre">Article 9 : Données personnelles</h2>
                 <p>Pool Party collecte et traite les données personnelles des utilisateurs dans le respect du RGPD (UE 2016/679) et de la loi Informatique et Libertés. Les données ne sont jamais revendues à des tiers.</p>
-                <p>La durée de conservation, la liste complète de vos droits (accès, rectification, effacement, portabilité, opposition, retrait du consentement), les modalités d'exercice par email à <a href="mailto:contact@poolparty.fr">contact@poolparty.fr</a> et les voies de recours auprès de la CNIL sont détaillés dans la <a href="<?php echo esc_url(home_url('/mentions-legales/#donnees')); ?>">politique de confidentialité, section Données personnelles</a>.</p>
+                <p>La durée de conservation, la liste complète de vos droits (accès, rectification, effacement, portabilité, opposition, retrait du consentement), les modalités d'exercice par email à <a href="mailto:poolparty.g4@gmail.com">poolparty.g4@gmail.com</a> et les voies de recours auprès de la CNIL sont détaillés dans la <a href="<?php echo esc_url(home_url('/mentions-legales/#donnees')); ?>">politique de confidentialité, section Données personnelles</a>.</p>
             </section>
 
             <section id="article-10" aria-labelledby="article-10-titre">

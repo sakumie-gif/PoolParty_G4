@@ -137,7 +137,7 @@ get_header();
                 <p>Si vous n'arrivez pas à accéder à un contenu ou à un service, écrivez-nous. Nous vous répondons sous 5 jours ouvrés avec une solution ou une alternative accessible.</p>
                 <div class="access-contact__actions">
                     <a href="<?php echo esc_url(home_url('/contact/')); ?>" class="btn btn-secondary btn-medium">Nous écrire</a>
-                    <a href="mailto:accessibilite@poolparty.fr" class="btn btn-tertiary btn-medium">accessibilite@poolparty.fr</a>
+                    <a href="mailto:poolparty.g4@gmail.com" class="btn btn-tertiary btn-medium">poolparty.g4@gmail.com</a>
                 </div>
             </div>
 

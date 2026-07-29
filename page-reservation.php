@@ -87,7 +87,7 @@ $pp_r_capacite = $pp_bien_ok ? max(1, (int) poolparty_g4_meta($pp_bien_id, 'capa
                          Le bloc affiché dépend de la classe is-connected du body ;
                          les coordonnées proviennent du compte, plus de saisie. -->
                     <div class="checkout-gate checkout-compte--visiteur">
-                        <p class="checkout-card__texte">La réservation est réservée aux membres Pool&nbsp;Party. Connectez-vous ou créez votre compte pour envoyer votre demande à <?php echo esc_html($pp_r_hote); ?>&nbsp;: c'est à l'adresse de votre compte qu'il vous répondra.</p>
+                        <p class="checkout-card__texte">La réservation est réservée aux membres Pool&nbsp;Party. Connectez-vous ou créez votre compte pour envoyer votre demande à <?php echo esc_html($pp_r_hote); ?>. Dès qu'il la valide, vous recevez un e-mail de confirmation ; s'il a besoin de vous joindre, il vous écrit sur la messagerie du site.</p>
                         <div class="checkout-gate__actions">
                             <button type="button" class="btn btn-secondary btn-medium js-open-login">Se connecter</button>
                             <a class="btn btn-tertiary btn-medium" href="<?php echo esc_url(home_url('/inscription/')); ?>">Créer un compte</a>
@@ -95,7 +95,7 @@ $pp_r_capacite = $pp_bien_ok ? max(1, (int) poolparty_g4_meta($pp_bien_id, 'capa
                     </div>
 
                     <div class="checkout-identite checkout-compte--connecte">
-                        <p class="checkout-card__texte"><?php echo esc_html($pp_r_hote); ?> reçoit votre demande et vous répondra à l'adresse de votre compte.</p>
+                        <p class="checkout-card__texte"><?php echo esc_html($pp_r_hote); ?> reçoit votre demande. Dès qu'il la valide, vous recevez un e-mail de confirmation. S'il souhaite vous contacter avant, il vous écrit sur la messagerie Pool Party : vos coordonnées restent privées.</p>
                         <p class="checkout-identite__ligne">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             <span data-checkout="identite">Connecté à votre compte</span>

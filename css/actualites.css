@@ -11,36 +11,6 @@
     padding: var(--padding-p2) var(--padding-page-mobile) 0;
 }
 
-/* EN-TÊTE DE PAGE */
-.actus-hero {
-    padding: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
-}
-
-.actus-hero__surtitre {
-    font-family: var(--font-input);
-    font-weight: var(--fw-semibold);
-    font-size: var(--fs-p3);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-corail);
-    margin-bottom: var(--padding-p4);
-}
-
-.actus-hero h1 {
-    margin-bottom: var(--padding-p3);
-}
-
-.actus-hero p {
-    font-family: var(--font-input);
-    font-size: var(--fs-p2);
-    line-height: 1.6;
-    color: var(--color-grey-font-1);
-    /* largeur de lecture confortable ; posée sur le texte et non sur
-       la section pour ne pas entrer en conflit avec la gouttière de
-       page (qui grandit sur très grand écran) */
-    max-width: 65ch;
-}
-
 /* ENTÊTE DE CARTE : rubrique + date (partagé une et grille) */
 .actus-card__entete {
     display: flex;
@@ -204,90 +174,11 @@
 }
 
 /* =============================================================
-   NEWSLETTER
-   Reprise du composant de l'accueil (classes .newsletter*) pour
-   que le hook de main.js fonctionne ; styles recopiés ici car la
-   page ne charge pas accueil.css.
-   ============================================================= */
-.newsletter {
-    padding: var(--padding-p1) var(--padding-page-mobile) 48px;
-}
-
-.newsletter__box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--padding-p2);
-    background: var(--color-beige);
-    border-radius: var(--radius-r1);
-    padding: var(--padding-p1) var(--padding-p2);
-    text-align: center;
-}
-
-.newsletter__text {
-    font-family: var(--font-input);
-    font-weight: var(--fw-bold);
-    font-size: var(--fs-p2);
-    color: var(--color-black);
-    max-width: 75ch;
-}
-
-.newsletter__form {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--padding-p2);
-    width: 100%;
-    max-width: 620px;
-}
-
-.newsletter__form input {
-    flex: 1 1 260px;
-    height: 40px;
-    padding: var(--padding-p4) var(--padding-p2);
-    background: var(--color-white);
-    border: 1px solid var(--color-grey-border);
-    border-radius: var(--radius-pill);
-    box-shadow: var(--shadow-search-small);
-    font-family: var(--font-input);
-    font-size: var(--fs-p2);
-    color: var(--color-grey-font-1);
-}
-
-.newsletter__form input::placeholder {
-    color: var(--color-grey-font-2);
-    opacity: 1;
-}
-
-.newsletter__form input:hover,
-.newsletter__form input:focus {
-    border-color: var(--color-dark-green-blue-2);
-    outline: none;
-}
-
-.newsletter__rgpd {
-    font-family: var(--font-input);
-    font-size: var(--fs-p4);
-    color: var(--color-grey-font-2);
-    max-width: 620px;
-}
-
-.newsletter__rgpd a {
-    color: var(--color-dark-green-blue);
-    text-decoration: underline;
-}
-
-/* =============================================================
    TABLETTE (à partir de 768px)
    ============================================================= */
 @media (min-width: 768px) {
 
     .actus-intro {
-        padding-left: var(--padding-page-tablet);
-        padding-right: var(--padding-page-tablet);
-    }
-
-    .actus-hero {
         padding-left: var(--padding-page-tablet);
         padding-right: var(--padding-page-tablet);
     }
@@ -319,11 +210,6 @@
     .actus-grille {
         grid-template-columns: repeat(2, 1fr);
     }
-
-    .newsletter {
-        padding-left: var(--padding-page-tablet);
-        padding-right: var(--padding-page-tablet);
-    }
 }
 
 /* =============================================================
@@ -334,12 +220,6 @@
     .actus-intro {
         padding-left: var(--padding-page-desktop);
         padding-right: var(--padding-page-desktop);
-    }
-
-    .actus-hero {
-        padding-left: var(--padding-page-desktop);
-        padding-right: var(--padding-page-desktop);
-        padding-top: var(--padding-p1);
     }
 
     .actus-featured,
@@ -356,11 +236,6 @@
     .actus-grille {
         grid-template-columns: repeat(3, 1fr);
         gap: var(--padding-p1);
-    }
-
-    .newsletter {
-        padding-left: var(--padding-page-desktop);
-        padding-right: var(--padding-page-desktop);
     }
 }
 

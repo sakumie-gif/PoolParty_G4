@@ -31,7 +31,7 @@
                 <ul>
                     <li>12 rue de Rivoli, 75001 Paris</li>
                     <li><a href="tel:+33123456789">01 23 45 67 89</a></li>
-                    <li><a href="mailto:contact@poolparty.fr">contact@poolparty.fr</a></li>
+                    <li><a href="mailto:poolparty.g4@gmail.com">poolparty.g4@gmail.com</a></li>
                 </ul>
             </div>
 

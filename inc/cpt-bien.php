@@ -75,6 +75,27 @@ function poolparty_g4_editeur_classique_bien($use_block_editor, $post_type) {
 add_filter('use_block_editor_for_post_type', 'poolparty_g4_editeur_classique_bien', 10, 2);
 
 /**
+ * La base des permaliens de fiche est /bien/ (une fiche vit sur
+ * /bien/{slug}/), mais l'archive du catalogue est sur /catalogue/.
+ * L'adresse nue /bien/ n'affiche donc rien : on la redirige en 301 vers
+ * le catalogue au lieu de laisser une page 404.
+ */
+function poolparty_g4_redirige_base_bien() {
+    if (is_admin()) {
+        return;
+    }
+    $chemin = trim((string) parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+    if ($chemin === 'bien') {
+        $catalogue = get_post_type_archive_link('bien');
+        if ($catalogue) {
+            wp_safe_redirect($catalogue, 301);
+            exit;
+        }
+    }
+}
+add_action('template_redirect', 'poolparty_g4_redirige_base_bien');
+
+/**
  * Sur le catalogue et les pages catégorie, afficher tous les biens sur
  * une seule page (pas de pagination) pour que la carte OpenStreetMap
  * montre tous les marqueurs d'un coup.
@@ -672,7 +693,7 @@ function poolparty_g4_carte_bien($post_id) {
             </div>
             <p class="card-product__meta"><span><?php echo esc_html($distance); ?>km</span><span><?php echo esc_html($ville); ?></span><?php if ($pays) : ?><span><?php echo esc_html($pays); ?></span><?php endif; ?></p>
             <p class="card-product__meta"><span><?php echo esc_html(poolparty_g4_capacite($cap_min, $cap_max)); ?></span></p>
-            <p class="card-product__price"><?php echo esc_html($prix); ?> €/ h</p>
+            <p class="card-product__price"><?php echo esc_html($prix); ?> €/h</p>
         </div>
     </article>
     <?php

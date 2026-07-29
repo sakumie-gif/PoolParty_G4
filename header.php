@@ -76,6 +76,30 @@
                     </svg>
                 </button>
             </form>
+            <?php
+            // Pastilles de notification du menu : messages non lus et
+            // demandes de réservation en attente côté hôte. Rendues côté
+            // serveur, tenues à jour par main.js quand une conversation
+            // est lue. Toujours présentes dans le markup (hidden à zéro)
+            // pour que le JS puisse les rafraîchir.
+            $pp_nonlus   = 0;
+            $pp_demandes = 0;
+            if (is_user_logged_in()) {
+                if (function_exists('poolparty_g4_messages_non_lus')) {
+                    $pp_nonlus = poolparty_g4_messages_non_lus(get_current_user_id());
+                }
+                $pp_demandes = count(get_posts(array(
+                    'post_type'      => 'reservation',
+                    'post_status'    => 'publish',
+                    'posts_per_page' => 100,
+                    'fields'         => 'ids',
+                    'meta_query'     => array(
+                        array('key' => 'pp_hote_id', 'value' => get_current_user_id()),
+                        array('key' => 'pp_statut', 'value' => 'en-attente'),
+                    ),
+                )));
+            }
+            ?>
             <!-- Navigation -->
             <nav class="header-nav" aria-label="Navigation principale">
                 <?php if (current_user_can('manage_options')) : ?>
@@ -93,6 +117,7 @@
                         <line x1="4" y1="17" x2="20" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                     <span>Menu</span>
+                    <span class="header-burger__pastille" data-pastille="menu" aria-hidden="true"<?php echo ($pp_nonlus || $pp_demandes) ? '' : ' hidden'; ?>></span>
                 </button>
 
                 <!-- Menu déroulant ancré dans header-nav pour rester collé
@@ -128,8 +153,12 @@
                 <?php // Ordre validé par Audrey : Messagerie, Réservations,
                       // Mes annonces (si le membre a déposé une annonce),
                       // Mes favoris. « Demandes » a fusionné dans Réservations V2. ?>
-                <a href="<?php echo esc_url(home_url('/messages/')); ?>">Messagerie</a>
-                <a href="<?php echo esc_url(home_url('/mes-reservations/')); ?>">Réservations</a>
+                <a href="<?php echo esc_url(home_url('/messages/')); ?>">Messagerie
+                    <span class="menu-pastille" data-pastille="messages"<?php echo $pp_nonlus ? '' : ' hidden'; ?>><?php echo esc_html($pp_nonlus > 9 ? '9+' : (string) $pp_nonlus); ?></span>
+                </a>
+                <a href="<?php echo esc_url(home_url('/mes-reservations/')); ?>">Réservations
+                    <span class="menu-pastille" data-pastille="demandes"<?php echo $pp_demandes ? '' : ' hidden'; ?>><?php echo esc_html($pp_demandes > 9 ? '9+' : (string) $pp_demandes); ?></span>
+                </a>
                 <?php if (function_exists('poolparty_g4_membre_a_des_annonces') && poolparty_g4_membre_a_des_annonces()) : ?>
                     <a href="<?php echo esc_url(home_url('/mes-annonces/')); ?>">Mes annonces</a>
                 <?php endif; ?>

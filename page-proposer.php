@@ -414,7 +414,7 @@ get_header('proposer');
                 <div class="prix-saisie">
                     <label class="sr-only" for="annonce-prix">Prix par heure en euros</label>
                     <input class="prix-saisie__input" id="annonce-prix" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" value="25">
-                    <span class="prix-saisie__unite">€ / heure</span>
+                    <span class="prix-saisie__unite">€/h</span>
                 </div>
 
                 <dl class="prix-detail">
@@ -509,7 +509,7 @@ get_header('proposer');
                             </div>
                             <p class="card-product__meta"><span data-recap="commune">Commune</span><span data-recap="type">Type d'espace</span></p>
                             <p class="card-product__meta"><span data-recap="invites">8 personnes</span></p>
-                            <p class="card-product__price" data-recap="prix">25 €/ h</p>
+                            <p class="card-product__price" data-recap="prix">25 €/h</p>
                         </div>
                     </article>
 
@@ -592,7 +592,7 @@ get_header('proposer');
                         </div>
                         <p class="card-product__meta"><span data-apercu="commune">Commune</span><span data-apercu="type">Type d'espace</span></p>
                         <p class="card-product__meta"><span data-apercu="invites">8 personnes max</span></p>
-                        <p class="card-product__price" data-apercu="prix">25 €/ h</p>
+                        <p class="card-product__price" data-apercu="prix">25 €/h</p>
                     </div>
                 </article>
 

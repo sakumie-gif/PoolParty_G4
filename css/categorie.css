@@ -486,62 +486,6 @@
    posée en JS pour le défilement vers l'annonce au clic d'un pin. */
 
 /* =============================================================
-   PAGINATION
-   Pages en pastilles rondes, la page courante est remplie en
-   corail (maquette), chevron vers la page suivante.
-   ============================================================= */
-.pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--padding-p4);
-    margin-top: var(--padding-p1);
-}
-
-.pagination__page,
-.pagination__fleche {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-family: var(--font-input);
-    font-size: var(--fs-p2);
-    color: var(--color-grey-font-1);
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color var(--transition-fast), color var(--transition-fast);
-}
-
-.pagination__page:hover,
-.pagination__fleche:hover {
-    background: var(--color-beige);
-    color: var(--color-dark-green-blue);
-}
-
-.pagination__page.is-current {
-    background: var(--color-corail);
-    color: var(--color-white);
-    font-weight: var(--fw-semibold);
-}
-
-/* Chevron dessiné en masque, colorable via currentColor */
-.pagination__fleche::before {
-    content: "";
-    width: 24px;
-    height: 24px;
-    background-color: currentColor;
-    -webkit-mask: var(--icon-chevron-right) center / contain no-repeat;
-    mask: var(--icon-chevron-right) center / contain no-repeat;
-}
-
-.pagination__points {
-    color: var(--color-grey-font-2);
-    letter-spacing: 2px;
-}
-
-/* =============================================================
    TABLETTE (à partir de 768px)
    Fil d'Ariane complet, pilules Catégories et Prix, libellé de
    l'interrupteur carte, grille sur trois colonnes.

@@ -60,7 +60,7 @@ get_header();
 
             <section id="article-1" aria-labelledby="article-1-titre">
                 <h2 id="article-1-titre">Article 1 : Identification du prestataire intermédiaire</h2>
-                <p>Pool Party SARL, 12 rue de Rivoli, 75001 Paris, France. Directrice de la publication : Mme Francine. Email : <a href="mailto:contact@poolparty.fr">contact@poolparty.fr</a>.</p>
+                <p>Pool Party SARL, 12 rue de Rivoli, 75001 Paris, France. Directrice de la publication : Mme Francine. Email : <a href="mailto:poolparty.g4@gmail.com">poolparty.g4@gmail.com</a>.</p>
                 <p>Pool Party agit en qualité d'intermédiaire entre Hôtes et Locataires. La vente effective du service de location est conclue directement entre les deux parties. Pool Party perçoit une commission de mise en relation et de gestion du paiement sécurisé.</p>
             </section>
 

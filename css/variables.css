@@ -12,7 +12,6 @@
        ========================================================= */
     --color-dark-green-blue:    #305E63;   /* Dark Green blue, couleur principale */
     --color-dark-green-blue-2:  #4B8182;   /* Dark Green blue 2, variante claire */
-    --color-dark-green:         #6A7F7E;   /* Dark Green */
     --color-green:              #8EA8A3;    /* Green, vert pâle */
     --color-beige:              #F4EDE6;    /* Beige, fond chaleureux */
     --color-sable:              #AA8E81;    /* Sable */
@@ -44,9 +43,7 @@
     /* Accents des composants avis et pop-up (valeurs Figma) */
     --color-star:               #FFA76B;    /* étoiles de notation des cartes avis */
     --color-grey-quote:         #717182;    /* citations et rôles des cartes avis */
-    --color-avatar-turquoise:   #3FA89C;    /* pastille avatar des cartes avis */
     --color-accent-blue:        #52BEB3;    /* Accent/Blue : bouton de fermeture pop-up */
-    --color-accent-pink:        #F3ADB5;    /* Accent/Pink : bouton secondaire pop-up */
     --color-grey-dark:          #909090;    /* Neutral/Grey Dark : titre du pop-up */
 
     /* =========================================================
@@ -102,11 +99,9 @@
     --fs-h4: 18px;
 
     /* Variantes Inter de titres (contextes spécifiques) */
-    --fs-h2-inter: 26px;
     --fs-h3-inter: 20px;
 
     /* POIDS DE POLICE */
-    --fw-light: 300;
     --fw-regular: 400;
     --fw-medium: 500;
     --fw-semibold: 600;
@@ -130,8 +125,6 @@
 
     /* Alias lisibles (pointent vers les tokens Figma) */
     --shadow-sm: var(--shadow-3);
-    --shadow-md: var(--shadow-2);
-    --shadow-lg: var(--shadow-1);
 
     /* =========================================================
        ICÔNES CSS (masques SVG, colorables via background-color)

@@ -357,12 +357,12 @@ add_action('wp_ajax_pp_maj_reservation', 'poolparty_g4_ajax_maj_reservation');
    5. E-MAILS
    ============================================================= */
 
-/** Nouvelle demande : accusé au locataire + notification à l'hôte. */
+/**
+ * Nouvelle demande : accusé au locataire + notification à l'hôte.
+ * Aucune coordonnée d'un membre n'est transmise à l'autre : les
+ * e-mails renvoient vers « Mes réservations » et la messagerie interne.
+ */
 function poolparty_g4_email_reservation_nouvelle($resa_id) {
-    // Envoi d'e-mails désactivé : la demande vit dans « Mes réservations »
-    // (locataire) et « Demandes de réservation » (hôte), pas par e-mail vers
-    // une adresse perso. Retirer ce return pour réactiver les notifications.
-    return;
     $bien_id = (int) get_post_meta($resa_id, 'pp_bien_id', true);
     $hote_id = (int) get_post_meta($resa_id, 'pp_hote_id', true);
     $auteur  = get_userdata((int) get_post_field('post_author', $resa_id));
@@ -400,7 +400,9 @@ function poolparty_g4_email_reservation_nouvelle($resa_id) {
             . '<strong>Invités :</strong> ' . esc_html($invites) . '<br>'
             . '<strong>Total :</strong> ' . esc_html($total) . '</p>'
             . ($message ? '<p><strong>Message :</strong><br>' . nl2br(esc_html($message)) . '</p>' : '')
-            . '<p>Retrouvez cette demande dans votre espace « Demandes de réservation » pour l\'accepter ou la refuser.</p>';
+            . '<p>Retrouvez cette demande dans « Mes réservations », vue Hôte, pour l\'accepter ou la refuser. '
+            . 'Pour échanger avec le locataire, passez par la messagerie Pool Party : vos coordonnées restent privées.</p>'
+            . '<p><a href="' . esc_url(home_url('/mes-reservations/?vue=hote')) . '" style="color:#CA8171;">Voir la demande</a></p>';
         poolparty_g4_email_envoyer(
             $hote->user_email,
             'Nouvelle demande de réservation',
@@ -412,10 +414,6 @@ function poolparty_g4_email_reservation_nouvelle($resa_id) {
 
 /** Réponse de l'hôte : informe le locataire de l'acceptation ou du refus. */
 function poolparty_g4_email_reservation_statut($resa_id, $statut) {
-    // Envoi d'e-mails désactivé (voir poolparty_g4_email_reservation_nouvelle) :
-    // l'acceptation / le refus se voient dans « Mes réservations », pas par
-    // e-mail. Retirer ce return pour réactiver les notifications.
-    return;
     $auteur  = get_userdata((int) get_post_field('post_author', $resa_id));
     if (!$auteur || !is_email($auteur->user_email)) {
         return;
@@ -442,12 +440,10 @@ function poolparty_g4_email_reservation_statut($resa_id, $statut) {
 }
 
 /**
- * Annulation par l'hôte : prévient le locataire avec la raison donnée.
- * Envoi désactivé comme les autres notifications (voir plus haut) ;
- * retirer le return pour réactiver.
+ * Annulation par l'hôte : prévient le locataire avec la raison donnée
+ * (le message saisi par l'hôte, jamais ses coordonnées).
  */
 function poolparty_g4_email_reservation_annulee_hote($resa_id, $raison) {
-    return;
     $auteur = get_userdata((int) get_post_field('post_author', $resa_id));
     if (!$auteur || !is_email($auteur->user_email)) {
         return;

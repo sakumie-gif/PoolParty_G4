@@ -1851,6 +1851,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         if (!estConnecte()) {
             favorisEnAttente = annonce;
+            ecrireAttente(annonce);
             if (typeof ouvrirConnexion === 'function') {
                 ouvrirConnexion();
             }
@@ -1876,6 +1877,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // tout seul lors d'une connexion ultérieure
     document.addEventListener('pp-popup-fermee', function () {
         favorisEnAttente = null;
+        ecrireAttente(null);
     });
 
     // Page Mes favoris : la grille est reconstruite depuis le
@@ -2055,20 +2057,50 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // =========================================================
     // MESSAGERIE INTERNE (page Messages)
-    // Boîte de réception locataire ↔ hôte, sur le même principe que
-    // les favoris et les réservations : connexion simulée, données
-    // dans le localStorage. Au premier affichage connecté, on amorce
-    // la boîte avec les conversations de démonstration fournies par
-    // le thème (window.ppData.messagerie). Trois états sont basculés
-    // par l'attribut hidden ; l'envoi d'un message reçoit une réponse
-    // simulée de l'hôte (aucun compte réel : projet fictif).
-    // L'architecture cible (tables Conversation / Message) figure
-    // dans schema-bdd.html pour la soutenance.
+    // Boîte de réception réelle : les conversations vivent en base
+    // (type pp_conversation, messages en commentaires pp_message) et
+    // main.js ne fait que le rendu via AJAX : liste, fil, envoi,
+    // marquage lu et pastille du menu. Trois états pleine page sont
+    // basculés par l'attribut hidden.
     // =========================================================
     var messagerie = document.getElementById('messagerie');
 
+    // Appel AJAX commun de la messagerie (jeton pp_messages), partagé
+    // avec la pop-up « Écrire à l'hôte » de la fiche bien.
+    var appelMessagerie = function (action, params) {
+        var corps = new URLSearchParams(Object.assign({
+            action: action,
+            nonce: (window.ppData && ppData.messagesNonce) || ''
+        }, params || {}));
+        return fetch((window.ppData && ppData.ajaxUrl) || '', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: corps.toString()
+        }).then(function (reponse) {
+            return reponse.json();
+        });
+    };
+
+    // Pastille « messages non lus » du menu : le premier rendu vient
+    // du serveur (header.php), le JS la tient à jour après lecture.
+    var majPastilleMessages = function (nonLus) {
+        var pastilles = document.querySelectorAll('[data-pastille="messages"]');
+        Array.prototype.forEach.call(pastilles, function (pastille) {
+            pastille.textContent = nonLus > 9 ? '9+' : String(nonLus);
+            pastille.hidden = !nonLus;
+        });
+        var point = document.querySelector('[data-pastille="menu"]');
+        if (point) {
+            var demandes = document.querySelector('[data-pastille="demandes"]');
+            point.hidden = !nonLus && !(demandes && !demandes.hidden);
+        }
+    };
+
     if (messagerie) {
-        var MESSAGES_CLE = 'pp-messages';
+        // L'ancienne démo localStorage n'a plus cours : on retire la
+        // clé restée dans les navigateurs des versions précédentes.
+        try { localStorage.removeItem('pp-messages'); } catch (erreur) {}
+
         var msgConnexion = document.getElementById('messages-connexion');
         var msgVide = document.getElementById('messages-vide');
         var msgCompte = document.getElementById('messages-compte');
@@ -2084,10 +2116,10 @@ document.addEventListener('DOMContentLoaded', function () {
         var msgEnvoyer = msgSaisie ? msgSaisie.querySelector('.messagerie__envoyer') : null;
         var msgRetour = document.getElementById('messagerie-retour');
 
+        var conversations = []; // boîte de réception en mémoire (servie par AJAX)
         var filActif = null;    // id de la conversation ouverte
-        var minuteurHote = null; // réponse simulée de l'hôte en attente
 
-        // Neutralise le HTML des valeurs relues du localStorage avant
+        // Neutralise le HTML des valeurs reçues du serveur avant
         // de les injecter dans la page.
         var echapperMsg = function (texte) {
             return String(texte == null ? '' : texte)
@@ -2096,51 +2128,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#39;');
-        };
-
-        var lireMessagerie = function () {
-            try {
-                var liste = JSON.parse(localStorage.getItem(MESSAGES_CLE));
-                return Array.isArray(liste) ? liste : null;
-            } catch (erreur) {
-                return null;
-            }
-        };
-
-        var ecrireMessagerie = function (liste) {
-            try {
-                localStorage.setItem(MESSAGES_CLE, JSON.stringify(liste));
-            } catch (erreur) {
-                // Stockage indisponible : les échanges vivront le temps de la page
-            }
-        };
-
-        // Amorce la boîte de réception à partir des conversations de
-        // démonstration du thème, une seule fois (tant que la clé est
-        // absente). Chaque conversation reçoit un indicateur « non lu »
-        // si son dernier message vient de l'hôte.
-        var amorcerMessagerie = function () {
-            var stockees = lireMessagerie();
-            if (stockees !== null) {
-                return stockees; // déjà amorcée (même si l'utilisateur a tout supprimé)
-            }
-            var seed = (window.ppData && Array.isArray(window.ppData.messagerie))
-                ? JSON.parse(JSON.stringify(window.ppData.messagerie))
-                : [];
-            seed.forEach(function (conv) {
-                var dernier = conv.messages[conv.messages.length - 1];
-                conv.lu = !(dernier && dernier.de === 'hote');
-            });
-            ecrireMessagerie(seed);
-            return seed;
-        };
-
-        // Libellé horaire court d'un message envoyé à l'instant
-        var horodatageMaintenant = function () {
-            var d = new Date();
-            var hh = ('0' + d.getHours()).slice(-2);
-            var mm = ('0' + d.getMinutes()).slice(-2);
-            return "Aujourd'hui " + hh + ':' + mm;
         };
 
         // Construit une entrée de la liste des conversations
@@ -2220,22 +2207,27 @@ document.addEventListener('DOMContentLoaded', function () {
             return null;
         };
 
-        // Ouvre une conversation : la marque lue, affiche son fil,
-        // bascule en vue « fil » sur mobile.
+        // Ouvre une conversation : la marque lue (en mémoire et côté
+        // serveur), affiche son fil, bascule en vue « fil » sur mobile.
         var ouvrirFil = function (id) {
-            var liste = lireMessagerie() || [];
-            var conv = trouverConv(liste, id);
+            var conv = trouverConv(conversations, id);
             if (!conv) {
                 return;
             }
             filActif = id;
             if (!conv.lu) {
                 conv.lu = true;
-                ecrireMessagerie(liste);
+                appelMessagerie('pp_conversation_lue', { conversation_id: id }).then(function (rep) {
+                    if (rep && rep.success) {
+                        majPastilleMessages(rep.data.nonLus);
+                    }
+                }).catch(function () {
+                    // Hors ligne : la conversation restera non lue côté serveur
+                });
             }
             messagerie.classList.add('is-thread-open');
             rendreFil(conv);
-            rendreListe(liste);
+            rendreListe(conversations);
             if (msgChamp) {
                 msgChamp.focus();
             }
@@ -2251,75 +2243,46 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         };
 
-        // Réponse simulée de l'hôte après l'envoi d'un message
-        var reponsesHote = [
-            "Merci pour votre message ! Je vous réponds dès que possible.",
-            "Bien reçu, je regarde ça et je reviens vers vous très vite.",
-            "Avec plaisir ! N'hésitez pas si vous avez d'autres questions.",
-            "Parfait, c'est noté. Je vous confirme les détails sous peu."
-        ];
-
-        var repondreHote = function (id) {
-            var liste = lireMessagerie() || [];
-            var conv = trouverConv(liste, id);
-            if (!conv) {
-                return;
-            }
-            // Indicateur « l'hôte écrit… » uniquement si le fil est ouvert
-            var typing = null;
-            if (filActif === id && msgMessages) {
-                typing = document.createElement('div');
-                typing.className = 'messagerie__typing';
-                typing.innerHTML = '<span></span><span></span><span></span>';
-                msgMessages.appendChild(typing);
-                msgMessages.scrollTop = msgMessages.scrollHeight;
-            }
-            minuteurHote = setTimeout(function () {
-                if (typing && typing.parentNode) {
-                    typing.parentNode.removeChild(typing);
-                }
-                var liste2 = lireMessagerie() || [];
-                var conv2 = trouverConv(liste2, id);
-                if (!conv2) {
-                    return;
-                }
-                var texte = reponsesHote[Math.floor(Math.random() * reponsesHote.length)];
-                conv2.messages.push({ de: 'hote', texte: texte, label: horodatageMaintenant() });
-                conv2.maj = Date.now();
-                conv2.lu = (filActif === id); // lu si le fil est ouvert à cet instant
-                ecrireMessagerie(liste2);
-                if (filActif === id) {
-                    rendreFil(conv2);
-                }
-                rendreListe(liste2);
-                majCompteur(liste2);
-            }, 1600);
-        };
-
-        // Envoi d'un message par l'utilisateur
+        // Envoi d'un message : la conversation mise à jour revient du
+        // serveur (horodatages calculés en base), le destinataire la
+        // retrouvera dans sa propre boîte de réception.
         var envoyerMessage = function () {
             var texte = msgChamp ? msgChamp.value.trim() : '';
             if (!texte || !filActif) {
                 return;
             }
-            var liste = lireMessagerie() || [];
-            var conv = trouverConv(liste, filActif);
-            if (!conv) {
-                return;
-            }
-            conv.messages.push({ de: 'moi', texte: texte, label: horodatageMaintenant() });
-            conv.maj = Date.now();
-            conv.lu = true;
-            ecrireMessagerie(liste);
-            msgChamp.value = '';
-            msgChamp.style.height = 'auto';
             if (msgEnvoyer) {
                 msgEnvoyer.disabled = true;
             }
-            rendreFil(conv);
-            rendreListe(liste);
-            clearTimeout(minuteurHote);
-            repondreHote(filActif);
+            appelMessagerie('pp_message_envoyer', {
+                conversation_id: filActif,
+                texte: texte
+            }).then(function (rep) {
+                if (!rep || !rep.success) {
+                    montrerToast((rep && rep.data && rep.data.message) || 'Votre message n\'a pas pu être envoyé. Réessayez.', false);
+                    if (msgEnvoyer) {
+                        msgEnvoyer.disabled = false;
+                    }
+                    return;
+                }
+                var conv = trouverConv(conversations, filActif);
+                if (conv) {
+                    Object.assign(conv, rep.data.conversation);
+                }
+                if (msgChamp) {
+                    msgChamp.value = '';
+                    msgChamp.style.height = 'auto';
+                }
+                if (conv && filActif === conv.id) {
+                    rendreFil(conv);
+                }
+                rendreListe(conversations);
+            }).catch(function () {
+                montrerToast('Votre message n\'a pas pu être envoyé. Vérifiez votre connexion et réessayez.', false);
+                if (msgEnvoyer) {
+                    msgEnvoyer.disabled = false;
+                }
+            });
         };
 
         // Compteur de conversations dans l'intro
@@ -2342,35 +2305,51 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         };
 
-        // Bascule des trois états de la page
+        // Bascule des trois états de la page à partir de la boîte en mémoire
         var rendreMessageriePage = function () {
             var connecte = estConnecte();
-            var liste = connecte ? amorcerMessagerie() : [];
 
             if (msgConnexion) { msgConnexion.hidden = connecte; }
-            if (msgVide) { msgVide.hidden = !connecte || liste.length > 0; }
-            messagerie.hidden = !connecte || liste.length === 0;
+            if (msgVide) { msgVide.hidden = !connecte || conversations.length > 0; }
+            messagerie.hidden = !connecte || conversations.length === 0;
 
-            majCompteur(liste);
+            majCompteur(conversations);
 
-            if (!connecte || liste.length === 0) {
+            if (!connecte || conversations.length === 0) {
                 filActif = null;
                 messagerie.classList.remove('is-thread-open');
                 return;
             }
 
-            rendreListe(liste);
+            rendreListe(conversations);
 
             // Desktop : ouvrir d'office la conversation la plus récente
             // pour ne pas laisser le panneau de droite vide.
             if (window.matchMedia && window.matchMedia('(min-width: 1024px)').matches) {
-                var premiere = liste.slice().sort(function (a, b) {
+                var premiere = conversations.slice().sort(function (a, b) {
                     return (b.maj || 0) - (a.maj || 0);
                 })[0];
                 if (premiere && !filActif) {
                     ouvrirFil(premiere.id);
                 }
             }
+        };
+
+        // Charge la boîte de réception depuis le serveur puis rend la page
+        var chargerMessagerie = function () {
+            if (!estConnecte()) {
+                rendreMessageriePage();
+                return;
+            }
+            appelMessagerie('pp_messages_liste', {}).then(function (rep) {
+                if (rep && rep.success) {
+                    conversations = rep.data.conversations || [];
+                    majPastilleMessages(rep.data.nonLus);
+                }
+                rendreMessageriePage();
+            }).catch(function () {
+                rendreMessageriePage();
+            });
         };
 
         // Champ de saisie : agrandissement automatique + activation du bouton
@@ -2402,14 +2381,28 @@ document.addEventListener('DOMContentLoaded', function () {
             msgRetour.addEventListener('click', function () {
                 messagerie.classList.remove('is-thread-open');
                 filActif = null;
-                rendreListe(lireMessagerie() || []);
+                rendreListe(conversations);
             });
         }
 
-        rendreMessageriePage();
+        chargerMessagerie();
     }
 
     rafraichirCoeurs();
+
+    // Coup de coeur mis en attente avant connexion : la connexion recharge
+    // la page, on applique donc le favori en attente une fois le membre
+    // connecté, puis on rafraîchit la page Mes favoris si on s'y trouve.
+    if (estConnecte()) {
+        var favoriEnAttenteAuChargement = lireAttente();
+        if (favoriEnAttenteAuChargement) {
+            appliquerFavori(favoriEnAttenteAuChargement, true);
+            ecrireAttente(null);
+            if (typeof rendreFavorisPage === 'function') {
+                rendreFavorisPage();
+            }
+        }
+    }
 
     // Page produit : galerie photos. Cliquer une vignette l'échange
     // avec la grande photo, la mosaïque garde donc toutes les photos.
@@ -2528,10 +2521,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Page produit : pop-up « Écrire à l'hôte ». Le bouton de la carte
     // hôte ouvre une fenêtre où l'on rédige un message ; la soumission
-    // dépose le message dans la messagerie interne du site (clé pp-messages),
-    // sans aucun service externe ni partage d'adresse e-mail : l'hôte le
-    // retrouve dans sa boîte de réception (page Messages). Le circuit est
-    // réservé aux membres : sans compte, le bouton ouvre la connexion.
+    // le dépose dans la messagerie interne du site (conversation en
+    // base via AJAX), sans aucun service externe ni partage d'adresse
+    // e-mail : l'hôte le retrouve dans sa boîte de réception (page
+    // Messages) et reçoit une notification. Le circuit est réservé aux
+    // membres : sans compte, le bouton ouvre la connexion.
     // Fermeture par la croix, le voile ou Échap.
     var messageHoteBtns = Array.prototype.slice.call(document.querySelectorAll('.js-message-hote'));
     var messageHotePopup = document.getElementById('message-hote-popup');
@@ -2542,7 +2536,6 @@ document.addEventListener('DOMContentLoaded', function () {
         var messageHoteSubmit = messageHotePopup.querySelector('.login-popup__submit');
         var messageHoteStatut = document.getElementById('message-hote-statut');
         var messageHoteClose = messageHotePopup.querySelector('.login-popup__close');
-        var MESSAGE_HOTE_CLE = 'pp-messages';
 
         var fermerMessageHote = function () {
             messageHotePopup.hidden = true;
@@ -2598,46 +2591,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         majMessageHoteSubmit();
 
-        // Lecture / écriture de la boîte de réception (même clé et même
-        // format que la page Messages), avec amorçage des conversations de
-        // démonstration au premier dépôt pour ne pas vider la boîte.
-        var lireBoiteHote = function () {
-            try {
-                var liste = JSON.parse(localStorage.getItem(MESSAGE_HOTE_CLE));
-                return Array.isArray(liste) ? liste : null;
-            } catch (erreur) {
-                return null;
-            }
-        };
-        var ecrireBoiteHote = function (liste) {
-            try {
-                localStorage.setItem(MESSAGE_HOTE_CLE, JSON.stringify(liste));
-            } catch (erreur) {
-                // Stockage indisponible : sans effet, le site reste utilisable
-            }
-        };
-        var amorcerBoiteHote = function () {
-            var stockees = lireBoiteHote();
-            if (stockees !== null) {
-                return stockees;
-            }
-            var seed = (window.ppData && Array.isArray(window.ppData.messagerie))
-                ? JSON.parse(JSON.stringify(window.ppData.messagerie))
-                : [];
-            seed.forEach(function (conv) {
-                var dernier = conv.messages[conv.messages.length - 1];
-                conv.lu = !(dernier && dernier.de === 'hote');
-            });
-            ecrireBoiteHote(seed);
-            return seed;
-        };
-        var horodatageHote = function () {
-            var d = new Date();
-            var hh = ('0' + d.getHours()).slice(-2);
-            var mm = ('0' + d.getMinutes()).slice(-2);
-            return "Aujourd'hui " + hh + ':' + mm;
-        };
-
         if (messageHoteForm) {
             messageHoteForm.addEventListener('submit', function (event) {
                 event.preventDefault();
@@ -2658,51 +2611,55 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 var hote = messageHoteForm.getAttribute('data-hote') || 'l\'hôte';
                 var bienId = messageHoteForm.getAttribute('data-bien-id') || '';
-                var bienTitre = messageHoteForm.getAttribute('data-annonce') || 'Espace Pool Party';
-                var bienLien = messageHoteForm.getAttribute('data-bien-lien') || '';
-                var hotePhoto = messageHoteForm.getAttribute('data-hote-photo') || '';
 
-                // Dépôt dans la messagerie interne : on retrouve (ou on crée)
-                // la conversation rattachée à ce bien, on y ajoute le message
-                // du membre. Aucune adresse e-mail n'est transmise.
-                var liste = amorcerBoiteHote();
-                var convId = 'conv-' + (bienId || bienTitre);
-                var conv = null;
-                for (var i = 0; i < liste.length; i++) {
-                    if (liste[i].id === convId) {
-                        conv = liste[i];
-                        break;
-                    }
-                }
-                if (!conv) {
-                    conv = {
-                        id: convId,
-                        hote: hote,
-                        photo: hotePhoto,
-                        bienId: bienId,
-                        bienTitre: bienTitre,
-                        bienLien: bienLien,
-                        messages: []
-                    };
-                    liste.push(conv);
-                }
-                conv.messages.push({ de: 'moi', texte: texte, label: horodatageHote() });
-                conv.maj = Date.now();
-                conv.lu = true;
-                ecrireBoiteHote(liste);
-
-                var champs = messageHoteForm.querySelector('.login-popup__fields');
-                if (champs) {
-                    champs.hidden = true;
-                }
                 if (messageHoteSubmit) {
-                    messageHoteSubmit.hidden = true;
+                    messageHoteSubmit.disabled = true;
                 }
-                if (messageHoteStatut) {
-                    messageHoteStatut.hidden = false;
-                    messageHoteStatut.textContent = 'Message envoyé à ' + hote +
-                        ' via la messagerie Pool Party. Retrouvez sa réponse dans votre boîte de réception, à la page Messages.';
-                }
+
+                // Dépôt en base via la messagerie interne : la conversation
+                // rattachée à ce bien est retrouvée ou créée côté serveur.
+                // Aucune adresse e-mail n'est transmise ni affichée.
+                appelMessagerie('pp_message_envoyer', {
+                    bien_id: bienId,
+                    texte: texte
+                }).then(function (rep) {
+                    if (!rep || !rep.success) {
+                        if (messageHoteStatut) {
+                            messageHoteStatut.hidden = false;
+                            messageHoteStatut.textContent = (rep && rep.data && rep.data.message)
+                                || 'Votre message n\'a pas pu être envoyé. Réessayez.';
+                        }
+                        if (messageHoteSubmit) {
+                            messageHoteSubmit.disabled = false;
+                        }
+                        return;
+                    }
+                    // hidden ne suffit pas ici : le display posé par les
+                    // classes des composants reprend la main, on coupe
+                    // l'affichage directement.
+                    var champs = messageHoteForm.querySelector('.login-popup__fields');
+                    if (champs) {
+                        champs.hidden = true;
+                        champs.style.display = 'none';
+                    }
+                    if (messageHoteSubmit) {
+                        messageHoteSubmit.hidden = true;
+                        messageHoteSubmit.style.display = 'none';
+                    }
+                    if (messageHoteStatut) {
+                        messageHoteStatut.hidden = false;
+                        messageHoteStatut.textContent = 'Message envoyé à ' + hote +
+                            ' via la messagerie Pool Party. Retrouvez sa réponse dans votre boîte de réception, à la page Messages.';
+                    }
+                }).catch(function () {
+                    if (messageHoteStatut) {
+                        messageHoteStatut.hidden = false;
+                        messageHoteStatut.textContent = 'Votre message n\'a pas pu être envoyé. Vérifiez votre connexion et réessayez.';
+                    }
+                    if (messageHoteSubmit) {
+                        messageHoteSubmit.disabled = false;
+                    }
+                });
             });
         }
     }
@@ -3197,7 +3154,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var resume = ck('identite');
             if (resume) {
                 if (identite.prenom && identite.email) {
-                    resume.textContent = identite.prenom + ' · ' + identite.email;
+                    resume.textContent = identite.prenom + ' : ' + identite.email;
                 } else {
                     resume.textContent = identite.email || identite.prenom || 'Connecté à votre compte';
                 }
@@ -4094,7 +4051,7 @@ document.addEventListener('DOMContentLoaded', function () {
             lireRecap('commune').textContent = champAdresse.commune.value.trim() || 'Votre commune';
             lireRecap('type').textContent = annonce.choix.type || 'Votre espace';
             lireRecap('invites').textContent = (annonce.compteurs.invites || 8) + ' personnes max';
-            lireRecap('prix').textContent = Math.round(prixHeure * 1.15) + ' €/ h';
+            lireRecap('prix').textContent = Math.round(prixHeure * 1.15) + ' €/h';
 
             if (annonce.photos.length) {
                 lireRecap('photo').src = annonce.photos[0].url;
@@ -4660,7 +4617,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 lireApercu('commune').textContent = champAdresse.commune.value.trim() || 'Votre commune';
                 lireApercu('type').textContent = annonce.choix.type || 'Votre espace';
                 lireApercu('invites').textContent = (annonce.compteurs.invites || 8) + ' personnes max';
-                lireApercu('prix').textContent = Math.round(prixHeure * 1.15) + ' €/ h';
+                lireApercu('prix').textContent = Math.round(prixHeure * 1.15) + ' €/h';
 
                 if (annonce.photos.length) {
                     lireApercu('photo').src = annonce.photos[0].url;

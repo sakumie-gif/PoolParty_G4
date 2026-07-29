@@ -19,35 +19,6 @@
 }
 
 /* =============================================================
-   BLOC 2 : EN-TÊTE DE PAGE + RECHERCHE
-   Bandeau beige pleine largeur : titre, sous-titre et pilule
-   de recherche centrés (composant input-search de global.css).
-   ============================================================= */
-.faq-hero {
-    padding: var(--padding-p1) var(--padding-page-mobile);
-    background: var(--color-beige);
-    text-align: center;
-}
-
-/* Titre réduit en mobile, la taille de la charte revient en tablette */
-.faq-hero h1 {
-    font-size: 32px;
-}
-
-.faq-hero p {
-    max-width: 660px;
-    margin: var(--padding-p4) auto 0;
-    font-family: var(--font-input);
-    font-size: var(--fs-p3);
-    color: var(--color-grey-font-1);
-}
-
-.faq-hero__recherche {
-    max-width: 560px;
-    margin: var(--padding-p2) auto 0;
-}
-
-/* =============================================================
    BLOC 3 : NAVIGATION PAR THÈME
    Rangée de pilules blanches avec icône, en défilement
    horizontal sur mobile puis centrées à partir de la tablette.
@@ -176,18 +147,6 @@
         padding-right: var(--padding-page-tablet);
     }
 
-    .faq-hero {
-        padding: 48px var(--padding-page-tablet);
-    }
-
-    .faq-hero h1 {
-        font-size: var(--fs-h1);
-    }
-
-    .faq-hero p {
-        font-size: var(--fs-p2);
-    }
-
     .faq-themes {
         padding-left: var(--padding-page-tablet);
         padding-right: var(--padding-page-tablet);
@@ -224,11 +183,6 @@
 @media (min-width: 1024px) {
 
     .faq-intro {
-        padding-left: var(--padding-page-desktop);
-        padding-right: var(--padding-page-desktop);
-    }
-
-    .faq-hero {
         padding-left: var(--padding-page-desktop);
         padding-right: var(--padding-page-desktop);
     }

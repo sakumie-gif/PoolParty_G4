@@ -167,7 +167,7 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
                 <div class="galerie__carrousel" role="group" aria-roledescription="carrousel" aria-label="Faites défiler les photos">
                     <?php foreach ($pp_galerie as $i => $photo) : ?>
                     <button type="button" class="galerie__diapo" aria-haspopup="dialog" aria-controls="galerie-popup" aria-label="Agrandir : <?php echo esc_attr($photo['alt']); ?>">
-                        <img src="<?php echo esc_url($photo['url']); ?>" alt="" loading="<?php echo $i === 0 ? 'eager' : 'lazy'; ?>" decoding="async" width="<?php echo esc_attr($photo['w']); ?>" height="<?php echo esc_attr($photo['h']); ?>">
+                        <img src="<?php echo esc_url($photo['url']); ?>" alt="<?php echo esc_attr($photo['alt']); ?>" loading="<?php echo $i === 0 ? 'eager' : 'lazy'; ?>" decoding="async" width="<?php echo esc_attr($photo['w']); ?>" height="<?php echo esc_attr($photo['h']); ?>">
                     </button>
                     <?php endforeach; ?>
                 </div>
@@ -657,7 +657,7 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
                         <div class="card-savoir">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                             <p class="card-savoir__title">Confidentialité et données</p>
-                            <p class="card-savoir__text">Vos coordonnées ne sont communiquées à l'hôte qu'après confirmation de la réservation, conformément au RGPD.</p>
+                            <p class="card-savoir__text">Vos coordonnées restent privées : l'hôte ne les voit jamais. Tous les échanges passent par la messagerie Pool Party, conformément au RGPD.</p>
                             <a class="link-signal link-signal--simple" href="<?php echo esc_url(home_url('/mentions-legales/')); ?>">En savoir plus</a>
                         </div>
                     </div>

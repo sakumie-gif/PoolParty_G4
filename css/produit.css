@@ -1488,37 +1488,9 @@ main {
     color: var(--color-black);
 }
 
-/* Récapitulatif : lignes libellé / montant, total souligné */
-.resa__recap {
-    display: flex;
-    flex-direction: column;
-    gap: var(--padding-p3);
-    margin: 0;
-    padding-top: var(--padding-p2-2);
-    border-top: 1px solid var(--color-grey-border-2);
-    font-family: var(--font-input);
-    font-size: var(--fs-p3);
-    color: var(--color-grey-font-1);
-}
-
-.resa__ligne {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--padding-p4);
-}
-
-.resa__ligne--total {
-    padding-top: var(--padding-p3);
-    font-weight: var(--fw-semibold);
-    font-size: var(--fs-p2);
-    color: var(--color-black);
-}
-
-.resa__ligne--total dd {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-}
+/* Récapitulatif de prix : .resa__recap / .resa__ligne / .resa__ligne--total
+   sont fournis par le composant partagé de global.css, pour un rendu
+   identique sur la fiche bien et dans le tunnel de réservation. */
 
 .resa__ecolo {
     font-family: var(--font-input);

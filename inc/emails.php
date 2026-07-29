@@ -13,8 +13,11 @@
  *   - Partenaire    : accusé au candidat + notification à l'équipe
  *   - Dépôt de bien : à l'hôte « en attente de validation » + à l'admin,
  *                     puis « annonce en ligne » quand l'admin la publie
- *   - Réservation   : accusé au locataire (via une requête AJAX de main.js ;
- *                     l'e-mail à l'hôte, lui, part déjà côté client)
+ *   - Réservation   : accusé au locataire, notification à l'hôte, puis
+ *                     acceptation / refus / annulation (inc/reservations.php)
+ *   - Messagerie    : « vous avez reçu un message » (inc/messagerie.php)
+ * Règle du projet : jamais de coordonnées d'un membre transmises à un
+ * autre membre ; les e-mails renvoient toujours vers la plateforme.
  */
 
 if (!defined('ABSPATH')) {
@@ -23,14 +26,14 @@ if (!defined('ABSPATH')) {
 
 /**
  * Expéditeur commun à tous les e-mails du site : « Pool Party
- * <contact@poolparty.fr> ». Renvoyé sous forme d'en-têtes wp_mail.
+ * <poolparty.g4@gmail.com> ». Renvoyé sous forme d'en-têtes wp_mail.
  */
 function poolparty_g4_email_from() {
     $nom = get_bloginfo('name');
     if (!$nom) {
         $nom = 'Pool Party';
     }
-    return $nom . ' <contact@poolparty.fr>';
+    return $nom . ' <poolparty.g4@gmail.com>';
 }
 
 /**

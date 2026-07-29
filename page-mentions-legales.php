@@ -71,7 +71,7 @@ get_header();
                     <dt>Directrice de la publication</dt>
                     <dd>Mme Francine, fondatrice</dd>
                     <dt>Contact</dt>
-                    <dd><a href="mailto:contact@poolparty.fr">contact@poolparty.fr</a></dd>
+                    <dd><a href="mailto:poolparty.g4@gmail.com">poolparty.g4@gmail.com</a></dd>
                     <dt>Téléphone</dt>
                     <dd><a href="tel:+33123456789">01 23 45 67 89</a></dd>
                 </dl>
@@ -121,7 +121,7 @@ get_header();
                 <p>Ce site est susceptible de collecter des données personnelles dans le cadre de la navigation, de la création de compte, du formulaire de contact et de l'inscription à la newsletter. Le traitement de ces données est soumis au Règlement Général sur la Protection des Données (RGPD, UE 2016/679) et à la loi Informatique et Libertés du 6 janvier 1978 modifiée.</p>
                 <p>Les données collectées ne sont jamais revendues à des tiers. Elles sont conservées pendant une durée de 3 ans à compter de la dernière activité du compte.</p>
                 <h3>Vos droits</h3>
-                <p>Conformément au RGPD, vous disposez des droits suivants, exerçables en écrivant à <a href="mailto:contact@poolparty.fr">contact@poolparty.fr</a> :</p>
+                <p>Conformément au RGPD, vous disposez des droits suivants, exerçables en écrivant à <a href="mailto:poolparty.g4@gmail.com">poolparty.g4@gmail.com</a> :</p>
                 <ul class="legal-liste">
                     <li>Droit d'accès à vos données (art. 15 RGPD)</li>
                     <li>Droit de rectification (art. 16 RGPD)</li>

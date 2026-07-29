@@ -185,8 +185,7 @@ a:hover {
 
 /* ÉTAT DÉSACTIVÉ : commun à toutes les variantes.
    Figma : fond Disable, l'ombre portée reste visible. */
-.btn:disabled,
-.btn.is-disabled {
+.btn:disabled {
     background-color: var(--color-disable);
     color: var(--color-white);
     border: none;
@@ -314,8 +313,7 @@ a:hover {
    (Figma : Menu item, node 96:12958)
    Icône 24px + libellé Inter 16 + chevron, contour arrondi R2.
    Padding 8px et gap 14px : valeurs exactes du Dev Mode.
-   Variantes : hover rempli, is-active / is-open en gras,
-   menu-item--collapsed pour la version icône seule. */
+   Variantes : hover rempli, is-active / is-open en gras. */
 .menu-item {
     display: inline-flex;
     align-items: center;
@@ -367,25 +365,6 @@ a:hover {
 
 .menu-item.is-open::after {
     transform: rotate(-90deg);
-}
-
-/* VARIANTE REPLIÉE (Collapsed=Yes) : icône seule dans un carré
-   arrondi de 40px, sans contour ni chevron */
-.menu-item--collapsed {
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    border: none;
-    background: transparent;
-}
-
-.menu-item--collapsed::after {
-    display: none;
-}
-
-.menu-item--collapsed:hover {
-    background: var(--color-dark-green-blue);
 }
 
 /* =============================================================
@@ -493,8 +472,8 @@ a:hover {
 /* =============================================================
    BARRES DE PROGRESSION
    (Figma : planche progress bars)
-   Piste grise arrondie, remplissage vert bleuté ; variante
-   corail via .progress--corail. La largeur du remplissage se
+   Piste grise arrondie, remplissage vert bleuté. La largeur
+   du remplissage se
    pilote avec l'attribut data-value (0 à 100) lu par main.js,
    pour respecter l'interdiction des styles inline.
    Usage : <div class="progress" data-value="60" role="progressbar"
@@ -518,10 +497,6 @@ a:hover {
     border-radius: var(--radius-pill);
     background: var(--color-dark-green-blue);
     transition: width var(--transition-slow);
-}
-
-.progress--corail .progress__bar {
-    background: var(--color-corail);
 }
 
 /* =============================================================
@@ -893,11 +868,6 @@ a:hover {
    survol garde le texte regular pour ne pas le confondre avec la
    sélection en cours. */
 .dropdown-item.is-active {
-    font-weight: var(--fw-semibold);
-}
-
-/* Variante libellé en semi-gras permanent (Figma : Content=Bold) */
-.dropdown-item--bold {
     font-weight: var(--fw-semibold);
 }
 
@@ -1632,15 +1602,6 @@ textarea.form-field__input {
     padding: var(--padding-p5) 0;
     /* colle le prix en bas de la carte pour aligner les tuiles d'une rangée */
     margin-top: auto;
-}
-
-/* Ancien prix barré à côté du prix promo (Figma : carte Promo) */
-.card-product__price-old {
-    margin-left: var(--padding-p3);
-    font-size: var(--fs-p2);
-    font-weight: var(--fw-regular);
-    color: var(--color-grey-font-2);
-    text-decoration: line-through;
 }
 
 /* Note compacte des cartes (Figma : texte 14px) */
@@ -3345,6 +3306,52 @@ textarea.form-field__input {
     display: block;
 }
 
+/* PASTILLES DE NOTIFICATION
+   Compteur corail sur Messagerie (messages non lus) et Réservations
+   (demandes en attente côté hôte) dans le menu, plus un point sur le
+   bouton Menu pour signaler qu'il y a du nouveau sans l'ouvrir.
+   Rendues par header.php, tenues à jour par main.js. */
+.menu-pastille {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    margin-left: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--color-corail);
+    color: var(--color-white);
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    font-weight: var(--fw-semibold);
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.menu-pastille[hidden] {
+    display: none;
+}
+
+.header-burger {
+    position: relative;
+}
+
+.header-burger__pastille {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-corail);
+    border: 2px solid var(--color-white);
+}
+
+.header-burger__pastille[hidden] {
+    display: none;
+}
+
 /* =============================================================
    HEADER - TABLETTE & ORDINATEUR (à partir de 768px)
    Grille 3 colonnes : logo collé à gauche, barre de recherche
@@ -4673,4 +4680,95 @@ html.pp-a11y-noanim body *::after {
     width: 1px;
     height: 1px;
     overflow: hidden;
+}
+
+/* =============================================================
+   NEWSLETTER (composant commun)
+   Encart beige arrondi centré : titre, texte en gras, champ e-mail
+   en pilule et bouton corail. Utilisé sur l'accueil et les
+   actualités ; le formulaire est relié au hook de main.js.
+   ============================================================= */
+.newsletter {
+    padding: var(--padding-p1) var(--padding-page-mobile) 48px;
+}
+
+.newsletter__box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-p2);
+    background: var(--color-beige);
+    border-radius: var(--radius-r1);
+    padding: var(--padding-p1) var(--padding-p2);
+    text-align: center;
+}
+
+.newsletter__text {
+    font-family: var(--font-input);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-p2);
+    color: var(--color-black);
+    max-width: 75ch;
+}
+
+.newsletter__form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--padding-p2);
+    width: 100%;
+    max-width: 620px;
+}
+
+.newsletter__form input {
+    flex: 1 1 260px;
+    height: 40px;
+    padding: var(--padding-p4) var(--padding-p2);
+    background: var(--color-white);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-search-small);
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-grey-font-1);
+}
+
+.newsletter__form input::placeholder {
+    color: var(--color-grey-font-2);
+    opacity: 1;
+}
+
+.newsletter__form input:hover,
+.newsletter__form input:focus {
+    border-color: var(--color-dark-green-blue-2);
+    outline: none;
+}
+
+/* Mention d'information RGPD sous le formulaire d'inscription */
+.newsletter__rgpd {
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+    max-width: 620px;
+}
+
+.newsletter__rgpd a {
+    color: var(--color-dark-green-blue);
+    text-decoration: underline;
+}
+
+@media (min-width: 768px) {
+
+    .newsletter {
+        padding-left: var(--padding-page-tablet);
+        padding-right: var(--padding-page-tablet);
+    }
+}
+
+@media (min-width: 1024px) {
+
+    .newsletter {
+        padding-left: var(--padding-page-desktop);
+        padding-right: var(--padding-page-desktop);
+    }
 }

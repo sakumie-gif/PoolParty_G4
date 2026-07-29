@@ -32,9 +32,9 @@ require get_template_directory() . '/inc/seed-pages.php';
 // catégories, une seule fois (verrou par option).
 require get_template_directory() . '/inc/seed-articles.php';
 
-// Messagerie interne (page Messages) : conversations de démonstration
-// locataire ↔ hôte injectées au premier affichage (le circuit lui-même
-// vit dans main.js / localStorage, comme les favoris et réservations).
+// Messagerie interne réelle : conversations en base (pp_conversation),
+// messages en commentaires (pp_message), AJAX, notification e-mail et
+// conversations de démonstration pour le compte membre-demo.
 require get_template_directory() . '/inc/messagerie.php';
 
 // Personnalisateur : textes éditables de l'accueil (Apparence >
@@ -289,12 +289,14 @@ function poolparty_g4_scripts() {
         'isHote'          => poolparty_g4_est_hote(),
         'userPrenom'      => is_user_logged_in() ? ($utilisateur->first_name ?: $utilisateur->display_name) : '',
         'userEmail'       => is_user_logged_in() ? $utilisateur->user_email : '',
+        // Identifiant du membre connecté (0 si visiteur) : sert à rattacher
+        // les favoris au compte dans le localStorage, sans les partager
+        // entre deux membres du même navigateur.
+        'userId'          => get_current_user_id(),
         'logoutUrl'       => wp_logout_url(home_url('/')),
-        // Conversations de démonstration de la messagerie interne,
-        // amorcées dans le localStorage au premier affichage connecté.
-        // On ne monte le jeu de données (qui interroge la base) que sur
-        // la page Messages, seule à le consommer.
-        'messagerie'      => is_page('messages') ? poolparty_g4_messagerie_seed() : array(),
+        // Messagerie interne réelle (conversations en base) : la page
+        // Messages et la pop-up « Écrire à l'hôte » passent par AJAX.
+        'messagesNonce'   => wp_create_nonce('pp_messages'),
         // Vraies réservations du membre connecté, servies à la page
         // « Mes réservations » (remplace l'ancienne démo localStorage).
         'reservations'    => (is_page('mes-reservations') && is_user_logged_in())
