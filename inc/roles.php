@@ -20,8 +20,10 @@ if (!defined('ABSPATH')) {
 
 // Verrou de version : le rôle vit en base une fois créé. On ne rejoue la
 // définition qu'après un changement. Incrémenter à chaque modification des
-// capacités ci-dessous. v2 : fusion locataire + hote en « membre ».
-define('PP_ROLES_VERSION', 2);
+// capacités ci-dessous. v2 : fusion locataire + hote en « membre ». v3 :
+// suppression des rôles natifs WordPress inutilisés (abonné, contributeur,
+// auteur, éditeur), le site n'ayant besoin que d'Administrateur + Membre.
+define('PP_ROLES_VERSION', 3);
 
 /**
  * Crée / met à jour le rôle Membre et migre les anciens comptes. Idempotent
@@ -56,6 +58,20 @@ function poolparty_g4_enregistrer_roles() {
     remove_role('locataire');
     remove_role('hote');
 
+    // Rôles natifs WordPress non utilisés : on bascule d'abord tout compte non
+    // administrateur qui les porterait encore vers « membre » (personne ne perd
+    // l'accès), puis on retire les rôles. Le site ne garde qu'Administrateur +
+    // Membre.
+    poolparty_g4_migrer_natifs_vers_membre();
+    remove_role('subscriber');
+    remove_role('contributor');
+    remove_role('author');
+    remove_role('editor');
+
+    // Un rôle par défaut supprimé casserait les futures inscriptions : on force
+    // « membre » (cohérent avec inc/auth.php).
+    update_option('default_role', 'membre');
+
     update_option('pp_roles_version', PP_ROLES_VERSION);
 }
 add_action('after_setup_theme', 'poolparty_g4_enregistrer_roles');
@@ -76,6 +92,26 @@ function poolparty_g4_migrer_vers_membre() {
         }
         // set_role remplace tous les rôles par « membre » (nettoie d'un coup
         // le cumul locataire + hote éventuel).
+        $user->set_role('membre');
+    }
+}
+
+/**
+ * Bascule vers « Membre » tout utilisateur portant un rôle natif WordPress
+ * inutilisé (abonné, contributeur, auteur, éditeur), sauf les administrateurs.
+ * Appelée avant la suppression de ces rôles pour ne laisser aucun compte sans
+ * rôle valide.
+ */
+function poolparty_g4_migrer_natifs_vers_membre() {
+    $natifs = get_users(array(
+        'role__in' => array('subscriber', 'contributor', 'author', 'editor'),
+        'fields'   => 'ID',
+    ));
+    foreach ($natifs as $user_id) {
+        $user = get_userdata($user_id);
+        if (!$user || in_array('administrator', (array) $user->roles, true)) {
+            continue;
+        }
         $user->set_role('membre');
     }
 }
