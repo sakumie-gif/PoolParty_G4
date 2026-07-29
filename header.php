@@ -78,34 +78,18 @@
             </form>
             <?php
             // Pastilles de notification du menu : messages non lus et
-            // demandes de réservation en attente côté hôte. Rendues côté
-            // serveur, tenues à jour par main.js quand une conversation
-            // est lue. Toujours présentes dans le markup (hidden à zéro)
-            // pour que le JS puisse les rafraîchir.
-            $pp_nonlus   = 0;
-            $pp_demandes = 0;
-            if (is_user_logged_in()) {
-                if (function_exists('poolparty_g4_messages_non_lus')) {
-                    $pp_nonlus = poolparty_g4_messages_non_lus(get_current_user_id());
-                }
-                $pp_demandes = count(get_posts(array(
-                    'post_type'      => 'reservation',
-                    'post_status'    => 'publish',
-                    'posts_per_page' => 100,
-                    'fields'         => 'ids',
-                    'meta_query'     => array(
-                        array('key' => 'pp_hote_id', 'value' => get_current_user_id()),
-                        array('key' => 'pp_statut', 'value' => 'en-attente'),
-                    ),
-                )));
-            }
+            // demandes de réservation en attente côté hôte (calcul partagé
+            // avec le menu déroulant). Tenues à jour par main.js.
+            $pp_compteurs = pp_compteurs_menu();
+            $pp_nonlus    = $pp_compteurs['nonlus'];
+            $pp_demandes  = $pp_compteurs['demandes'];
             ?>
             <!-- Navigation -->
             <nav class="header-nav" aria-label="Navigation principale">
                 <?php if (current_user_can('manage_options')) : ?>
                     <?php // Bascule façon Airbnb : l'admin n'a pas besoin d'« Explorer »
                           // (déjà dans le menu burger), il bascule vers sa console. ?>
-                    <a href="<?php echo esc_url(home_url('/administration/')); ?>" class="header-explorer header-explorer--admin">Mode admin</a>
+                    <a href="<?php echo esc_url(home_url('/administration/')); ?>" class="header-explorer header-explorer--admin">Mode administrateur</a>
                 <?php else : ?>
                     <a href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>" class="header-explorer">Explorer</a>
                 <?php endif; ?>
@@ -117,70 +101,22 @@
                         <line x1="4" y1="17" x2="20" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                     <span>Menu</span>
-                    <span class="header-burger__pastille" data-pastille="menu" aria-hidden="true"<?php echo ($pp_nonlus || $pp_demandes) ? '' : ' hidden'; ?>></span>
+                    <?php
+                    // Point de notification sur le bouton Menu retiré à la
+                    // demande d'Audrey (29-07) : les compteurs du menu
+                    // déroulant suffisent. Conservé désactivé au cas où :
+                    // if ($pp_nonlus || $pp_demandes) {
+                    //     echo '<span class="header-burger__pastille" data-pastille="menu" aria-hidden="true"></span>';
+                    // }
+                    ?>
                 </button>
 
                 <!-- Menu déroulant ancré dans header-nav pour rester collé
                      sous le bouton Menu et passer par-dessus la barre de
-                     recherche en responsive. Sections visiteur / connecté
-                     basculées par la classe is-connected posée sur body. -->
-                <nav class="main-menu" id="main-menu" aria-label="Menu" hidden>
-            <?php if (has_nav_menu('principal')) : ?>
-                <?php
-                // Menu géré depuis Apparence > Menus ; le walker rend
-                // des liens nus pour conserver le markup du statique
-                wp_nav_menu(array(
-                    'theme_location' => 'principal',
-                    'container'       => 'div',
-                    'container_class' => 'main-menu__section',
-                    'items_wrap'      => '%3$s',
-                    'walker'          => new PoolParty_G4_Walker_Liens(),
-                ));
-                ?>
-            <?php else : ?>
-            <div class="main-menu__section">
-                <a href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>">Explorer</a>
-                <a href="<?php echo esc_url(home_url('/proposer/')); ?>" class="main-menu__strong">Proposer votre espace</a>
-                <a href="<?php echo esc_url(home_url('/actualites/')); ?>">Actualités</a>
-            </div>
-            <?php endif; ?>
-            <hr class="main-menu__sep">
-            <div class="main-menu__section main-menu__section--visiteur">
-                <a href="#" class="js-open-login">Connexion</a>
-                <a href="<?php echo esc_url(home_url('/inscription/')); ?>">Inscription</a>
-            </div>
-            <div class="main-menu__section main-menu__section--connecte">
-                <?php // Ordre validé par Audrey : Messagerie, Réservations,
-                      // Mes annonces (si le membre a déposé une annonce),
-                      // Mes favoris. « Demandes » a fusionné dans Réservations V2. ?>
-                <a href="<?php echo esc_url(home_url('/messages/')); ?>">Messagerie
-                    <span class="menu-pastille" data-pastille="messages"<?php echo $pp_nonlus ? '' : ' hidden'; ?>><?php echo esc_html($pp_nonlus > 9 ? '9+' : (string) $pp_nonlus); ?></span>
-                </a>
-                <a href="<?php echo esc_url(home_url('/mes-reservations/')); ?>">Réservations
-                    <span class="menu-pastille" data-pastille="demandes"<?php echo $pp_demandes ? '' : ' hidden'; ?>><?php echo esc_html($pp_demandes > 9 ? '9+' : (string) $pp_demandes); ?></span>
-                </a>
-                <?php if (function_exists('poolparty_g4_membre_a_des_annonces') && poolparty_g4_membre_a_des_annonces()) : ?>
-                    <a href="<?php echo esc_url(home_url('/mes-annonces/')); ?>">Mes annonces</a>
-                <?php endif; ?>
-                <a href="<?php echo esc_url(home_url('/favoris/')); ?>">Mes favoris</a>
-                <?php // Accès à la console d'administration, réservé à l'équipe. ?>
-                <?php if (current_user_can('manage_options')) : ?>
-                    <a href="<?php echo esc_url(home_url('/administration/')); ?>" class="main-menu__strong">Administration</a>
-                <?php endif; ?>
-            </div>
-            <hr class="main-menu__sep">
-            <div class="main-menu__section">
-                <a href="<?php echo esc_url(home_url('/faq/')); ?>" class="main-menu__aide">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-                    Aide
-                </a>
-                <a href="<?php echo esc_url(home_url('/contact/')); ?>" class="main-menu__aide">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
-                    Contact
-                </a>
-                <a href="<?php echo esc_url(wp_logout_url(home_url('/'))); ?>" class="main-menu__deconnexion">Déconnexion</a>
-            </div>
-                </nav>
+                     recherche en responsive. Markup mutualisé dans
+                     template-parts/menu-burger.php (identique sur toutes
+                     les pages). -->
+                <?php get_template_part('template-parts/menu-burger'); ?>
             </nav>
 
         </div>

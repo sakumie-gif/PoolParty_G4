@@ -40,50 +40,7 @@
                 <span>Menu</span>
             </button>
 
-            <nav class="main-menu" id="main-menu" aria-label="Menu" hidden>
-            <?php if (has_nav_menu('principal')) : ?>
-                <?php
-                wp_nav_menu(array(
-                    'theme_location' => 'principal',
-                    'container'       => 'div',
-                    'container_class' => 'main-menu__section',
-                    'items_wrap'      => '%3$s',
-                    'walker'          => new PoolParty_G4_Walker_Liens(),
-                ));
-                ?>
-            <?php else : ?>
-            <div class="main-menu__section">
-                <a href="<?php echo esc_url(get_post_type_archive_link('bien')); ?>">Explorer</a>
-                <a href="<?php echo esc_url(home_url('/proposer/')); ?>" class="main-menu__strong">Proposer votre espace</a>
-                <a href="<?php echo esc_url(home_url('/actualites/')); ?>">Actualités</a>
-            </div>
-            <?php endif; ?>
-            <hr class="main-menu__sep">
-            <div class="main-menu__section main-menu__section--visiteur">
-                <a href="#" class="js-open-login">Connexion</a>
-                <a href="<?php echo esc_url(home_url('/inscription/')); ?>">Inscription</a>
-            </div>
-            <div class="main-menu__section main-menu__section--connecte">
-                <a href="<?php echo esc_url(home_url('/mes-reservations/')); ?>">Réservations</a>
-                <?php if (function_exists('poolparty_g4_est_hote') && poolparty_g4_est_hote()) : ?>
-                <a href="<?php echo esc_url(home_url('/demandes/')); ?>">Demandes de réservation</a>
-                <?php endif; ?>
-                <a href="<?php echo esc_url(home_url('/favoris/')); ?>">Mes favoris</a>
-                <a href="<?php echo esc_url(home_url('/messages/')); ?>">Messagerie</a>
-            </div>
-            <hr class="main-menu__sep">
-            <div class="main-menu__section">
-                <a href="<?php echo esc_url(home_url('/faq/')); ?>" class="main-menu__aide">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-                    Aide
-                </a>
-                <a href="<?php echo esc_url(home_url('/contact/')); ?>" class="main-menu__aide">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
-                    Contact
-                </a>
-                <a href="#" class="main-menu__deconnexion js-logout">Déconnexion</a>
-            </div>
-            </nav>
+            <?php get_template_part('template-parts/menu-burger'); ?>
         </nav>
     </header>
 

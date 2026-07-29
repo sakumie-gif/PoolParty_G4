@@ -363,6 +363,50 @@ class PoolParty_G4_Walker_Liens extends Walker_Nav_Menu {
 }
 
 /**
+ * Compteurs de notification du menu burger : messages non lus et demandes
+ * de réservation en attente côté hôte. Calculés une seule fois par page
+ * (cache statique) car ils alimentent à la fois la pastille du bouton Menu
+ * et les pastilles à l'intérieur du menu déroulant.
+ */
+function pp_compteurs_menu() {
+    static $cache = null;
+    if ($cache !== null) {
+        return $cache;
+    }
+    $r = array('nonlus' => 0, 'demandes' => 0);
+    if (is_user_logged_in()) {
+        if (function_exists('poolparty_g4_messages_non_lus')) {
+            $r['nonlus'] = poolparty_g4_messages_non_lus(get_current_user_id());
+        }
+        $r['demandes'] = count(get_posts(array(
+            'post_type'      => 'reservation',
+            'post_status'    => 'publish',
+            'posts_per_page' => 100,
+            'fields'         => 'ids',
+            'meta_query'     => array(
+                array('key' => 'pp_hote_id', 'value' => get_current_user_id()),
+                array('key' => 'pp_statut', 'value' => 'en-attente'),
+            ),
+        )));
+    }
+    return $cache = $r;
+}
+
+/**
+ * Attribut class/aria d'un lien du menu burger : ajoute is-current +
+ * aria-current quand le lien pointe vers la page affichée, en conservant
+ * d'éventuelles classes de base (ex. main-menu__vedette).
+ */
+function pp_menu_lien_attr($actif, $classes = '') {
+    $liste = trim($classes . ($actif ? ' is-current' : ''));
+    $attr  = $liste !== '' ? ' class="' . esc_attr($liste) . '"' : '';
+    if ($actif) {
+        $attr .= ' aria-current="page"';
+    }
+    return $attr;
+}
+
+/**
  * Compatibilité avec les liens .html codés en dur dans js/main.js
  * (carrousel de catégories, tunnel de réservation, bandeau cookies).
  * Toute URL en <slug>.html qui aboutit à une 404 est redirigée en 301

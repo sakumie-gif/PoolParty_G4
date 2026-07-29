@@ -21,7 +21,11 @@
                     <li><a href="https://www.instagram.com/pool.partyfr/" target="_blank" rel="noopener noreferrer" aria-label="Instagram (nouvel onglet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a></li>
                     <li><a href="https://www.facebook.com/profile.php?id=61591946695522" target="_blank" rel="noopener noreferrer" aria-label="Facebook (nouvel onglet)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 22v-8h2.7l.4-3H13V9.2c0-.9.3-1.5 1.6-1.5H16V5.1C15.7 5 14.8 5 13.8 5 11.6 5 10 6.3 10 8.9V11H7.5v3H10v8h3z"/></svg></a></li>
                     <li><a href="https://www.tiktok.com/@pool_partyfr" target="_blank" rel="noopener noreferrer" aria-label="TikTok (nouvel onglet)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 4c.3 2 1.7 3.6 3.7 3.9v2.6c-1.4 0-2.7-.4-3.7-1.1v5.8c0 3-2.4 5.3-5.3 5.3S5.3 18.1 5.3 15.2 7.7 9.9 10.7 9.9c.3 0 .6 0 .9.1v2.7c-.3-.1-.6-.2-.9-.2-1.5 0-2.6 1.2-2.6 2.7s1.2 2.7 2.6 2.7c1.5 0 2.7-1.2 2.7-2.7V4H16z"/></svg></a></li>
+                    <?php // Pinterest retiré (29-07) : pas de compte ni de lien
+                          // fourni. Bloc conservé désactivé pour réactivation future.
+                          /* ?>
                     <li><a href="https://www.pinterest.fr/" target="_blank" rel="noopener noreferrer" aria-label="Pinterest (nouvel onglet)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4C7.6 4 5 6.9 5 10.1c0 1.5.8 3.3 2.1 3.9.2.1.3 0 .4-.2 0-.1.1-.5.2-.7 0-.2 0-.3-.1-.4-.4-.5-.7-1.3-.7-2.1 0-2.1 1.6-4 4.4-4 2.4 0 3.7 1.4 3.7 3.3 0 2.5-1.1 4.6-2.7 4.6-.9 0-1.6-.7-1.4-1.7.3-1.1.8-2.3.8-3 0-.7-.4-1.3-1.2-1.3-1 0-1.7 1-1.7 2.3 0 .9.3 1.4.3 1.4l-1.2 5c-.2 1.3-.1 2.9 0 3.1.1.1.2.1.3 0 .1-.1 1.4-1.8 1.9-3.4.1-.4.7-2.6.7-2.6.3.6 1.3 1.1 2.3 1.1 3 0 5.1-2.8 5.1-6.2C19 6.7 16.1 4 12 4z"/></svg></a></li>
+                    <?php */ ?>
                 </ul>
             </div>
 
