@@ -128,7 +128,7 @@ function poolparty_g4_ajax_register() {
         'first_name'   => $prenom,
         'last_name'    => $nom,
         'display_name' => $prenom,
-        'role'         => 'locataire',
+        'role'         => 'membre',
     ));
 
     if (is_wp_error($user_id)) {

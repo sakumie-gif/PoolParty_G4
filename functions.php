@@ -63,13 +63,21 @@ require get_template_directory() . '/inc/reservations.php';
 // Avis de la page Mes réservations (commentaires WordPress natifs)
 require get_template_directory() . '/inc/avis.php';
 
-// Compte hôte de démonstration + rattachement des 16 biens à ce compte,
+// Compte membre de démonstration + rattachement des 16 biens à ce compte,
 // pour que les demandes de réservation arrivent à un vrai destinataire.
 require get_template_directory() . '/inc/seed-hote.php';
+
+// Jeu de démonstration de « Mes réservations » (réservations et avis des
+// deux côtés de la bascule Hôte / Locataire) pour la soutenance.
+require get_template_directory() . '/inc/seed-demo.php';
 
 // Création d'annonces depuis le site (tunnel « Proposer votre espace ») :
 // le membre publie son bien, enregistré en attente de validation admin.
 require get_template_directory() . '/inc/proposer.php';
+
+// Confort du back-office : méta-box des détails d'une réservation,
+// colonnes et filtre de la liste des réservations, écran Avis.
+require get_template_directory() . '/inc/back-office.php';
 
 /**
  * Raccourci vers un fichier du thème (images, icônes, polices...).

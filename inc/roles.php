@@ -1,49 +1,43 @@
 <?php
 /**
- * Rôles utilisateurs de PoolParty.
+ * Rôle utilisateur de PoolParty.
  *
- * Trois profils :
- *  - Administrateur : l'équipe PoolParty (rôle WordPress natif, non touché).
- *  - Locataire      : profil de départ de tout inscrit ; réserve, envoie des
- *                     messages, gère ses réservations. Droits de lecture.
- *  - Hôte           : cumulé EN PLUS du rôle Locataire quand un membre décide
- *                     de proposer son espace (parcours « Devenir partenaire »).
- *                     Peut publier et gérer ses annonces.
+ * Modèle unifié type Airbnb : un seul profil de membre, à la fois locataire
+ * ET hôte. Tout inscrit peut réserver un espace et proposer le sien. Il n'y a
+ * donc qu'un rôle métier, « Membre », en plus de l'Administrateur natif
+ * (l'équipe PoolParty), qui n'est pas touché.
  *
- * Un même compte peut donc être Locataire + Hôte : WordPress autorise le
- * cumul de rôles (add_role/remove_role sur l'utilisateur). Le rôle Hôte
- * s'obtient via poolparty_g4_promouvoir_hote() ; en démo on l'attribue à la
- * main depuis l'admin, la version finale le branchera sur le formulaire.
+ * Historique : le site distinguait avant « Locataire » (lecture seule) et
+ * « Hôte » (publication), cumulables via « Devenir partenaire ». La refonte
+ * des réservations a rendu tout membre hôte potentiel : les deux rôles ne
+ * pilotaient plus rien côté site. On les fusionne ici et on migre les comptes
+ * existants vers « Membre ».
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-// Verrou de version : les rôles vivent en base une fois créés. On ne
-// (re)joue add_role qu'après un changement de définition, pas à chaque
-// chargement. Incrémenter à chaque modification des capacités ci-dessous.
-define('PP_ROLES_VERSION', 1);
+// Verrou de version : le rôle vit en base une fois créé. On ne rejoue la
+// définition qu'après un changement. Incrémenter à chaque modification des
+// capacités ci-dessous. v2 : fusion locataire + hote en « membre ».
+define('PP_ROLES_VERSION', 2);
 
 /**
- * Crée / met à jour les rôles métier. Idempotent grâce au verrou.
+ * Crée / met à jour le rôle Membre et migre les anciens comptes. Idempotent
+ * grâce au verrou de version.
  */
 function poolparty_g4_enregistrer_roles() {
     if ((int) get_option('pp_roles_version') === PP_ROLES_VERSION) {
         return;
     }
 
-    // Locataire : lecture seule (comme l'abonné natif). Réservations et
-    // messages passent par le front, pas par des capacités WordPress.
-    remove_role('locataire');
-    add_role('locataire', 'Locataire', array(
-        'read' => true,
-    ));
-
-    // Hôte : peut créer et gérer ses propres annonces depuis le back-office
-    // (le CPT « bien » utilise les capacités standard de type post).
-    remove_role('hote');
-    add_role('hote', 'Hôte', array(
+    // Membre : peut réserver (côté site) et publier / gérer ses propres
+    // annonces. Le CPT « bien » utilise les capacités standard de type post.
+    // Le back-office reste fermé aux membres (voir inc/auth.php) : la
+    // publication se fait par le tunnel « Proposer » côté site.
+    remove_role('membre');
+    add_role('membre', 'Membre', array(
         'read'                   => true,
         'upload_files'           => true,
         'edit_posts'             => true,
@@ -53,23 +47,52 @@ function poolparty_g4_enregistrer_roles() {
         'delete_published_posts' => true,
     ));
 
+    // Migration : tout compte encore en « locataire » ou « hote » bascule en
+    // « membre ». La propriété des annonces (post_author) est indépendante du
+    // rôle, rien n'est perdu.
+    poolparty_g4_migrer_vers_membre();
+
+    // Les anciens rôles n'ont plus aucun porteur : on les retire du site.
+    remove_role('locataire');
+    remove_role('hote');
+
     update_option('pp_roles_version', PP_ROLES_VERSION);
 }
 add_action('after_setup_theme', 'poolparty_g4_enregistrer_roles');
 
 /**
- * Promeut un membre au rôle Hôte sans lui retirer Locataire (cumul).
- * Point d'accroche pour le futur formulaire « Devenir partenaire » ;
- * en démo, on peut l'appeler à la main ou changer le rôle dans l'admin.
+ * Bascule vers « Membre » tout utilisateur portant encore un ancien rôle
+ * métier. Ne touche pas aux administrateurs ni aux rôles natifs.
+ */
+function poolparty_g4_migrer_vers_membre() {
+    $anciens = get_users(array(
+        'role__in' => array('locataire', 'hote'),
+        'fields'   => 'ID',
+    ));
+    foreach ($anciens as $user_id) {
+        $user = get_userdata($user_id);
+        if (!$user || in_array('administrator', (array) $user->roles, true)) {
+            continue;
+        }
+        // set_role remplace tous les rôles par « membre » (nettoie d'un coup
+        // le cumul locataire + hote éventuel).
+        $user->set_role('membre');
+    }
+}
+
+/**
+ * Compat : garantit le rôle « Membre ». Dans le modèle unifié, tout membre est
+ * déjà hôte potentiel ; cette fonction ne sert plus qu'à d'anciens appels
+ * éventuels. Conservée pour ne rien casser.
  *
- * @param int $user_id Identifiant du membre à promouvoir.
+ * @param int $user_id Identifiant du membre.
  */
 function poolparty_g4_promouvoir_hote($user_id) {
     $user = get_userdata($user_id);
     if (!$user) {
         return;
     }
-    if (!in_array('hote', (array) $user->roles, true)) {
-        $user->add_role('hote');
+    if (!in_array('membre', (array) $user->roles, true)) {
+        $user->set_role('membre');
     }
 }

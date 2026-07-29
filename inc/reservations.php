@@ -204,7 +204,7 @@ function poolparty_g4_ajax_creer_reservation() {
         'post_type'   => 'reservation',
         'post_status' => 'publish',
         'post_author' => $user->ID,
-        'post_title'  => sprintf('%s — %s', $titre, ($champs['pp_date'] ?: 'sans date')),
+        'post_title'  => sprintf('%s, %s', $titre, ($champs['pp_date'] ?: 'sans date')),
     ), true);
 
     if (is_wp_error($resa_id) || !$resa_id) {
@@ -462,7 +462,7 @@ function poolparty_g4_carte_demande($resa) {
             <div class="reservation-card__head">
                 <h3 class="reservation-card__title"><a href="<?php echo esc_url($lien); ?>"><?php echo esc_html($titre); ?></a></h3>
                 <?php if ($auteur) : ?>
-                    <p class="reservation-card__hote">Demande de <?php echo esc_html($auteur->display_name); ?> · <?php echo esc_html($auteur->user_email); ?></p>
+                    <p class="reservation-card__hote">Demande de <?php echo esc_html($auteur->display_name); ?></p>
                 <?php endif; ?>
             </div>
             <dl class="reservation-card__infos">
