@@ -232,9 +232,15 @@ function poolparty_g4_email_bien_transition($nouveau, $ancien, $post) {
         $titre_bien = 'votre annonce';
     }
 
+    // Préférence « Annonces » du propriétaire (page Mon compte) : ne
+    // filtre que les e-mails qui lui sont destinés, jamais ceux de
+    // l'équipe. Le refus avec motif (fonction dédiée ci-dessous) reste
+    // toujours envoyé : l'hôte doit corriger pour republier.
+    $auteur_notifie = poolparty_g4_notif_active($post->post_author, 'annonce');
+
     // 1) Soumission : l'annonce passe en attente de modération.
     if ($nouveau === 'pending' && $ancien !== 'pending') {
-        if (is_email($auteur_email)) {
+        if (is_email($auteur_email) && $auteur_notifie) {
             $corps  = '<p>Bonjour,</p>';
             $corps .= '<p>Votre annonce <strong>« ' . esc_html($titre_bien) . ' »</strong> a bien été enregistrée. Merci&nbsp;!</p>';
             $corps .= '<p>Notre équipe la vérifie sous <strong>24&nbsp;heures</strong>. Dès qu\'elle sera validée, elle apparaîtra dans les résultats de recherche et vous recevrez un e-mail de confirmation.</p>';
@@ -256,7 +262,7 @@ function poolparty_g4_email_bien_transition($nouveau, $ancien, $post) {
 
     // 2) Validation : l'annonce en attente est publiée par l'admin.
     if ($nouveau === 'publish' && $ancien === 'pending') {
-        if (is_email($auteur_email)) {
+        if (is_email($auteur_email) && $auteur_notifie) {
             $lien   = get_permalink($post->ID);
             $corps  = '<p>Bonjour,</p>';
             $corps .= '<p>Bonne nouvelle&nbsp;: votre annonce <strong>« ' . esc_html($titre_bien) . ' »</strong> a été validée par notre équipe et elle est désormais <strong>en ligne</strong>&nbsp;! 🎉</p>';
@@ -311,3 +317,34 @@ function poolparty_g4_email_bien_refuse($post, $motif = '') {
  * réutilisent le gabarit et l'expéditeur définis ci-dessus, via
  * poolparty_g4_email_envoyer().
  */
+
+/* ------------------------------------------------------------------ *
+ *  AVIS
+ * ------------------------------------------------------------------ */
+
+/**
+ * Prévient l'hôte qu'un avis vient d'être déposé sur son annonce
+ * (appelé par inc/avis.php). Gouverné par la préférence « Avis » de
+ * la page Mon compte. Nom d'affichage du membre uniquement, jamais
+ * ses coordonnées.
+ */
+function poolparty_g4_email_avis_recu($avis_id, $bien_id) {
+    $hote = get_userdata((int) get_post_field('post_author', $bien_id));
+    if (!$hote || !is_email($hote->user_email)) {
+        return;
+    }
+    if (function_exists('poolparty_g4_notif_active') && !poolparty_g4_notif_active($hote->ID, 'avis')) {
+        return;
+    }
+    $avis   = get_comment((int) $avis_id);
+    $auteur = $avis ? get_userdata((int) $avis->user_id) : null;
+    $note   = $avis ? (int) get_comment_meta($avis->comment_ID, 'pp_note', true) : 0;
+    $titre  = get_the_title($bien_id);
+
+    $corps = '<p>Bonjour ' . esc_html($hote->display_name) . ',</p>'
+        . '<p><strong>' . esc_html($auteur ? $auteur->display_name : 'Un membre') . '</strong> a laissé un avis'
+        . ($note ? ' (' . $note . '/5)' : '') . ' sur <strong>' . esc_html($titre) . '</strong>.</p>'
+        . '<p>Retrouvez-le dans « Mes réservations », vue Hôte, onglet Avis. Vous pouvez y répondre publiquement.</p>'
+        . '<p><a href="' . esc_url(home_url('/mes-reservations/?vue=hote')) . '" style="color:#CA8171;">Voir l\'avis</a></p>';
+    poolparty_g4_email_envoyer($hote->user_email, 'Vous avez reçu un nouvel avis', 'Nouvel avis reçu', $corps);
+}

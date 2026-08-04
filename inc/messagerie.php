@@ -262,7 +262,10 @@ function poolparty_g4_message_envoyer($conv_id, $expediteur_id, $texte) {
     // Remonte la conversation en tête de liste (tri par date de modification).
     wp_update_post(array('ID' => (int) $conv_id));
 
-    if ($deja_non_lus === 0) {
+    // Notification seulement si rien n'était déjà non lu (pas de rafale)
+    // et si le destinataire accepte les e-mails de messagerie (Mon compte).
+    if ($deja_non_lus === 0
+        && (!function_exists('poolparty_g4_notif_active') || poolparty_g4_notif_active($destinataire_id, 'message'))) {
         poolparty_g4_email_message_recu($conv_id, $expediteur_id, $destinataire_id);
     }
     return (int) $message_id;

@@ -92,6 +92,11 @@ require get_template_directory() . '/inc/admin-site.php';
 // annonces et les modifie quand aucune réservation n'est en cours.
 require get_template_directory() . '/inc/mes-annonces.php';
 
+// Espace « Mon compte » (page /mon-compte/) : informations personnelles,
+// mot de passe, préférences de notification, copie des données (JSON)
+// et fermeture du compte.
+require get_template_directory() . '/inc/mon-compte.php';
+
 /**
  * Raccourci vers un fichier du thème (images, icônes, polices...).
  * Exemple : pp_asset('assets/images/logo/logo-full.png')
@@ -222,6 +227,7 @@ function poolparty_g4_styles() {
         'reservation'        => array('reservation'),
         'administration'     => array('administration'),
         'mes-annonces'       => array('mes-annonces'),
+        'mon-compte'         => array('mon-compte'),
     );
     foreach ($pages_css as $slug => $feuilles) {
         if (is_page($slug)) {
@@ -454,7 +460,7 @@ add_filter('body_class', 'poolparty_g4_body_class');
  * on demande aux moteurs de ne pas les indexer.
  */
 function poolparty_g4_noindex($robots) {
-    if (is_page(array('favoris', 'mes-reservations', 'demandes', 'messages', 'inscription', 'proposer', 'reservation', 'administration', 'mes-annonces'))) {
+    if (is_page(array('favoris', 'mes-reservations', 'demandes', 'messages', 'inscription', 'proposer', 'reservation', 'administration', 'mes-annonces', 'mon-compte'))) {
         $robots['noindex']  = true;
         $robots['nofollow'] = true;
     }

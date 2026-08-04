@@ -373,8 +373,9 @@ function poolparty_g4_email_reservation_nouvelle($resa_id) {
     $total   = get_post_meta($resa_id, 'pp_total', true);
     $message = get_post_meta($resa_id, 'pp_message', true);
 
-    // Accusé de réception au locataire.
-    if ($auteur && is_email($auteur->user_email)) {
+    // Accusé de réception au locataire (préférence « Réservations » de la
+    // page Mon compte ; la réponse de l'hôte, elle, est toujours envoyée).
+    if ($auteur && is_email($auteur->user_email) && poolparty_g4_notif_active($auteur->ID, 'reservation')) {
         $corps = '<p>Bonjour ' . esc_html($auteur->display_name) . ',</p>'
             . '<p>Votre demande de réservation pour <strong>' . esc_html($titre) . '</strong> a bien été envoyée à l\'hôte.</p>'
             . '<p><strong>Date :</strong> ' . esc_html($date . ($creneau ? ' · ' . $creneau : '')) . '<br>'
@@ -390,9 +391,9 @@ function poolparty_g4_email_reservation_nouvelle($resa_id) {
         );
     }
 
-    // Notification à l'hôte.
+    // Notification à l'hôte (même préférence « Réservations »).
     $hote = get_userdata($hote_id);
-    if ($hote && is_email($hote->user_email)) {
+    if ($hote && is_email($hote->user_email) && poolparty_g4_notif_active($hote_id, 'reservation')) {
         $corps = '<p>Bonjour ' . esc_html($hote->display_name) . ',</p>'
             . '<p>Vous avez reçu une nouvelle demande de réservation pour <strong>' . esc_html($titre) . '</strong>.</p>'
             . '<p><strong>De :</strong> ' . esc_html($auteur ? $auteur->display_name : 'Un membre') . '<br>'

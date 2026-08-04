@@ -40,6 +40,7 @@ $pp_demandes  = $pp_compteurs['demandes'];
             <a href="<?php echo esc_url(home_url('/mes-annonces/')); ?>"<?php echo pp_menu_lien_attr(is_page('mes-annonces')); ?>>Mes annonces</a>
         <?php endif; ?>
         <a href="<?php echo esc_url(home_url('/favoris/')); ?>"<?php echo pp_menu_lien_attr(is_page('favoris')); ?>>Mes favoris</a>
+        <a href="<?php echo esc_url(home_url('/mon-compte/')); ?>"<?php echo pp_menu_lien_attr(is_page('mon-compte')); ?>>Mon compte</a>
     </div>
 
     <!-- Bloc 3 : contenus et aide -->

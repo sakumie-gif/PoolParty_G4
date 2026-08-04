@@ -222,6 +222,11 @@ function poolparty_g4_ajax_creer_avis() {
     update_comment_meta($avis_id, 'pp_note', $note);
     update_comment_meta($avis_id, 'pp_resa_id', $resa_id);
 
+    // Prévient l'hôte (selon sa préférence « Avis » de Mon compte).
+    if (function_exists('poolparty_g4_email_avis_recu')) {
+        poolparty_g4_email_avis_recu($avis_id, $bien_id);
+    }
+
     wp_send_json_success(array('avisId' => (int) $avis_id));
 }
 add_action('wp_ajax_pp_creer_avis', 'poolparty_g4_ajax_creer_avis');
