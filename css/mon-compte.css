@@ -1,15 +1,18 @@
 /* =============================================================
    POOL PARTY - PAGE MON COMPTE (espace membre)
-   Cinq blocs en cartes beiges (référence : page Contact), champs
-   form-field blancs de global.css posés dessus, cases .checkbox.
-   Succès en toast bas droite, erreurs en bandeau au-dessus du
-   bloc concerné. Mobile-first : 393px puis 768px et 1024px.
+   Mise en page calquée sur Mes réservations V2 : bandeau hero,
+   colonne d'onglets verticale à gauche en desktop (piste beige,
+   item actif marqué par la barre sombre), pilules en mobile,
+   contenu à droite sur fond blanc. Champs form-field de
+   global.css, succès en toast bas droite, erreurs en bandeau.
+   Mobile-first : 393px puis 768px et 1024px.
    ============================================================= */
 
 .mon-compte-intro {
     padding: var(--padding-p2) var(--padding-page-mobile) 0;
 }
 
+/* Layout général (modèle .rv2-layout) */
 .mon-compte {
     display: flex;
     flex-direction: column;
@@ -41,28 +44,80 @@
     margin-bottom: var(--padding-p2);
 }
 
-/* -------- Carte de bloc (carte beige de la page Contact) -------- */
-.mon-compte__carte {
-    width: 100%;
-    max-width: 760px;
-    margin: 0 auto;
-    padding: var(--padding-p2);
-    background: var(--color-beige);
+/* -------- Onglets (modèle .rv2-tabs) : pilules en mobile --------
+   Avec cinq entrées, les pilules passent sur plusieurs lignes : la
+   piste est une carte beige à coins doux (radius-r1, pas la pilule
+   complète qui déforme le bloc dès la deuxième ligne). */
+.mon-compte-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--padding-p5);
+    padding: var(--padding-p4);
+    background-color: var(--color-beige);
     border-radius: var(--radius-r1);
 }
 
-.mon-compte__carte h2 {
+.mon-compte-tab {
+    padding: var(--padding-p4) var(--padding-p2);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+    background: transparent;
+    cursor: pointer;
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.mon-compte-tab:hover {
+    color: var(--color-dark-green-blue);
+}
+
+.mon-compte-tab.is-active {
+    color: var(--color-dark-green-blue);
+    font-weight: var(--fw-medium);
+    background-color: var(--color-white);
+    box-shadow: var(--shadow-3);
+}
+
+/* -------- Contenu (modèle .rv2-contenu) : fond blanc -------- */
+.mon-compte-contenu {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-p2);
+    min-width: 0;
+}
+
+.mon-compte__bloc[hidden] {
+    display: none;
+}
+
+/* Vision B validée par Audrey : titres, textes et boutons centrés
+   dans la zone de contenu ; les champs restent alignés à gauche à
+   l'intérieur de la colonne centrée. */
+.mon-compte__bloc h2 {
     font-size: var(--fs-h3);
     color: var(--color-dark-green-blue);
     margin-bottom: var(--padding-p2);
+    text-align: center;
 }
 
-.mon-compte__carte > p {
+.mon-compte__bloc > p {
     font-family: var(--font-input);
     font-size: var(--fs-p3);
     color: var(--color-grey-font-1);
     line-height: 1.5;
     margin-bottom: var(--padding-p2);
+    text-align: center;
+}
+
+/* Contenu borné pour rester lisible, colonne centrée dans la zone */
+.mon-compte__form,
+.mon-compte__bloc > p,
+.mon-compte__bloc > .mon-compte__actions,
+.mon-compte__erreur {
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .mon-compte__form {
@@ -87,7 +142,7 @@
 
 .mon-compte__actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .mon-compte__actions .btn {
@@ -239,7 +294,8 @@
 }
 
 /* =============================================================
-   DESKTOP (à partir de 1024px)
+   ORDINATEUR (à partir de 1024px) : colonne d'onglets verticale
+   à gauche (modèle .rv2-tabs desktop), contenu à droite.
    ============================================================= */
 @media (min-width: 1024px) {
 
@@ -249,11 +305,58 @@
     }
 
     .mon-compte {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: var(--padding-p1);
         padding-left: var(--padding-page-desktop);
         padding-right: var(--padding-page-desktop);
     }
 
-    .mon-compte__carte {
-        padding: var(--padding-p1);
+    /* La piste beige descend sur toute la hauteur du contenu,
+       comme sur Mes réservations */
+    .mon-compte-tabs-panel {
+        flex: 0 0 250px;
+        align-self: stretch;
+    }
+
+    .mon-compte-tabs {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--padding-p4);
+        min-height: 300px;
+        height: 100%;
+        padding: var(--padding-p2) 0;
+        background-color: var(--color-beige);
+        border-radius: var(--radius-r1);
+    }
+
+    .mon-compte-tab {
+        padding: var(--padding-p4) var(--padding-p2);
+        border-left: 3px solid transparent;
+        border-radius: 0;
+        text-align: left;
+        font-family: var(--font-input);
+        font-size: var(--fs-p2);
+        color: var(--color-grey-font-1);
+        background: transparent;
+    }
+
+    .mon-compte-tab:hover {
+        background-color: var(--color-hover-sable);
+        color: var(--color-grey-font-1);
+    }
+
+    .mon-compte-tab.is-active {
+        border-left-color: var(--color-grey-font-1);
+        font-weight: var(--fw-semibold);
+        background: transparent;
+        box-shadow: none;
+        color: var(--color-grey-font-1);
+    }
+
+    .mon-compte-contenu {
+        flex: 1 1 auto;
+        padding-top: var(--padding-p4);
     }
 }

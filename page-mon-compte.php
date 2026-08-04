@@ -37,11 +37,10 @@ $pp_bloc_erreur = function ($bloc) use ($pp_erreur) {
             </nav>
         </section>
 
-        <div class="hero-page">
-            <p class="hero-page__surtitre">Espace membre</p>
+        <section class="hero-page hero-page--membre">
             <h1>Mon compte</h1>
             <p class="hero-page__texte">Gérez vos informations, vos notifications et vos données personnelles.</p>
-        </div>
+        </section>
 
         <section class="mon-compte">
 
@@ -55,8 +54,22 @@ $pp_bloc_erreur = function ($bloc) use ($pp_erreur) {
 
             <?php else : ?>
 
+                <!-- Colonne d'onglets, comme Mes réservations : pilules en
+                     mobile, colonne verticale beige à partir de 1024px -->
+                <aside class="mon-compte-tabs-panel">
+                    <div class="mon-compte-tabs" role="tablist" aria-label="Sections du compte">
+                        <button type="button" class="mon-compte-tab is-active" role="tab" data-onglet="bloc-infos" aria-selected="true">Informations personnelles</button>
+                        <button type="button" class="mon-compte-tab" role="tab" data-onglet="bloc-mdp" aria-selected="false">Mot de passe</button>
+                        <button type="button" class="mon-compte-tab" role="tab" data-onglet="bloc-notifs" aria-selected="false">Notifications</button>
+                        <button type="button" class="mon-compte-tab" role="tab" data-onglet="bloc-donnees" aria-selected="false">Mes données</button>
+                        <button type="button" class="mon-compte-tab" role="tab" data-onglet="bloc-fermer" aria-selected="false">Fermer mon compte</button>
+                    </div>
+                </aside>
+
+                <section class="mon-compte-contenu">
+
                 <!-- Bloc 1 : informations personnelles -->
-                <section class="mon-compte__carte" id="bloc-infos" aria-labelledby="titre-infos">
+                <section class="mon-compte__bloc" id="bloc-infos" aria-labelledby="titre-infos">
                     <h2 id="titre-infos">Informations personnelles</h2>
                     <?php $pp_bloc_erreur('infos'); ?>
                     <form class="mon-compte__form" method="post" action="">
@@ -89,7 +102,7 @@ $pp_bloc_erreur = function ($bloc) use ($pp_erreur) {
                 </section>
 
                 <!-- Bloc 2 : mot de passe -->
-                <section class="mon-compte__carte" id="bloc-mdp" aria-labelledby="titre-mdp">
+                <section class="mon-compte__bloc" id="bloc-mdp" aria-labelledby="titre-mdp" hidden>
                     <h2 id="titre-mdp">Mot de passe</h2>
                     <?php $pp_bloc_erreur('mdp'); ?>
                     <form class="mon-compte__form" method="post" action="">
@@ -129,7 +142,7 @@ $pp_bloc_erreur = function ($bloc) use ($pp_erreur) {
                 </section>
 
                 <!-- Bloc 3 : préférences de notification -->
-                <section class="mon-compte__carte" id="bloc-notifs" aria-labelledby="titre-notifs">
+                <section class="mon-compte__bloc" id="bloc-notifs" aria-labelledby="titre-notifs" hidden>
                     <h2 id="titre-notifs">Préférences de notification</h2>
                     <form class="mon-compte__form" method="post" action="">
                         <input type="hidden" name="pp_compte_action" value="prefs">
@@ -148,7 +161,7 @@ $pp_bloc_erreur = function ($bloc) use ($pp_erreur) {
                 </section>
 
                 <!-- Bloc 4 : copie des données -->
-                <section class="mon-compte__carte" id="bloc-donnees" aria-labelledby="titre-donnees">
+                <section class="mon-compte__bloc" id="bloc-donnees" aria-labelledby="titre-donnees" hidden>
                     <h2 id="titre-donnees">Obtenir une copie de mes données</h2>
                     <p>Téléchargez un fichier rassemblant votre profil, vos annonces, vos réservations, vos avis et vos messages. Les coordonnées des autres membres n'y figurent jamais.</p>
                     <form class="mon-compte__actions" method="post" action="">
@@ -159,7 +172,7 @@ $pp_bloc_erreur = function ($bloc) use ($pp_erreur) {
                 </section>
 
                 <!-- Bloc 5 : fermeture du compte -->
-                <section class="mon-compte__carte" id="bloc-fermer" aria-labelledby="titre-fermer">
+                <section class="mon-compte__bloc" id="bloc-fermer" aria-labelledby="titre-fermer" hidden>
                     <h2 id="titre-fermer">Fermer mon compte</h2>
                     <?php $pp_bloc_erreur('fermer'); ?>
                     <p>Cette action est définitive. Vos annonces et vos réservations passées seront conservées par la plateforme de façon anonyme. Vos favoris et vos préférences seront supprimés.</p>
@@ -167,6 +180,8 @@ $pp_bloc_erreur = function ($bloc) use ($pp_erreur) {
                         <button type="button" class="btn btn-tertiary btn-medium" id="pp-ouvrir-fermeture">Fermer mon compte</button>
                     </div>
                 </section>
+
+                </section><!-- /.mon-compte-contenu -->
 
             <?php endif; ?>
         </section>
@@ -213,6 +228,31 @@ $pp_bloc_erreur = function ($bloc) use ($pp_erreur) {
 
         <script>
         (function () {
+            // Onglets : une carte visible à la fois. L'ancre (#bloc-mdp...)
+            // posée par les redirections rouvre le bon onglet.
+            var onglets = document.querySelectorAll('.mon-compte-tab');
+            function activerOnglet(cible) {
+                var trouve = false;
+                onglets.forEach(function (o) { trouve = trouve || o.dataset.onglet === cible; });
+                if (!trouve) { return; }
+                onglets.forEach(function (o) {
+                    var actif = o.dataset.onglet === cible;
+                    o.classList.toggle('is-active', actif);
+                    o.setAttribute('aria-selected', actif ? 'true' : 'false');
+                    var bloc = document.getElementById(o.dataset.onglet);
+                    if (bloc) { bloc.hidden = !actif; }
+                });
+            }
+            onglets.forEach(function (o) {
+                o.addEventListener('click', function () {
+                    activerOnglet(o.dataset.onglet);
+                    history.replaceState(null, '', '#' + o.dataset.onglet);
+                });
+            });
+            if (window.location.hash) {
+                activerOnglet(window.location.hash.slice(1));
+            }
+
             var toast = document.getElementById('pp-compte-toast');
             if (toast) {
                 setTimeout(function () { toast.classList.remove('is-visible'); }, 6000);

@@ -107,7 +107,7 @@ function poolparty_g4_mon_compte_traiter() {
             if ($email !== $ancienne) {
                 poolparty_g4_email_compte_email_change($ancienne, $email, $user->display_name);
             }
-            poolparty_g4_mon_compte_rediriger('infos-ok');
+            poolparty_g4_mon_compte_rediriger('infos-ok', 'bloc-infos');
             break;
 
         // -- Mot de passe : vérification de l'actuel, 8 caractères minimum,
@@ -138,7 +138,7 @@ function poolparty_g4_mon_compte_traiter() {
             // E-mail de sécurité (toujours envoyé) : wp_set_password
             // n'envoie aucune notice, contrairement à wp_update_user.
             poolparty_g4_email_compte_mdp_change($user);
-            poolparty_g4_mon_compte_rediriger('mdp-ok');
+            poolparty_g4_mon_compte_rediriger('mdp-ok', 'bloc-mdp');
             break;
 
         // -- Préférences de notification : une méta par type.
@@ -147,7 +147,7 @@ function poolparty_g4_mon_compte_traiter() {
             foreach (array_keys(poolparty_g4_types_notification()) as $type) {
                 update_user_meta($user->ID, 'pp_notif_' . $type, empty($_POST['notif_' . $type]) ? '0' : '1');
             }
-            poolparty_g4_mon_compte_rediriger('prefs-ok');
+            poolparty_g4_mon_compte_rediriger('prefs-ok', 'bloc-notifs');
             break;
 
         // -- Copie des données : fichier JSON généré à la volée et envoyé
