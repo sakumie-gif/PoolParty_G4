@@ -554,6 +554,14 @@
     display: none;
 }
 
+/* Dans la disposition à colonne, la grille remplit toute la zone de
+   contenu : le plafond de 840px de l'ancienne mise en page laissait
+   un grand vide à droite sur les très grands écrans (demande
+   d'Audrey du 04-08 : cartes et états vides « en fill »). */
+.rv2-contenu .reservations-grid {
+    max-width: none;
+}
+
 /* Tuiles de taille identique dans tous les onglets : hauteur imposée
    dès la tablette (media queries plus bas), espace réparti entre les
    sections, textes longs bornés à 2 lignes */

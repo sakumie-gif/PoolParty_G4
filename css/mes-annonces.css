@@ -32,14 +32,15 @@
     border-color: rgba(202, 129, 113, 0.30);
 }
 
-/* -------- État vide / connexion requise -------- */
+/* -------- État vide / connexion requise --------
+   Pleine largeur comme les états de Mes réservations (demande
+   d'Audrey du 04-08 : plus de rectangle étroit sous le bandeau). */
 .mes-annonces__etat-vide {
+    width: 100%;
     background: var(--color-beige);
     border-radius: var(--radius-r1);
-    padding: var(--padding-p1) var(--padding-p2);
+    padding: calc(2 * var(--padding-p1)) var(--padding-p2);
     text-align: center;
-    max-width: 560px;
-    margin: 0 auto;
 }
 
 .mes-annonces__etat-vide h2 {

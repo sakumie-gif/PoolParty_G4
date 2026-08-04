@@ -20,14 +20,15 @@
     padding: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
 }
 
-/* -------- État connexion requise (modèle mes-annonces) -------- */
+/* -------- État connexion requise --------
+   Pleine largeur comme les états de Mes réservations : le rectangle
+   beige garde les mêmes bords que le bandeau hero (pas d'escalier). */
 .mon-compte__etat-vide {
+    width: 100%;
     background: var(--color-beige);
     border-radius: var(--radius-r1);
-    padding: var(--padding-p1) var(--padding-p2);
+    padding: calc(2 * var(--padding-p1)) var(--padding-p2);
     text-align: center;
-    max-width: 560px;
-    margin: 0 auto;
 }
 
 .mon-compte__etat-vide h2 {
