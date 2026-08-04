@@ -501,12 +501,15 @@
     padding: var(--padding-p2) var(--padding-page-mobile) var(--padding-p1);
 }
 
+/* En mobile les pilules passent sur plusieurs lignes : piste en carte
+   beige à coins doux (radius-r1), comme sur Mon compte ; la pilule
+   complète se déformait dès la deuxième ligne. */
 .rv2-tabs {
-    display: inline-flex;
+    display: flex;
     gap: var(--padding-p5);
-    padding: var(--padding-p5);
+    padding: var(--padding-p4);
     background-color: var(--color-beige);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-r1);
     flex-wrap: wrap;
 }
 
