@@ -48,6 +48,7 @@ $pp_flash    = poolparty_g4_admin_flash();
                 'tableau-de-bord' => array('Tableau de bord', 'Vue d\'ensemble de la plateforme : annonces à valider, dernières réservations, membres et avis à modérer.'),
                 'annonces'        => array('Annonces', 'Validez les espaces déposés par les membres et modérez toutes les annonces du site.'),
                 'reservations'    => array('Suivi des réservations', 'Toutes les demandes de réservation de la plateforme et leur statut.'),
+                'incidents'       => array('Incidents', 'Les signalements déposés par les membres sur leurs réservations : traitement, note interne et clôture.'),
                 'membres'         => array('Membres', 'Les personnes inscrites sur Pool Party : activité, annonces, réservations et modération des comptes.'),
                 'avis'            => array('Modération des avis', 'Les avis déposés sur les espaces et les locataires. Masquer retire un avis du site sans le supprimer.'),
                 'reglages'        => array('Réglages', 'Les réglages du site : référencement, statistiques, e-mails et menus.'),
@@ -79,6 +80,8 @@ $pp_flash    = poolparty_g4_admin_flash();
                             $pp_pastille = $pp_stats['biens_attente'];
                         } elseif ($pp_slug === 'avis') {
                             $pp_pastille = $pp_stats['avis_masques'];
+                        } elseif ($pp_slug === 'incidents') {
+                            $pp_pastille = $pp_stats['incidents_ouverts'];
                         }
                         ?>
                         <a href="<?php echo esc_url(poolparty_g4_admin_url($pp_slug)); ?>"<?php echo $pp_slug === $pp_section ? ' class="is-active" aria-current="page"' : ''; ?>>

@@ -31,6 +31,10 @@ $pp_reservations = array_slice(poolparty_g4_admin_reservations(), 0, 6);
         <div class="pp-admin__stat-valeur"><?php echo esc_html($pp_stats['avis_masques']); ?></div>
         <div class="pp-admin__stat-libelle">Avis masqués</div>
     </div>
+    <div class="pp-admin__stat<?php echo $pp_stats['incidents_ouverts'] > 0 ? ' pp-admin__stat--alerte' : ''; ?>">
+        <div class="pp-admin__stat-valeur"><?php echo esc_html($pp_stats['incidents_ouverts']); ?></div>
+        <div class="pp-admin__stat-libelle">Incidents ouverts</div>
+    </div>
 </div>
 
 <section class="pp-admin__bloc">

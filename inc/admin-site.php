@@ -33,6 +33,7 @@ function poolparty_g4_admin_sections() {
         'tableau-de-bord' => 'Tableau de bord',
         'annonces'        => 'Annonces',
         'reservations'    => 'Réservations',
+        'incidents'       => 'Incidents',
         'membres'         => 'Membres',
         'avis'            => 'Avis',
         'reglages'        => 'Réglages',
@@ -110,10 +111,11 @@ function poolparty_g4_admin_stats() {
     ));
 
     return array(
-        'biens_attente' => $biens_attente,
-        'resa_attente'  => $resa_attente,
-        'membres'       => $nb_membres,
-        'avis_masques'  => $avis_masques,
+        'biens_attente'     => $biens_attente,
+        'resa_attente'      => $resa_attente,
+        'membres'           => $nb_membres,
+        'avis_masques'      => $avis_masques,
+        'incidents_ouverts' => function_exists('poolparty_g4_incidents_ouverts_nb') ? poolparty_g4_incidents_ouverts_nb() : 0,
     );
 }
 
@@ -468,6 +470,31 @@ function poolparty_g4_admin_traiter_action() {
             }
             break;
 
+        // -- Traiter un incident : note interne et statut. Le passage à
+        //    « clos » déclenche l'e-mail de clôture aux deux membres, avec
+        //    le message facultatif saisi par l'équipe.
+        case 'incident_maj':
+            $incident_id = isset($_POST['incident_id']) ? absint($_POST['incident_id']) : 0;
+            $incident    = $incident_id ? get_post($incident_id) : null;
+            if ($incident && $incident->post_type === 'pp_incident') {
+                if (isset($_POST['note_interne'])) {
+                    update_post_meta($incident_id, 'pp_note_interne', sanitize_textarea_field(wp_unslash($_POST['note_interne'])));
+                }
+                $statut_avant = get_post_meta($incident_id, 'pp_statut', true);
+                $statut_apres = isset($_POST['pp_statut']) ? sanitize_key(wp_unslash($_POST['pp_statut'])) : '';
+                if (array_key_exists($statut_apres, poolparty_g4_incident_statuts())) {
+                    update_post_meta($incident_id, 'pp_statut', $statut_apres);
+                    if ($statut_apres === 'clos' && $statut_avant !== 'clos') {
+                        $message_cloture = isset($_POST['message_cloture']) ? sanitize_textarea_field(wp_unslash($_POST['message_cloture'])) : '';
+                        poolparty_g4_email_incident_cloture($incident_id, $message_cloture);
+                        $message = 'incident-clos';
+                        break;
+                    }
+                }
+                $message = 'incident-maj';
+            }
+            break;
+
         // -- Modération d'un avis : masquer / rendre visible / corbeille.
         //    Réutilise le statut des commentaires WordPress natifs.
         case 'avis_masquer':
@@ -535,6 +562,22 @@ function poolparty_g4_admin_badge_resa($statut) {
         $classe = 'pp-admin__etat--refus';
     } elseif ($statut === 'annulee' || $statut === 'annulee-hote') {
         $classe = 'pp-admin__etat--neutre';
+    }
+    return array($classe, $label);
+}
+
+/**
+ * Classe de badge et libellé d'un statut d'incident, pour la section
+ * Incidents et le tableau de bord.
+ */
+function poolparty_g4_admin_badge_incident($statut) {
+    $labels = poolparty_g4_incident_statuts();
+    $label  = isset($labels[$statut]) ? $labels[$statut] : 'Ouvert';
+    $classe = 'pp-admin__etat--refus';
+    if ($statut === 'en-cours') {
+        $classe = 'pp-admin__etat--attente';
+    } elseif ($statut === 'clos') {
+        $classe = 'pp-admin__etat--ok';
     }
     return array($classe, $label);
 }
@@ -732,6 +775,8 @@ function poolparty_g4_admin_flash() {
         'membre-banni'    => array('Le compte a été banni : connexion refusée et adresse e-mail en liste noire (aucune réinscription possible).', 'refus'),
         'membre-supprime' => array('Le compte a été supprimé. Ses annonces et réservations passées ont été conservées et réattribuées à l\'administration.', 'refus'),
         'membre-resas-actives' => array('Suppression impossible : ce membre a des réservations en cours (en attente ou confirmées), avec lui ou sur ses annonces. Bloquez plutôt son compte, ou attendez la fin de ces réservations pour supprimer.', 'refus'),
+        'incident-maj'    => array('Le signalement a été mis à jour.', 'ok'),
+        'incident-clos'   => array('Le signalement est clos. Les deux membres en ont été informés par e-mail.', 'ok'),
     );
     return isset($map[$cle]) ? $map[$cle] : null;
 }

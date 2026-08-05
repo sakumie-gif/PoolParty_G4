@@ -178,6 +178,20 @@
         } else {
             html += '<a class="btn btn-tertiary btn-small" href="' + lien + '">Voir l’annonce</a>';
         }
+        // Signalement d'incident : réservations confirmées, à venir comme
+        // passées, dans les deux vues. Un seul dossier non clos par
+        // déclarant et par réservation (état initial fourni par ppData).
+        if (resa.statut === 'acceptee') {
+            var deja = Array.isArray(ppData.incidentsDeclares) && ppData.incidentsDeclares.indexOf(resa.id) !== -1;
+            if (deja) {
+                html += '<button type="button" class="btn btn-tertiary btn-small" disabled>Signalement envoyé</button>';
+            } else {
+                html += '<button type="button" class="btn btn-tertiary btn-small js-incident-ouvrir"' +
+                    ' data-resa-id="' + echapper(resa.id) + '"' +
+                    ' data-titre="' + echapper(resa.titre) + '"' +
+                    ' data-date="' + echapper(resa.date || '') + '">Signaler un problème</button>';
+            }
+        }
         html += '</div></div></div></article>';
         return html;
     }
@@ -696,4 +710,126 @@
     if (params.get('vue') === 'hote' || params.get('vue') === 'locataire') { vue = params.get('vue'); }
     if (['en-attente', 'a-venir', 'passees', 'avis'].indexOf(params.get('onglet')) !== -1) { onglet = params.get('onglet'); }
     rendre();
+})();
+
+/* =============================================================
+   SIGNALEMENT D'INCIDENT
+   Pop-up ouverte depuis les cartes confirmées (bouton
+   js-incident-ouvrir, posé par carte() ci-dessus). Envoi en
+   FormData (photos) vers pp_creer_incident ; après succès la
+   pop-up affiche la confirmation et la carte passe en
+   « Signalement envoyé ».
+   ============================================================= */
+(function () {
+    'use strict';
+
+    var popup = document.getElementById('pp-popup-incident');
+    if (!popup || !window.ppData) {
+        return;
+    }
+
+    var formulaire   = document.getElementById('pp-incident-formulaire');
+    var confirmation = document.getElementById('pp-incident-confirmation');
+    var contexte     = document.getElementById('pp-incident-contexte');
+    var motif        = document.getElementById('pp-incident-motif');
+    var description  = document.getElementById('pp-incident-description');
+    var photos       = document.getElementById('pp-incident-photos');
+    var erreur       = document.getElementById('pp-incident-erreur');
+    var envoyer      = document.getElementById('pp-incident-envoyer');
+    var resaCourante = 0;
+
+    function ouvrir(bouton) {
+        resaCourante = parseInt(bouton.dataset.resaId, 10) || 0;
+        contexte.textContent = bouton.dataset.titre + (bouton.dataset.date ? ', venue du ' + bouton.dataset.date : '')
+            + '. Votre signalement sera transmis à l\'équipe Pool Party.';
+        motif.value = '';
+        description.value = '';
+        photos.value = '';
+        erreur.hidden = true;
+        formulaire.hidden = false;
+        confirmation.hidden = true;
+        envoyer.disabled = false;
+        popup.hidden = false;
+        motif.focus();
+    }
+
+    function fermer() {
+        popup.hidden = true;
+    }
+
+    function montrerErreur(texte) {
+        erreur.textContent = texte;
+        erreur.hidden = false;
+    }
+
+    // Les cartes sont re-rendues à chaque changement d'onglet : délégation.
+    document.addEventListener('click', function (e) {
+        var bouton = e.target.closest('.js-incident-ouvrir');
+        if (bouton) {
+            ouvrir(bouton);
+        }
+    });
+
+    popup.querySelectorAll('.js-incident-fermer').forEach(function (b) {
+        b.addEventListener('click', fermer);
+    });
+    popup.addEventListener('click', function (e) {
+        if (e.target === popup) { fermer(); }
+    });
+
+    envoyer.addEventListener('click', function () {
+        if (!motif.value) {
+            montrerErreur('Choisissez un motif dans la liste.');
+            return;
+        }
+        if (!description.value.trim()) {
+            montrerErreur('Décrivez ce qui s\'est passé.');
+            return;
+        }
+        if (photos.files && photos.files.length > 4) {
+            montrerErreur('4 photos maximum.');
+            return;
+        }
+        erreur.hidden = true;
+        envoyer.disabled = true;
+
+        var donnees = new FormData();
+        donnees.append('action', 'pp_creer_incident');
+        donnees.append('nonce', ppData.incidentNonce || '');
+        donnees.append('resa_id', String(resaCourante));
+        donnees.append('motif', motif.value);
+        donnees.append('description', description.value);
+        if (photos.files) {
+            for (var i = 0; i < photos.files.length && i < 4; i++) {
+                donnees.append('photos[]', photos.files[i]);
+            }
+        }
+
+        fetch(ppData.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: donnees })
+            .then(function (reponse) { return reponse.json(); })
+            .then(function (retour) {
+                if (!retour || !retour.success) {
+                    envoyer.disabled = false;
+                    montrerErreur((retour && retour.data && retour.data.message) ? retour.data.message : 'L\'envoi a échoué. Réessayez.');
+                    return;
+                }
+                formulaire.hidden = true;
+                confirmation.hidden = false;
+                // Mémorise le dossier pour les re-rendus de cartes et met à
+                // jour le bouton affiché.
+                if (!Array.isArray(ppData.incidentsDeclares)) { ppData.incidentsDeclares = []; }
+                ppData.incidentsDeclares.push(resaCourante);
+                document.querySelectorAll('.js-incident-ouvrir').forEach(function (b) {
+                    if (parseInt(b.dataset.resaId, 10) === resaCourante) {
+                        b.textContent = 'Signalement envoyé';
+                        b.disabled = true;
+                        b.classList.remove('js-incident-ouvrir');
+                    }
+                });
+            })
+            .catch(function () {
+                envoyer.disabled = false;
+                montrerErreur('L\'envoi a échoué. Vérifiez votre connexion et réessayez.');
+            });
+    });
 })();

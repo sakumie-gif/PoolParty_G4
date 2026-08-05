@@ -164,6 +164,52 @@ get_header();
             </div>
         </div>
 
+        <!-- Pop-up de signalement d'incident (réservations confirmées,
+             vues Hôte et Locataire). Envoi géré par mes-reservations-v2.js
+             vers pp_creer_incident (inc/incidents.php). -->
+        <div class="popup-overlay" id="pp-popup-incident" hidden>
+            <div class="confirm-popup" role="dialog" aria-modal="true" aria-labelledby="pp-incident-titre">
+                <div class="confirm-popup__head">
+                    <h2 class="confirm-popup__title" id="pp-incident-titre">Signaler un problème</h2>
+                    <button type="button" class="confirm-popup__close js-incident-fermer" aria-label="Fermer la fenêtre">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <div id="pp-incident-formulaire">
+                    <p class="confirm-popup__texte" id="pp-incident-contexte"></p>
+                    <div class="incident-champ">
+                        <label for="pp-incident-motif">Motif</label>
+                        <select id="pp-incident-motif">
+                            <option value="">Sélectionner un motif</option>
+                            <?php foreach (poolparty_g4_incident_motifs() as $pp_motif_cle => $pp_motif_label) : ?>
+                                <option value="<?php echo esc_attr($pp_motif_cle); ?>"><?php echo esc_html($pp_motif_label); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="incident-champ">
+                        <label for="pp-incident-description">Description</label>
+                        <textarea id="pp-incident-description" placeholder="Décrivez ce qui s'est passé."></textarea>
+                    </div>
+                    <div class="incident-champ">
+                        <label for="pp-incident-photos">Photos (facultatif)</label>
+                        <input type="file" id="pp-incident-photos" multiple accept="image/*">
+                        <p class="incident-aide">4 photos maximum. Elles aident l'équipe à comprendre la situation.</p>
+                    </div>
+                    <p class="rv2-popup-erreur" id="pp-incident-erreur" role="alert" hidden></p>
+                    <div class="confirm-popup__actions">
+                        <button type="button" class="btn btn-tertiary btn-medium js-incident-fermer">Annuler</button>
+                        <button type="button" class="btn btn-secondary btn-medium" id="pp-incident-envoyer">Envoyer le signalement</button>
+                    </div>
+                </div>
+                <div id="pp-incident-confirmation" hidden>
+                    <p class="incident-confirmation">Votre signalement a bien été transmis à l'équipe Pool Party. Nous revenons vers vous rapidement.</p>
+                    <div class="confirm-popup__actions">
+                        <button type="button" class="btn btn-primary btn-medium js-incident-fermer">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <?php endif; ?>
     </main>
 

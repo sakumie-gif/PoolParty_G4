@@ -698,3 +698,19 @@
         justify-content: space-between;
     }
 }
+
+/* -------- Section Incidents : photos jointes dans la pop-up -------- */
+.pp-admin__incident-photos {
+    display: flex;
+    gap: var(--padding-p4);
+    flex-wrap: wrap;
+    margin: var(--padding-p4) 0;
+}
+
+.pp-admin__incident-photos img {
+    width: 84px;
+    height: 84px;
+    object-fit: cover;
+    border-radius: var(--radius-r2);
+    border: 1px solid var(--color-grey-border);
+}

@@ -97,6 +97,10 @@ require get_template_directory() . '/inc/mes-annonces.php';
 // et fermeture du compte.
 require get_template_directory() . '/inc/mon-compte.php';
 
+// Incidents sur les réservations : signalement par les membres depuis
+// Mes réservations, traitement par l'équipe dans la console.
+require get_template_directory() . '/inc/incidents.php';
+
 /**
  * Raccourci vers un fichier du thème (images, icônes, polices...).
  * Exemple : pp_asset('assets/images/logo/logo-full.png')
@@ -317,6 +321,12 @@ function poolparty_g4_scripts() {
             ? poolparty_g4_avis_pour_js(get_current_user_id())
             : array('locataire' => array(), 'hote' => array()),
         'avisNonce'       => wp_create_nonce('pp_avis'),
+        // Signalement d'incident (page Mes réservations) : jeton et
+        // réservations ayant déjà un dossier non clos du membre.
+        'incidentNonce'   => wp_create_nonce('pp_incident'),
+        'incidentsDeclares' => (is_page('mes-reservations') && is_user_logged_in())
+            ? poolparty_g4_incidents_resas_declarees(get_current_user_id())
+            : array(),
     ));
 }
 add_action('wp_enqueue_scripts', 'poolparty_g4_scripts');

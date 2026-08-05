@@ -964,3 +964,55 @@
         height: 310px;
     }
 }
+
+/* =============================================================
+   POP-UP DE SIGNALEMENT D'INCIDENT
+   Champs compacts dans la pop-up épurée (motif, description,
+   photos) et message de confirmation après envoi.
+   ============================================================= */
+.incident-champ {
+    display: block;
+    margin-bottom: var(--padding-p3);
+}
+
+.incident-champ label {
+    display: block;
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    font-weight: var(--fw-semibold);
+    color: var(--color-grey-font-1);
+    margin-bottom: var(--padding-p5);
+}
+
+.incident-champ select,
+.incident-champ textarea,
+.incident-champ input[type="file"] {
+    width: 100%;
+    border: 1px solid var(--color-grey-border-2);
+    border-radius: var(--radius-r2);
+    padding: 10px var(--padding-p3);
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-1);
+    background: var(--color-white);
+}
+
+.incident-champ textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.incident-aide {
+    margin-top: var(--padding-p5);
+    font-family: var(--font-input);
+    font-size: var(--fs-p4);
+    color: var(--color-grey-font-2);
+}
+
+.incident-confirmation {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-accent-bleu-green);
+    line-height: 1.6;
+    padding: var(--padding-p3) 0;
+}
