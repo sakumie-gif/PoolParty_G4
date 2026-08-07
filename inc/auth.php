@@ -229,7 +229,9 @@ function poolparty_g4_bloquer_backoffice() {
         exit;
     }
 }
-add_action('admin_init', 'poolparty_g4_bloquer_backoffice');
+// Redirection désactivée le 07-08-2026 (provoquait des bugs) : les membres
+// peuvent de nouveau ouvrir /wp-admin. Réactiver en décommentant la ligne.
+// add_action('admin_init', 'poolparty_g4_bloquer_backoffice');
 
 function poolparty_g4_masquer_admin_bar($show) {
     return current_user_can('manage_options') ? $show : false;

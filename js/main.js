@@ -387,11 +387,19 @@ document.addEventListener('DOMContentLoaded', function () {
             croix.addEventListener('click', fermer);
         }
 
-        // Clic sur le voile sombre : fermeture
+        // Clic sur le voile sombre : fermeture. On ne ferme que si le clic
+        // a commencé ET fini sur le voile : un clic entamé dans un champ qui
+        // se termine hors de la carte (sélection de texte, glissement de la
+        // souris pendant la saisie) ne doit pas fermer la fenêtre.
+        var clicPartiDuVoile = false;
+        overlay.addEventListener('pointerdown', function (event) {
+            clicPartiDuVoile = card && !card.contains(event.target);
+        });
         overlay.addEventListener('click', function (event) {
-            if (card && !card.contains(event.target)) {
+            if (clicPartiDuVoile && card && !card.contains(event.target)) {
                 fermer();
             }
+            clicPartiDuVoile = false;
         });
 
         document.addEventListener('keydown', function (event) {
