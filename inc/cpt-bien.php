@@ -45,12 +45,14 @@ function poolparty_g4_cpt_bien() {
 
     register_taxonomy('categorie_bien', 'bien', array(
         'labels' => array(
-            'name'          => 'Catégories',
-            'singular_name' => 'Catégorie',
-            'menu_name'     => 'Catégories',
-            'all_items'     => 'Toutes les catégories',
-            'edit_item'     => 'Modifier la catégorie',
-            'add_new_item'  => 'Ajouter une catégorie',
+            'name'          => 'Catégories de biens',
+            'singular_name' => 'Catégorie de bien',
+            'menu_name'     => 'Catégories de biens',
+            'all_items'     => 'Toutes les catégories de biens',
+            'edit_item'     => 'Modifier la catégorie de bien',
+            'add_new_item'  => 'Ajouter une catégorie de bien',
+            'search_items'  => 'Rechercher une catégorie de bien',
+            'not_found'     => 'Aucune catégorie de bien trouvée',
         ),
         'public'            => true,
         'hierarchical'      => true,
