@@ -32,6 +32,11 @@ require get_template_directory() . '/inc/seed-pages.php';
 // catégories, une seule fois (verrou par option).
 require get_template_directory() . '/inc/seed-articles.php';
 
+// Métadonnées Yoast SEO des contenus (mots-clés, méta-descriptions,
+// pages de service en « ne pas indexer »). Elles vivent en base, donc
+// hors déploiement : ce seed les rejoue sur toute installation.
+require get_template_directory() . '/inc/seed-yoast.php';
+
 // Messagerie interne réelle : conversations en base (pp_conversation),
 // messages en commentaires (pp_message), AJAX, notification e-mail et
 // conversations de démonstration pour le compte membre-demo.
