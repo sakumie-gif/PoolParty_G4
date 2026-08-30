@@ -4846,6 +4846,15 @@ document.addEventListener('DOMContentLoaded', function () {
             } catch (erreur) {
                 // Stockage indisponible : le bandeau reviendra, sans bloquer
             }
+            // Le choix prend effet immédiatement : Google Analytics n'est
+            // chargé qu'à l'acceptation, et coupé au refus.
+            if (window.ppAnalytics) {
+                if (audience) {
+                    window.ppAnalytics.activer();
+                } else {
+                    window.ppAnalytics.desactiver();
+                }
+            }
             fermerBandeau();
         };
 

@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('PP_PAGES_SEED_VERSION', '11');
+define('PP_PAGES_SEED_VERSION', '12');
 
 /**
  * Pages à créer : slug => titre affiché (menu, onglet, fil d'Ariane).
@@ -35,6 +35,7 @@ function poolparty_g4_seed_pages() {
         'paiement-securise'  => 'Paiement sécurisé',
         'assurance'          => 'Assurances',
         'accessibilite'      => 'Accessibilité',
+        'plan-du-site'       => 'Plan du site',
         'mentions-legales'   => 'Mentions légales',
         'cgu'                => "Conditions générales d'utilisation",
         'cgv'                => 'Conditions générales de vente',

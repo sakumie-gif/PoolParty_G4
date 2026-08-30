@@ -227,6 +227,7 @@ function poolparty_g4_styles() {
         'mentions-legales'   => array('legal'),
         'cgu'                => array('legal'),
         'cgv'                => array('legal'),
+        'plan-du-site'       => array('legal'),
         'inscription'        => array('inscription'),
         'favoris'            => array('favoris'),
         'mes-reservations'   => array('mes-reservations'),
@@ -533,6 +534,12 @@ add_action('wp_head', 'poolparty_g4_favicon');
 /**
  * Google Analytics 4 (gtag.js). Non chargé sur l'environnement Local
  * (.local) pour que les tests ne polluent pas les statistiques de la prod.
+ *
+ * Le script de mesure n'est injecté qu'après accord explicite du
+ * visiteur dans le bandeau cookies (clé pp-cookies, même validité de
+ * six mois). Sans accord, aucune requête ne part vers Google et
+ * window.gtag reste indéfini, ce qui neutralise du même coup les
+ * événements envoyés par js/main.js.
  */
 function poolparty_g4_google_analytics() {
     $hote = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
@@ -541,14 +548,102 @@ function poolparty_g4_google_analytics() {
     }
     $id = 'G-6YNBKZHM0Y';
     ?>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_attr($id); ?>"></script>
+    <!-- Google tag (gtag.js), soumis au consentement du bandeau cookies -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '<?php echo esc_js($id); ?>');
+    (function () {
+        var ID = '<?php echo esc_js($id); ?>';
+        var CLE = 'pp-cookies';
+        var DUREE_MS = 1000 * 60 * 60 * 24 * 182;
+        var injecte = false;
+
+        function audienceAcceptee() {
+            try {
+                var choix = JSON.parse(localStorage.getItem(CLE));
+                if (!choix || !choix.horodatage) {
+                    return false;
+                }
+                if (Date.now() - choix.horodatage > DUREE_MS) {
+                    return false;
+                }
+                return choix.audience === true;
+            } catch (erreur) {
+                return false;
+            }
+        }
+
+        function activer() {
+            if (!audienceAcceptee()) {
+                return;
+            }
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () { window.dataLayer.push(arguments); };
+            if (injecte) {
+                return;
+            }
+            injecte = true;
+            window.gtag('js', new Date());
+            window.gtag('config', ID);
+            var balise = document.createElement('script');
+            balise.async = true;
+            balise.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID;
+            document.head.appendChild(balise);
+        }
+
+        // Refus après une acceptation : le suivi est coupé et les
+        // cookies _ga déjà déposés sont effacés.
+        function desactiver() {
+            window.gtag = undefined;
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var nom = cookies[i].split('=')[0].trim();
+                if (nom.indexOf('_ga') === 0) {
+                    document.cookie = nom + '=; Max-Age=0; path=/';
+                    document.cookie = nom + '=; Max-Age=0; path=/; domain=.' + location.hostname;
+                }
+            }
+        }
+
+        window.ppAnalytics = { activer: activer, desactiver: desactiver };
+        activer();
+    })();
     </script>
     <?php
 }
 add_action('wp_head', 'poolparty_g4_google_analytics');
+
+/**
+ * Redirection permanente de http vers https, absente de la
+ * configuration du serveur : une adresse tapée sans le « s » restait
+ * servie en clair. Ne s'applique que si le site est lui-même déclaré
+ * en https, ce qui laisse l'environnement Local intact, et se base sur
+ * l'hôte canonique du site pour éviter toute boucle.
+ */
+function poolparty_g4_forcer_https() {
+    if (is_ssl() || (defined('WP_CLI') && WP_CLI)) {
+        return;
+    }
+    // Cas d'un serveur qui déchiffre en amont : is_ssl() est faux alors
+    // que le visiteur est bien en https. Sans ces contrôles, la
+    // redirection tournerait en boucle.
+    $transmis = isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ? strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) : '';
+    if (strpos($transmis, 'https') !== false) {
+        return;
+    }
+    $transmis_ssl = isset($_SERVER['HTTP_X_FORWARDED_SSL']) ? strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) : '';
+    if ($transmis_ssl === 'on') {
+        return;
+    }
+    if (isset($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443) {
+        return;
+    }
+    if (strpos(home_url(), 'https://') !== 0) {
+        return;
+    }
+
+    $chemin = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+    $cible  = 'https://' . wp_parse_url(home_url(), PHP_URL_HOST) . $chemin;
+
+    wp_safe_redirect(esc_url_raw($cible), 301);
+    exit;
+}
+add_action('template_redirect', 'poolparty_g4_forcer_https', 1);

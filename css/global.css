@@ -3819,6 +3819,18 @@ textarea.form-field__input {
     text-align: left;
 }
 
+/* Lien Plan du site : hors des colonnes à menu, il se place sous la
+   mention de copyright et reprend le blanc du pied de page. */
+.footer-bottom p.footer-bottom__plan {
+    margin-top: var(--padding-p4);
+    font-style: normal;
+}
+
+.footer-bottom__plan a {
+    color: var(--color-white);
+    text-decoration: underline;
+}
+
 /* TABLETTE : grille 2 colonnes */
 @media (min-width: 768px) {
 

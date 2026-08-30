@@ -92,6 +92,7 @@
 
         <div class="footer-bottom">
             <p>© 2026 Pool Party SARL : projet étudiant fictif, aucune réservation réelle ne peut être effectuée.</p>
+            <p class="footer-bottom__plan"><a href="<?php echo esc_url(home_url('/plan-du-site/')); ?>">Plan du site</a></p>
         </div>
     </footer>
 

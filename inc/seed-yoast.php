@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('PP_YOAST_SEED_VERSION', '1');
+define('PP_YOAST_SEED_VERSION', '2');
 
 /**
  * Mot-clé principal et méta-description de chaque contenu, par slug.
@@ -158,6 +158,10 @@ function poolparty_g4_yoast_metas() {
         'actualites' => array(
             'kw'   => '',
             'desc' => 'Toute l\'actualité de Pool Party : nouveaux espaces à louer, conseils baignade et événements autour de la location de piscines et spas entre particuliers.',
+        ),
+        'plan-du-site' => array(
+            'kw'   => 'plan du site',
+            'desc' => 'Toutes les pages de Pool Party réunies : rubriques du site, catégories d\'espaces, annonces de piscines à louer et articles du journal.',
         ),
 
         // Les articles du blog.
