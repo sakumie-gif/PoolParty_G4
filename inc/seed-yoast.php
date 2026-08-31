@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('PP_YOAST_SEED_VERSION', '3');
+define('PP_YOAST_SEED_VERSION', '4');
 
 /**
  * Mot-clé principal et méta-description de chaque contenu, par slug.
@@ -295,6 +295,7 @@ function poolparty_g4_importer_yoast_categories() {
     }
 
     $modifie = false;
+    $termes_touches = array();
     foreach (poolparty_g4_yoast_categories() as $slug => $meta) {
         $terme = get_term_by('slug', $slug, 'categorie_bien');
         if (!$terme || is_wp_error($terme)) {
@@ -313,12 +314,42 @@ function poolparty_g4_importer_yoast_categories() {
             $modifie = true;
         }
         $stock['categorie_bien'][$terme->term_id] = $actuel;
+        $termes_touches[] = $terme;
     }
 
     if ($modifie) {
         update_option('wpseo_taxonomy_meta', $stock);
+
+        // Yoast garde une copie calculée de chaque page dans sa propre
+        // table : écrire l'option ne suffit pas si la copie existe déjà
+        // avec une description vide. Cette action est celle que Yoast
+        // écoute après une modification de terme dans l'administration,
+        // elle lui fait refaire sa copie.
+        foreach ($termes_touches as $terme) {
+            do_action('edited_term', $terme->term_id, $terme->term_taxonomy_id, 'categorie_bien');
+        }
     }
 }
+
+/**
+ * Filet de sécurité : si Yoast ne sert aucune méta-description sur une
+ * page de catégorie, on lui fournit celle du tableau ci-dessus. Une
+ * description saisie dans l'administration reste prioritaire, puisque
+ * Yoast la transmet alors non vide.
+ */
+function poolparty_g4_yoast_metadesc_categorie($description) {
+    if (!empty($description) || !is_tax('categorie_bien')) {
+        return $description;
+    }
+    $terme = get_queried_object();
+    if (!$terme || empty($terme->slug)) {
+        return $description;
+    }
+    $table = poolparty_g4_yoast_categories();
+
+    return isset($table[$terme->slug]) ? $table[$terme->slug]['desc'] : $description;
+}
+add_filter('wpseo_metadesc', 'poolparty_g4_yoast_metadesc_categorie');
 
 /**
  * Applique les métas et les exclusions d'indexation.
