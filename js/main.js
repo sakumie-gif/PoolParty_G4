@@ -1054,6 +1054,9 @@ document.addEventListener('DOMContentLoaded', function () {
         field.appendChild(hidden);
         input.removeAttribute('name');
         input.readOnly = true;
+        // role combobox : aria-expanded n'est pas autorisé sur un simple
+        // champ texte, il l'est sur une liste déroulante de saisie.
+        input.setAttribute('role', 'combobox');
         input.setAttribute('aria-haspopup', 'dialog');
         input.setAttribute('aria-expanded', 'false');
 
@@ -1082,6 +1085,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 '</div>';
         });
         field.appendChild(panel);
+
+        // Le combobox doit désigner le panneau qu'il ouvre.
+        window.ppPopupSeq = (window.ppPopupSeq || 0) + 1;
+        panel.id = 'pp-pop-' + window.ppPopupSeq;
+        panel.setAttribute('role', 'dialog');
+        panel.setAttribute('aria-label', 'Nombre de voyageurs');
+        input.setAttribute('aria-controls', panel.id);
 
         // Résumé lisible : "2 adultes, 1 enfant" (le pluriel suit le nombre)
         var resume = function () {
@@ -1185,6 +1195,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         field.classList.add('search-field--quoi');
         input.readOnly = true;
+        // Voir le champ Invités : aria-expanded impose le role combobox.
+        input.setAttribute('role', 'combobox');
         input.setAttribute('aria-haspopup', 'listbox');
         input.setAttribute('aria-expanded', 'false');
 
@@ -1199,23 +1211,36 @@ document.addEventListener('DOMContentLoaded', function () {
         var liste = document.createElement('ul');
         options.forEach(function (opt) {
             var li = document.createElement('li');
+            // Une liste de choix ARIA n'accepte que des options pour
+            // enfants : le li ne porte donc plus de rôle propre.
+            li.setAttribute('role', 'presentation');
             var btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'dropdown-item';
             btn.textContent = opt.label;
             btn.setAttribute('data-valeur', opt.valeur);
+            btn.setAttribute('role', 'option');
+            btn.setAttribute('aria-selected', 'false');
             li.appendChild(btn);
             liste.appendChild(li);
         });
+        liste.setAttribute('role', 'listbox');
+        liste.setAttribute('aria-label', 'Type d\'espace');
         panel.appendChild(liste);
         field.appendChild(panel);
+
+        window.ppPopupSeq = (window.ppPopupSeq || 0) + 1;
+        panel.id = 'pp-pop-' + window.ppPopupSeq;
+        input.setAttribute('aria-controls', panel.id);
 
         var items = Array.prototype.slice.call(panel.querySelectorAll('.dropdown-item'));
 
         // Marque l'item courant (utile si une recherche est relancée)
         var marquerActif = function () {
             items.forEach(function (item) {
-                item.classList.toggle('is-active', item.getAttribute('data-valeur') === input.value);
+                var actif = item.getAttribute('data-valeur') === input.value;
+                item.classList.toggle('is-active', actif);
+                item.setAttribute('aria-selected', String(actif));
             });
         };
         marquerActif();

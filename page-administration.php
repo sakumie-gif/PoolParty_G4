@@ -31,11 +31,11 @@ $pp_flash    = poolparty_g4_admin_flash();
             <!-- Accès réservé : non connecté ou membre sans droits admin -->
             <div class="pp-admin__garde">
                 <?php if (!$pp_connecte) : ?>
-                    <h2>Espace réservé à l'administration</h2>
+                    <h1>Espace réservé à l'administration</h1>
                     <p>Cette console est réservée à l'équipe Pool Party. Connectez-vous avec un compte administrateur pour y accéder.</p>
                     <button type="button" class="btn btn-primary js-open-login">Se connecter</button>
                 <?php else : ?>
-                    <h2>Accès non autorisé</h2>
+                    <h1>Accès non autorisé</h1>
                     <p>Votre compte n'a pas les droits d'administration. Si vous pensez qu'il s'agit d'une erreur, contactez l'équipe Pool Party.</p>
                     <a href="<?php echo esc_url(home_url('/')); ?>" class="btn btn-primary">Retour à l'accueil</a>
                 <?php endif; ?>
