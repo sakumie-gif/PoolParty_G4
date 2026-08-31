@@ -2,10 +2,10 @@
 /**
  * Captcha visible des formulaires publics.
  * -------------------------------------------------------------
- * Une question d'arithmétique écrite en toutes lettres, posée au
- * visiteur avant l'envoi d'un formulaire ouvert à tous (contact,
- * candidature partenaire). Elle complète le champ piège invisible
- * déjà en place, qui reste utile contre les robots basiques.
+ * Un mot du site à recopier, demandé au visiteur avant l'envoi d'un
+ * formulaire ouvert à tous (contact, candidature partenaire) : aucun
+ * calcul à faire. Il complète le champ piège invisible déjà en
+ * place, qui reste utile contre les robots basiques.
  *
  * Choix d'un captcha maison plutôt qu'un service extérieur : aucune
  * donnée du visiteur ne part chez un tiers, rien à configurer, et la
@@ -26,21 +26,18 @@ if (!defined('ABSPATH')) {
 define('PP_CAPTCHA_DUREE', HOUR_IN_SECONDS);
 
 /**
- * Nombres en toutes lettres : un robot qui cherche des chiffres dans
- * la page ne trouve rien à additionner.
+ * Mots à recopier : le vocabulaire du site, sans accent ni piège
+ * d'orthographe.
  */
 function poolparty_g4_captcha_mots() {
-    return array(
-        1 => 'un', 2 => 'deux', 3 => 'trois', 4 => 'quatre', 5 => 'cinq',
-        6 => 'six', 7 => 'sept', 8 => 'huit', 9 => 'neuf',
-    );
+    return array('piscine', 'jacuzzi', 'sauna', 'hammam', 'bassin', 'transat');
 }
 
 /**
  * Signature d'une réponse attendue, liée à l'horodatage de la page.
  */
 function poolparty_g4_captcha_signature($reponse, $horodatage) {
-    return wp_hash('pp_captcha|' . intval($reponse) . '|' . intval($horodatage));
+    return wp_hash('pp_captcha|' . strtolower(trim((string) $reponse)) . '|' . intval($horodatage));
 }
 
 /**
@@ -51,18 +48,17 @@ function poolparty_g4_captcha_signature($reponse, $horodatage) {
  */
 function poolparty_g4_captcha_champs($prefixe) {
     $mots = poolparty_g4_captcha_mots();
-    $a    = wp_rand(1, 9);
-    $b    = wp_rand(1, 9);
+    $mot  = $mots[wp_rand(0, count($mots) - 1)];
 
     $horodatage = time();
-    $signature  = poolparty_g4_captcha_signature($a + $b, $horodatage);
+    $signature  = poolparty_g4_captcha_signature($mot, $horodatage);
     $id         = $prefixe . '-captcha';
     ?>
     <div class="form-field pp-captcha">
-        <label class="form-field__label" for="<?php echo esc_attr($id); ?>">Question de sécurité : combien font <?php echo esc_html($mots[$a]); ?> plus <?php echo esc_html($mots[$b]); ?> ?</label>
+        <label class="form-field__label" for="<?php echo esc_attr($id); ?>">Question de sécurité : recopiez le mot « <?php echo esc_html($mot); ?> »</label>
         <input class="form-field__input" type="text" id="<?php echo esc_attr($id); ?>" name="pp_captcha"
-               inputmode="numeric" autocomplete="off" required
-               aria-describedby="<?php echo esc_attr($id); ?>-aide" placeholder="Votre réponse en chiffres">
+               autocomplete="off" autocapitalize="none" required
+               aria-describedby="<?php echo esc_attr($id); ?>-aide" placeholder="Recopiez le mot demandé">
         <p class="pp-captcha__aide" id="<?php echo esc_attr($id); ?>-aide">Cette question nous permet de vérifier que vous n'êtes pas un robot.</p>
         <input type="hidden" name="pp_captcha_ts" value="<?php echo esc_attr($horodatage); ?>">
         <input type="hidden" name="pp_captcha_sig" value="<?php echo esc_attr($signature); ?>">
@@ -84,7 +80,7 @@ function poolparty_g4_captcha_valide() {
     $horodatage = intval($_POST['pp_captcha_ts']);
     $signature  = sanitize_text_field(wp_unslash($_POST['pp_captcha_sig']));
 
-    if ($saisie === '' || !ctype_digit($saisie)) {
+    if ($saisie === '' || strlen($saisie) > 30) {
         return false;
     }
 

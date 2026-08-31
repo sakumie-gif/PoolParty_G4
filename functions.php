@@ -50,8 +50,8 @@ require get_template_directory() . '/inc/messagerie.php';
 // depuis le back-office sans toucher au code.
 require get_template_directory() . '/inc/customizer.php';
 
-// Captcha visible des formulaires publics : question d'arithmétique
-// vérifiée côté serveur, sans service extérieur.
+// Captcha visible des formulaires publics : un mot du site à recopier,
+// vérifié côté serveur, sans service extérieur.
 require get_template_directory() . '/inc/captcha.php';
 
 // E-mails transactionnels (contact, partenaire, dépôt de bien,
