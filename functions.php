@@ -684,3 +684,11 @@ add_filter('wp_headers', 'poolparty_g4_sans_pingback');
 // Couper la requête xmlrpc avant la réponse de WordPress provoque un
 // 502 du proxy de l'hébergeur : on s'en tient au vidage des méthodes,
 // seules les trois entrées de description du protocole subsistent.
+
+/**
+ * Validation de la propriété dans la Google Search Console.
+ */
+function poolparty_g4_verification_google() {
+    echo '<meta name="google-site-verification" content="imy5AazrtpSQpk0N3c04dDjjfUP4ySqEqP0kUY3rba8">' . "\n";
+}
+add_action('wp_head', 'poolparty_g4_verification_google', 1);
