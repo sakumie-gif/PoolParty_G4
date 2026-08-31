@@ -59,9 +59,7 @@ function poolparty_g4_captcha_champs($prefixe) {
     $id         = $prefixe . '-captcha';
     ?>
     <div class="form-field pp-captcha">
-        <label class="form-field__label" for="<?php echo esc_attr($id); ?>">
-            Question de sécurité : combien font <?php echo esc_html($mots[$a]); ?> plus <?php echo esc_html($mots[$b]); ?> ?
-        </label>
+        <label class="form-field__label" for="<?php echo esc_attr($id); ?>">Question de sécurité : combien font <?php echo esc_html($mots[$a]); ?> plus <?php echo esc_html($mots[$b]); ?> ?</label>
         <input class="form-field__input" type="text" id="<?php echo esc_attr($id); ?>" name="pp_captcha"
                inputmode="numeric" autocomplete="off" required
                aria-describedby="<?php echo esc_attr($id); ?>-aide" placeholder="Votre réponse en chiffres">
