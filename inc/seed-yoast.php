@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('PP_YOAST_SEED_VERSION', '2');
+define('PP_YOAST_SEED_VERSION', '3');
 
 /**
  * Mot-clé principal et méta-description de chaque contenu, par slug.
@@ -197,6 +197,40 @@ function poolparty_g4_yoast_metas() {
 }
 
 /**
+ * Mot-clé et méta-description des catégories de biens. Yoast range
+ * les métas de taxonomie dans une seule option, pas dans des champs
+ * personnalisés, d'où le traitement séparé plus bas.
+ */
+function poolparty_g4_yoast_categories() {
+    return array(
+        'piscine' => array(
+            'kw'   => 'louer une piscine',
+            'desc' => 'Louez une piscine entre particuliers : bassins enterrés, chauffés ou avec vue, à l’heure ou à la demi-journée, partout en Île-de-France.',
+        ),
+        'jacuzzi' => array(
+            'kw'   => 'louer un jacuzzi',
+            'desc' => 'Réservez un jacuzzi privatif pour quelques heures : bulles chaudes, rooftop ou jardin, le bien-être entre particuliers avec Pool Party.',
+        ),
+        'spa' => array(
+            'kw'   => 'louer un spa',
+            'desc' => 'Offrez-vous un spa privatif à la location : détente complète, équipements soignés et réservation simple sur Pool Party.',
+        ),
+        'sauna' => array(
+            'kw'   => 'louer un sauna',
+            'desc' => 'Louez un sauna authentique près de chez vous : chaleur sèche, séance privative et réservation à l’heure sur Pool Party.',
+        ),
+        'hammam' => array(
+            'kw'   => 'louer un hammam',
+            'desc' => 'Réservez un hammam privatif : vapeur douce et moment de détente entre particuliers, aux horaires qui vous arrangent.',
+        ),
+        'piscine-hors-sol' => array(
+            'kw'   => 'piscine hors-sol',
+            'desc' => 'Louez une piscine hors-sol entre particuliers : la baignade simple et conviviale, à petit prix près de chez vous.',
+        ),
+    );
+}
+
+/**
  * Pages sans intérêt pour un moteur de recherche : espace membre,
  * tunnel de réservation, console d'administration, et la page
  * d'exemple créée par WordPress à l'installation.
@@ -247,6 +281,46 @@ function poolparty_g4_yoast_meta_si_vide($post_id, $cle, $valeur) {
 }
 
 /**
+ * Métas des catégories de biens. Yoast les stocke toutes ensemble
+ * dans l'option wpseo_taxonomy_meta, indexées par identifiant de
+ * terme ; une valeur déjà saisie est conservée.
+ */
+function poolparty_g4_importer_yoast_categories() {
+    $stock = get_option('wpseo_taxonomy_meta');
+    if (!is_array($stock)) {
+        $stock = array();
+    }
+    if (!isset($stock['categorie_bien']) || !is_array($stock['categorie_bien'])) {
+        $stock['categorie_bien'] = array();
+    }
+
+    $modifie = false;
+    foreach (poolparty_g4_yoast_categories() as $slug => $meta) {
+        $terme = get_term_by('slug', $slug, 'categorie_bien');
+        if (!$terme || is_wp_error($terme)) {
+            continue;
+        }
+        $actuel = isset($stock['categorie_bien'][$terme->term_id]) && is_array($stock['categorie_bien'][$terme->term_id])
+            ? $stock['categorie_bien'][$terme->term_id]
+            : array();
+
+        if (empty($actuel['wpseo_desc'])) {
+            $actuel['wpseo_desc'] = $meta['desc'];
+            $modifie = true;
+        }
+        if (empty($actuel['wpseo_focuskw'])) {
+            $actuel['wpseo_focuskw'] = $meta['kw'];
+            $modifie = true;
+        }
+        $stock['categorie_bien'][$terme->term_id] = $actuel;
+    }
+
+    if ($modifie) {
+        update_option('wpseo_taxonomy_meta', $stock);
+    }
+}
+
+/**
  * Applique les métas et les exclusions d'indexation.
  */
 function poolparty_g4_importer_yoast() {
@@ -270,6 +344,8 @@ function poolparty_g4_importer_yoast() {
         }
         poolparty_g4_yoast_meta_si_vide($post->ID, '_yoast_wpseo_meta-robots-noindex', '1');
     }
+
+    poolparty_g4_importer_yoast_categories();
 
     update_option('pp_yoast_seed_version', PP_YOAST_SEED_VERSION);
 }
