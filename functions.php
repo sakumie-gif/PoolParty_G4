@@ -682,10 +682,15 @@ function poolparty_g4_sans_pingback($headers) {
 }
 add_filter('wp_headers', 'poolparty_g4_sans_pingback');
 // WordPress répond toujours aux méthodes de description du protocole :
-// toute requête xmlrpc est refusée avant d'être servie.
+// toute requête xmlrpc est refusée avant d'être servie. La réponse
+// porte un corps et un type : le proxy de l'hébergeur transforme une
+// réponse vide en erreur 502.
 function poolparty_g4_bloquer_xmlrpc() {
     if (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST) {
         status_header(403);
+        nocache_headers();
+        header('Content-Type: text/plain; charset=utf-8');
+        echo 'Service ferme.';
         exit;
     }
 }
