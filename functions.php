@@ -681,3 +681,12 @@ function poolparty_g4_sans_pingback($headers) {
     return $headers;
 }
 add_filter('wp_headers', 'poolparty_g4_sans_pingback');
+// WordPress répond toujours aux méthodes de description du protocole :
+// toute requête xmlrpc est refusée avant d'être servie.
+function poolparty_g4_bloquer_xmlrpc() {
+    if (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST) {
+        status_header(403);
+        exit;
+    }
+}
+add_action('init', 'poolparty_g4_bloquer_xmlrpc', 0);
