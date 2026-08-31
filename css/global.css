@@ -4733,6 +4733,27 @@ html.pp-a11y-noanim body *::after {
     overflow: hidden;
 }
 
+/* Question de sécurité visible des formulaires publics : un champ de
+   saisie normal, suivi d'une phrase d'explication discrète. */
+.pp-captcha__aide {
+    font-family: var(--font-input);
+    font-size: var(--fs-p3);
+    color: var(--color-grey-font-2);
+    margin-top: var(--padding-p5);
+}
+
+/* Message d'erreur au-dessus d'un formulaire refusé par le serveur. */
+.form-erreur {
+    font-family: var(--font-input);
+    font-size: var(--fs-p2);
+    color: var(--color-corail);
+    background: var(--color-white);
+    border: 1px solid var(--color-corail);
+    border-radius: var(--radius-r2);
+    padding: var(--padding-p3) var(--padding-p2-2);
+    margin-bottom: var(--padding-p2);
+}
+
 /* =============================================================
    NEWSLETTER (composant commun)
    Encart beige arrondi centré : titre, texte en gras, champ e-mail

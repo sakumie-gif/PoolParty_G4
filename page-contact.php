@@ -11,12 +11,18 @@ get_header();
 // (POST) avec un jeton valide, on affiche la confirmation côté serveur au
 // lieu de recharger un formulaire vide. Avec JS activé, main.js intercepte
 // l'envoi et affiche la même confirmation sans recharger la page.
-$pp_contact_envoye = (
+$pp_contact_soumis = (
     (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST')
     && isset($_POST['pp_contact_nonce'])
     && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['pp_contact_nonce'])), 'pp_contact_envoi')
     && empty($_POST['pp_site_web'])
 );
+
+// La question de sécurité est le dernier filtre : une soumission dont
+// la réponse est fausse réaffiche le formulaire avec un message.
+$pp_contact_captcha = $pp_contact_soumis && poolparty_g4_captcha_valide();
+$pp_contact_erreur  = $pp_contact_soumis && !$pp_contact_captcha;
+$pp_contact_envoye  = $pp_contact_captcha;
 
 // Soumission valide : accusé de réception au visiteur + notification à
 // l'équipe (voir inc/emails.php). Sans JavaScript, ce POST est la seule
@@ -102,6 +108,9 @@ if ($pp_contact_envoye) {
                 <?php if ($pp_contact_envoye) : ?>
                 <p class="contact-form__confirmation" role="status">Merci pour votre message ! Notre équipe vous répond sous 24 heures.</p>
                 <?php else : ?>
+                <?php if ($pp_contact_erreur) : ?>
+                <p class="form-erreur" role="alert">La réponse à la question de sécurité n'est pas la bonne. Votre message n'a pas été envoyé, merci de répondre à la nouvelle question ci-dessous.</p>
+                <?php endif; ?>
                 <form class="contact-form" action="<?php echo esc_url(get_permalink()); ?>" method="post">
                     <?php wp_nonce_field('pp_contact_envoi', 'pp_contact_nonce'); ?>
                     <p class="pp-piege" aria-hidden="true"><label for="contact-site-web">Ne pas remplir ce champ</label><input type="text" id="contact-site-web" name="pp_site_web" tabindex="-1" autocomplete="off"></p>
@@ -184,6 +193,9 @@ if ($pp_contact_envoye) {
                         <input type="checkbox" name="newsletter">
                         <span>Je souhaite recevoir les actualités de Pool Party</span>
                     </label>
+
+                    <!-- Question de sécurité (voir inc/captcha.php) -->
+                    <?php poolparty_g4_captcha_champs('contact'); ?>
 
                     <button type="submit" class="btn btn-secondary btn-medium contact-form__submit">Envoyer votre message</button>
 

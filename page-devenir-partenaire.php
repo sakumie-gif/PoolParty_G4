@@ -11,12 +11,16 @@ get_header();
 // soumission (POST) avec un jeton valide, on affiche la confirmation côté
 // serveur au lieu de recharger un formulaire vide. Avec JS activé, main.js
 // intercepte l'envoi et affiche la même confirmation sans recharger.
-$pp_partenaire_envoye = (
+$pp_partenaire_soumis = (
     (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST')
     && isset($_POST['pp_partenaire_nonce'])
     && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['pp_partenaire_nonce'])), 'pp_partenaire_envoi')
     && empty($_POST['pp_site_web'])
 );
+
+// Question de sécurité : dernier filtre avant l'envoi (inc/captcha.php).
+$pp_partenaire_erreur = $pp_partenaire_soumis && !poolparty_g4_captcha_valide();
+$pp_partenaire_envoye = $pp_partenaire_soumis && !$pp_partenaire_erreur;
 
 // Soumission valide : accusé de réception au candidat + notification à
 // l'équipe partenariats (voir inc/emails.php).
@@ -285,6 +289,9 @@ if ($pp_partenaire_envoye) {
                 <?php if ($pp_partenaire_envoye) : ?>
                 <p class="partenaire-form__confirmation" role="status">Merci pour votre candidature ! Votre interlocuteur dédié vous recontacte sous 48 heures ouvrées.</p>
                 <?php else : ?>
+                <?php if ($pp_partenaire_erreur) : ?>
+                <p class="form-erreur" role="alert">La réponse à la question de sécurité n'est pas la bonne. Votre candidature n'a pas été envoyée, merci de répondre à la nouvelle question ci-dessous.</p>
+                <?php endif; ?>
                 <form class="partenaire-form" action="<?php echo esc_url(get_permalink()); ?>" method="post">
                     <?php wp_nonce_field('pp_partenaire_envoi', 'pp_partenaire_nonce'); ?>
                     <p class="pp-piege" aria-hidden="true"><label for="partenaire-site-web">Ne pas remplir ce champ</label><input type="text" id="partenaire-site-web" name="pp_site_web" tabindex="-1" autocomplete="off"></p>
@@ -335,6 +342,9 @@ if ($pp_partenaire_envoye) {
                         <input type="checkbox" name="consentement" required>
                         <span>J'accepte que mes données soient utilisées pour traiter ma candidature. <a href="<?php echo esc_url(home_url('/mentions-legales/')); ?>">Politique de confidentialité</a></span>
                     </label>
+
+                    <!-- Question de sécurité (voir inc/captcha.php) -->
+                    <?php poolparty_g4_captcha_champs('partenaire'); ?>
 
                     <button type="submit" class="btn btn-secondary btn-medium partenaire-form__submit">Envoyer ma candidature</button>
 

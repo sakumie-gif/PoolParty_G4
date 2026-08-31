@@ -50,6 +50,10 @@ require get_template_directory() . '/inc/messagerie.php';
 // depuis le back-office sans toucher au code.
 require get_template_directory() . '/inc/customizer.php';
 
+// Captcha visible des formulaires publics : question d'arithmétique
+// vérifiée côté serveur, sans service extérieur.
+require get_template_directory() . '/inc/captcha.php';
+
 // E-mails transactionnels (contact, partenaire, dépôt de bien,
 // réservation) envoyés via wp_mail. L'envoi effectif dépend de la
 // configuration SMTP du site (WP Mail SMTP en production).

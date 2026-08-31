@@ -3761,59 +3761,77 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Page contact : pas d'envoi réel (projet fictif), une confirmation
-    // remplace le formulaire une fois les champs requis validés.
-    var contactForm = document.querySelector('.contact-form');
+    // Formulaires publics (contact, candidature partenaire) : envoi en
+    // arrière-plan au serveur, qui traite le POST et déclenche les e-mails
+    // (voir inc/emails.php). La confirmation n'apparaît que si le serveur a
+    // accepté : la question de sécurité peut refuser l'envoi, il ne faut pas
+    // remercier quelqu'un dont le message n'est jamais parti.
+    var brancherFormulairePublic = function (form, classeConfirmation, texteConfirmation) {
+        if (!form) {
+            return;
+        }
 
-    if (contactForm) {
-        contactForm.addEventListener('submit', function (event) {
+        var confirmer = function () {
+            var confirmation = document.createElement('p');
+            confirmation.className = classeConfirmation;
+            confirmation.setAttribute('role', 'status');
+            confirmation.textContent = texteConfirmation;
+            form.replaceWith(confirmation);
+        };
+
+        var refuser = function (texte) {
+            var erreur = form.parentNode.querySelector('.form-erreur');
+            if (!erreur) {
+                erreur = document.createElement('p');
+                erreur.className = 'form-erreur';
+                erreur.setAttribute('role', 'alert');
+                form.parentNode.insertBefore(erreur, form);
+            }
+            erreur.textContent = texte;
+
+            // La question affichée reste valable une heure : on vide la
+            // réponse et on y ramène le curseur pour une seconde tentative.
+            var champ = form.querySelector('[name="pp_captcha"]');
+            if (champ) {
+                champ.value = '';
+                champ.focus();
+            }
+        };
+
+        form.addEventListener('submit', function (event) {
             event.preventDefault();
 
-            // Envoi en arrière-plan au serveur (même URL que le formulaire,
-            // jeton et anti-spam inclus) : WordPress traite le POST et
-            // déclenche les e-mails (accusé au visiteur + notification à
-            // l'équipe, voir inc/emails.php). La réponse HTML est ignorée,
-            // on affiche notre confirmation sans recharger la page.
-            if (window.fetch) {
-                fetch(contactForm.action, {
-                    method: 'POST',
-                    body: new FormData(contactForm)
-                }).catch(function () {});
+            if (!window.fetch) {
+                form.submit();
+                return;
             }
 
-            var confirmation = document.createElement('p');
-            confirmation.className = 'contact-form__confirmation';
-            confirmation.setAttribute('role', 'status');
-            confirmation.textContent = 'Merci pour votre message ! Notre équipe vous répond sous 24 heures.';
-            contactForm.replaceWith(confirmation);
+            fetch(form.action, { method: 'POST', body: new FormData(form) })
+                .then(function (reponse) { return reponse.text(); })
+                .then(function (html) {
+                    if (html.indexOf(classeConfirmation) !== -1) {
+                        confirmer();
+                        return;
+                    }
+                    refuser('La réponse à la question de sécurité n\'est pas la bonne. Vérifiez le calcul, puis renvoyez le formulaire.');
+                })
+                .catch(function () {
+                    refuser('L\'envoi n\'a pas abouti. Vérifiez votre connexion et réessayez.');
+                });
         });
-    }
+    };
 
-    // Page devenir partenaire : aucun envoi réel, la soumission de la
-    // candidature remplace le formulaire par une confirmation.
-    var partenaireForm = document.querySelector('.partenaire-form');
+    brancherFormulairePublic(
+        document.querySelector('.contact-form'),
+        'contact-form__confirmation',
+        'Merci pour votre message ! Notre équipe vous répond sous 24 heures.'
+    );
 
-    if (partenaireForm) {
-        partenaireForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            // Envoi en arrière-plan au serveur : WordPress traite le POST et
-            // déclenche les e-mails (accusé au candidat + notification à
-            // l'équipe partenariats, voir inc/emails.php).
-            if (window.fetch) {
-                fetch(partenaireForm.action, {
-                    method: 'POST',
-                    body: new FormData(partenaireForm)
-                }).catch(function () {});
-            }
-
-            var confirmation = document.createElement('p');
-            confirmation.className = 'partenaire-form__confirmation';
-            confirmation.setAttribute('role', 'status');
-            confirmation.textContent = 'Merci pour votre candidature ! Votre interlocuteur dédié vous recontacte sous 48 heures ouvrées.';
-            partenaireForm.replaceWith(confirmation);
-        });
-    }
+    brancherFormulairePublic(
+        document.querySelector('.partenaire-form'),
+        'partenaire-form__confirmation',
+        'Merci pour votre candidature ! Votre interlocuteur dédié vous recontacte sous 48 heures ouvrées.'
+    );
 
     // Page proposer : parcours de création d'annonce (modèle Airbnb).
     // Un écran par question ; la barre du bas porte le cycle de vie
