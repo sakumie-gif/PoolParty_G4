@@ -16,6 +16,9 @@
     <!-- Preload de l'image hero (LCP) : version legere 96 Ko servie par defaut -->
     <link rel="preload" as="image" href="<?php echo esc_url(pp_asset('assets/images/hero/hero-original.webp')); ?>" fetchpriority="high">
     <?php endif; ?>
+    <!-- Preload de la police du corps de texte : le bandeau cookies se
+         redessinait a l'arrivee tardive de la police (decalage releve a l'audit) -->
+    <link rel="preload" as="font" type="font/woff2" href="<?php echo esc_url(pp_asset('assets/fonts/poppins-latin-400-normal.woff2')); ?>" crossorigin>
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>

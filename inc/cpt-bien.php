@@ -752,11 +752,17 @@ function poolparty_g4_galerie_bien($post_id) {
         if (!$src) {
             continue;
         }
+        // À défaut de texte alternatif saisi sur le média, décrit la photo
+        // par le nom du bien et sa position dans la galerie.
+        $alt = trim((string) get_post_meta($id, '_wp_attachment_image_alt', true));
+        if ($alt === '') {
+            $alt = get_the_title($post_id) . ', vue ' . (count($photos) + 1);
+        }
         $photos[] = array(
             'url' => $src[0],
             'w'   => $src[1] ? $src[1] : 800,
             'h'   => $src[2] ? $src[2] : 533,
-            'alt' => trim((string) get_post_meta($id, '_wp_attachment_image_alt', true)),
+            'alt' => $alt,
         );
     }
     if (!empty($photos)) {

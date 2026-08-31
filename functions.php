@@ -650,3 +650,15 @@ function poolparty_g4_forcer_https() {
     exit;
 }
 add_action('template_redirect', 'poolparty_g4_forcer_https', 1);
+
+/**
+ * HSTS : la redirection https étant en place, demande aux navigateurs
+ * de ne plus tenter le http pendant six mois. Émis uniquement sur les
+ * réponses déjà chiffrées, comme le prévoit la spécification.
+ */
+function poolparty_g4_hsts() {
+    if (is_ssl()) {
+        header('Strict-Transport-Security: max-age=15552000');
+    }
+}
+add_action('send_headers', 'poolparty_g4_hsts');
