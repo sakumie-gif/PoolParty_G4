@@ -37,6 +37,9 @@ require get_template_directory() . '/inc/seed-articles.php';
 // hors déploiement : ce seed les rejoue sur toute installation.
 require get_template_directory() . '/inc/seed-yoast.php';
 
+// Textes alternatifs manquants sur les photos de galerie des biens.
+require get_template_directory() . '/inc/seed-alt-images.php';
+
 // Messagerie interne réelle : conversations en base (pp_conversation),
 // messages en commentaires (pp_message), AJAX, notification e-mail et
 // conversations de démonstration pour le compte membre-demo.

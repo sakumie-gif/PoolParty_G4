@@ -1229,9 +1229,12 @@ document.addEventListener('DOMContentLoaded', function () {
         panel.appendChild(liste);
         field.appendChild(panel);
 
+        // aria-controls désigne la liste elle-même, celle qui porte le
+        // rôle annoncé par aria-haspopup.
         window.ppPopupSeq = (window.ppPopupSeq || 0) + 1;
         panel.id = 'pp-pop-' + window.ppPopupSeq;
-        input.setAttribute('aria-controls', panel.id);
+        liste.id = 'pp-liste-' + window.ppPopupSeq;
+        input.setAttribute('aria-controls', liste.id);
 
         var items = Array.prototype.slice.call(panel.querySelectorAll('.dropdown-item'));
 
