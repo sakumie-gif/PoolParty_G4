@@ -666,3 +666,18 @@ function poolparty_g4_hsts() {
     }
 }
 add_action('send_headers', 'poolparty_g4_hsts');
+
+/**
+ * Surface technique : la version de WordPress n'est plus annoncée dans
+ * le code source, et xmlrpc.php, que le site n'utilise pas, ne répond
+ * plus à aucune méthode.
+ */
+remove_action('wp_head', 'wp_generator');
+add_filter('the_generator', '__return_empty_string');
+add_filter('xmlrpc_enabled', '__return_false');
+add_filter('xmlrpc_methods', '__return_empty_array');
+function poolparty_g4_sans_pingback($headers) {
+    unset($headers['X-Pingback']);
+    return $headers;
+}
+add_filter('wp_headers', 'poolparty_g4_sans_pingback');
