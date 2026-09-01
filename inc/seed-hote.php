@@ -12,7 +12,7 @@
  * Identifiants du compte de démonstration (à présenter le jour J) :
  *   identifiant   : membre-demo
  *   e-mail        : a.garoscio@gmail.com
- *   mot de passe  : PoolParty2026
+ *   mot de passe  : M2P_PoolParty_G4
  *
  * Idempotent : verrous par option. Récupère un compte déjà présent (nouvelle
  * identité, ancien e-mail de démo, ancien compte « hote ») au lieu d'en créer
@@ -26,7 +26,7 @@ if (!defined('ABSPATH')) {
 define('PP_MEMBRE_DEMO_VERSION', '2');
 define('PP_MEMBRE_DEMO_LOGIN', 'membre-demo');
 define('PP_MEMBRE_DEMO_EMAIL', 'a.garoscio@gmail.com');
-define('PP_MEMBRE_DEMO_PASS', 'PoolParty2026');
+define('PP_MEMBRE_DEMO_PASS', 'M2P_PoolParty_G4');
 define('PP_MEMBRE_DEMO_PRENOM', 'Sophie');
 define('PP_MEMBRE_DEMO_NOM', 'Marchand');
 
