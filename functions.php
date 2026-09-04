@@ -82,6 +82,10 @@ require get_template_directory() . '/inc/seed-admin-demo.php';
 // deux côtés de la bascule Hôte / Locataire) pour la soutenance.
 require get_template_directory() . '/inc/seed-demo.php';
 
+// Deux signalements de démonstration, pour que la section Incidents de la
+// console d'administration ait des dossiers à présenter.
+require get_template_directory() . '/inc/seed-incidents.php';
+
 // Avis de départ du catalogue : le décor des fiches produit devient de
 // vrais commentaires pp_avis, modérables depuis Commentaires > Avis.
 require get_template_directory() . '/inc/seed-avis.php';
