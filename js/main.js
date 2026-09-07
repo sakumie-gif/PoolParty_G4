@@ -737,6 +737,21 @@ document.addEventListener('DOMContentLoaded', function () {
         'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
     var JOURS_FR = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 
+    // Page produit : une date est indisponible si l'hôte n'accueille pas
+    // ce jour de la semaine ou l'a bloquée (attributs data-jours-fermes
+    // et data-indispos du formulaire de réservation, posés par le gabarit).
+    var ppDateIndisponible = function (form, d) {
+        if (!form) {
+            return false;
+        }
+        var fermes = (form.getAttribute('data-jours-fermes') || '').split(',').filter(Boolean).map(Number);
+        if (fermes.indexOf(d.getDay()) >= 0) {
+            return true;
+        }
+        var jj = ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear();
+        return (form.getAttribute('data-indispos') || '').split(',').indexOf(jj) >= 0;
+    };
+
     var construireCalendrier = function (input) {
         // Le panneau s'ancre sur un champ des barres de recherche ou
         // sur le champ Date du panneau de réservation (page produit)
@@ -744,6 +759,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!field) {
             return;
         }
+        var resaDispo = input.closest('form.resa');
 
         var aujourdhui = new Date();
         aujourdhui.setHours(0, 0, 0, 0);
@@ -760,17 +776,22 @@ document.addEventListener('DOMContentLoaded', function () {
         var avecHoraire = false;
 
         // Reprend la date déjà affichée dans le champ (ex. "15/07/2026")
-        // pour marquer le jour correspondant dans la grille
-        var valeurInitiale = (input.value || '').match(/^(\d{2})\/(\d{2})\/(\d{4})/);
-        if (valeurInitiale) {
-            var dateInitiale = new Date(parseInt(valeurInitiale[3], 10),
-                parseInt(valeurInitiale[2], 10) - 1, parseInt(valeurInitiale[1], 10));
-            if (!isNaN(dateInitiale.getTime())) {
-                selection = dateInitiale;
-                vueMois = selection.getMonth();
-                vueAnnee = selection.getFullYear();
+        // pour marquer le jour correspondant dans la grille. Relu à chaque
+        // ouverture : le panneau de réservation peut corriger le champ
+        // après la construction du calendrier (date passée ou jour fermé).
+        var synchroniserDepuisChamp = function () {
+            var valeurInitiale = (input.value || '').match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+            if (valeurInitiale) {
+                var dateInitiale = new Date(parseInt(valeurInitiale[3], 10),
+                    parseInt(valeurInitiale[2], 10) - 1, parseInt(valeurInitiale[1], 10));
+                if (!isNaN(dateInitiale.getTime())) {
+                    selection = dateInitiale;
+                    vueMois = selection.getMonth();
+                    vueAnnee = selection.getFullYear();
+                }
             }
-        }
+        };
+        synchroniserDepuisChamp();
 
         // Créneau horaire : double curseur de 6h à minuit,
         // sélection par défaut 9h - 12h. Minuit est porté par la
@@ -918,6 +939,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Les jours passés ne sont pas réservables
                 if (date < aujourdhui) {
                     btn.disabled = true;
+                } else if (ppDateIndisponible(resaDispo, date)) {
+                    // Jour fermé ou bloqué par l'hôte : grisé et barré
+                    btn.disabled = true;
+                    btn.classList.add('is-indispo');
+                    btn.title = 'Indisponible';
                 }
 
                 if (selection && date.getTime() === selection.getTime()) {
@@ -975,8 +1001,10 @@ document.addEventListener('DOMContentLoaded', function () {
         panel.querySelector('.calendar__today').addEventListener('click', function () {
             vueMois = aujourdhui.getMonth();
             vueAnnee = aujourdhui.getFullYear();
-            selection = new Date(aujourdhui);
-            majInput();
+            if (!ppDateIndisponible(resaDispo, aujourdhui)) {
+                selection = new Date(aujourdhui);
+                majInput();
+            }
             rendre();
         });
 
@@ -988,6 +1016,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
             panel.hidden = false;
+            synchroniserDepuisChamp();
             rendre();
         });
 
@@ -3010,8 +3039,24 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!dateResaValide(resaDate.value)) {
                 resaDate.value = formaterDateFr(new Date());
             }
+            // Si la date préremplie tombe un jour fermé, on avance
+            // jusqu'au premier jour ouvert (60 jours au plus)
+            var mDate = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(resaDate.value);
+            if (mDate) {
+                var dCour = new Date(parseInt(mDate[3], 10), parseInt(mDate[2], 10) - 1, parseInt(mDate[1], 10));
+                for (var iDate = 0; iDate < 60 && ppDateIndisponible(resaForm, dCour); iDate++) {
+                    dCour.setDate(dCour.getDate() + 1);
+                }
+                resaDate.value = formaterDateFr(dCour);
+            }
             resaDate.addEventListener('change', function () {
                 resaDate.value = resaDate.value.split(',')[0];
+                // Les créneaux déjà réservés dépendent du jour choisi
+                var formuleDate = resaForm.querySelector('.resa-formule.is-active');
+                majCreneauxFormule(
+                    formuleDate ? formuleDate.getAttribute('data-formule') : 'demi-journee',
+                    resaCreneauInput ? resaCreneauInput.value.trim() : ''
+                );
             });
         }
 
@@ -3022,6 +3067,28 @@ document.addEventListener('DOMContentLoaded', function () {
         // à chaque changement de formule.
         var creneauChamp = resaForm.querySelector('.resa__creneau');
         var creneauListe = document.getElementById('resa-creneau-liste');
+        var resaSubmit = resaForm.querySelector('.resa__submit');
+
+        // Créneaux déjà confirmés sur ce bien ("JJ/MM/AAAA|libellé", posés
+        // par le gabarit) : une tranche est prise si ses heures chevauchent
+        // celles d'une réservation confirmée le même jour.
+        var creneauxReserves = (resaForm.getAttribute('data-reserves') || '').split(';').filter(Boolean);
+        var heuresCreneau = function (libelle) {
+            var m = /(\d{1,2})h\s*-\s*(\d{1,2})h/.exec(libelle || '');
+            return m ? [parseInt(m[1], 10), parseInt(m[2], 10)] : null;
+        };
+        var creneauPris = function (libelle) {
+            var jour = resaDate ? resaDate.value.split(',')[0] : '';
+            var plage = heuresCreneau(libelle);
+            if (!plage || !jour) {
+                return false;
+            }
+            return creneauxReserves.some(function (r) {
+                var parts = r.split('|');
+                var prise = heuresCreneau(parts[1]);
+                return parts[0] === jour && prise && plage[0] < prise[1] && prise[0] < plage[1];
+            });
+        };
 
         // Reconstruit la liste déroulante pour la formule donnée. Le
         // paramètre « prefere » permet de conserver la tranche déjà
@@ -3032,17 +3099,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             var creneaux = CRENEAUX_PAR_FORMULE[type] || CRENEAUX_PAR_FORMULE['demi-journee'];
+            var pris = creneaux.map(creneauPris);
             var actif = prefere ? creneaux.indexOf(prefere) : -1;
-            if (actif < 0) {
-                actif = 0;
+            if (actif < 0 || pris[actif]) {
+                actif = pris.indexOf(false);
+            }
+            // Plus aucune tranche libre ce jour : le bouton Réserver se bloque
+            if (resaSubmit) {
+                resaSubmit.disabled = actif < 0;
             }
             creneauListe.innerHTML = '';
             creneaux.forEach(function (libelle, index) {
                 var li = document.createElement('li');
                 var btn = document.createElement('button');
                 btn.type = 'button';
-                btn.className = 'dropdown-item' + (index === actif ? ' is-active' : '');
-                btn.textContent = libelle;
+                btn.className = 'dropdown-item' + (index === actif ? ' is-active' : '') + (pris[index] ? ' is-indispo' : '');
+                btn.textContent = pris[index] ? libelle + ' (réservé)' : libelle;
+                btn.disabled = pris[index];
                 btn.addEventListener('click', function () {
                     resaCreneauInput.value = libelle;
                     creneauListe.querySelectorAll('.dropdown-item').forEach(function (autre) {
@@ -3053,7 +3126,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 li.appendChild(btn);
                 creneauListe.appendChild(li);
             });
-            resaCreneauInput.value = creneaux[actif];
+            resaCreneauInput.value = actif < 0 ? 'Complet ce jour' : creneaux[actif];
         };
 
         if (creneauChamp && creneauListe && resaCreneauInput) {

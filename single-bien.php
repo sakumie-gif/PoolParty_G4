@@ -93,6 +93,53 @@ $pp_paras  = array_values(array_filter(array_map('trim', $pp_paras), 'strlen'));
 $pp_prix_heure   = (float) $pp_prix;
 $pp_prix_demi    = round($pp_prix_heure * 4);
 $pp_prix_journee = round($pp_prix_heure * 7.5);
+
+// Disponibilités transmises au calendrier de réservation : jours fermés
+// (jours d'accueil choisis par l'hôte), dates d'indisponibilité et
+// créneaux déjà confirmés sur ce bien. Sans jours renseignés, l'espace
+// est considéré ouvert tous les jours.
+$pp_jours_ouverts = array_filter(array_map('trim', explode(',', (string) poolparty_g4_meta($pp_id, 'jours'))));
+$pp_jours_fermes  = array();
+if (!empty($pp_jours_ouverts)) {
+    $pp_jours_ouverts = array_map(function ($j) { return ucfirst(mb_strtolower($j)); }, $pp_jours_ouverts);
+    $pp_semaine = array('Dimanche' => 0, 'Lundi' => 1, 'Mardi' => 2, 'Mercredi' => 3, 'Jeudi' => 4, 'Vendredi' => 5, 'Samedi' => 6);
+    foreach ($pp_semaine as $pp_nom => $pp_num) {
+        if (!in_array($pp_nom, $pp_jours_ouverts, true)) {
+            $pp_jours_fermes[] = $pp_num;
+        }
+    }
+    if (count($pp_jours_fermes) === 7) {
+        $pp_jours_fermes = array();
+    }
+}
+$pp_indispos = array();
+foreach (explode(',', (string) poolparty_g4_meta($pp_id, 'indispos')) as $pp_i) {
+    if (preg_match('/^\s*(\d{2}\/\d{2}\/\d{4})\s*$/', $pp_i, $pp_m)) {
+        $pp_indispos[] = $pp_m[1];
+    }
+}
+$pp_reserves = array();
+$pp_resas_confirmees = get_posts(array(
+    'post_type'      => 'reservation',
+    'posts_per_page' => -1,
+    'fields'         => 'ids',
+    'meta_query'     => array(
+        array('key' => 'pp_bien_id', 'value' => $pp_id),
+        array('key' => 'pp_statut', 'value' => 'acceptee'),
+    ),
+));
+foreach ($pp_resas_confirmees as $pp_r) {
+    $pp_r_date    = (string) get_post_meta($pp_r, 'pp_date', true);
+    $pp_r_creneau = (string) get_post_meta($pp_r, 'pp_creneau', true);
+    if ($pp_r_date === '') {
+        continue;
+    }
+    if (strpos($pp_r_creneau, 'Journée') === 0) {
+        $pp_indispos[] = $pp_r_date;
+    } else {
+        $pp_reserves[] = $pp_r_date . '|' . $pp_r_creneau;
+    }
+}
 ?>
 
     <main id="contenu">
@@ -668,7 +715,7 @@ $pp_prix_journee = round($pp_prix_heure * 7.5);
             <!-- Panneau de réservation -->
             <aside class="resa-panel" aria-labelledby="resa-titre">
                 <h2 class="sr-only" id="resa-titre">Panneau de réservation</h2>
-                <form class="resa" data-bien-id="<?php echo esc_attr($pp_id); ?>" data-capacite="<?php echo esc_attr($pp_capmax); ?>">
+                <form class="resa" data-bien-id="<?php echo esc_attr($pp_id); ?>" data-capacite="<?php echo esc_attr($pp_capmax); ?>" data-jours-fermes="<?php echo esc_attr(implode(',', $pp_jours_fermes)); ?>" data-indispos="<?php echo esc_attr(implode(',', array_unique($pp_indispos))); ?>" data-reserves="<?php echo esc_attr(implode(';', $pp_reserves)); ?>">
 
                     <div class="resa__entete">
                         <p class="resa__prix">Dès <?php echo esc_html($pp_prix); ?>€</p>

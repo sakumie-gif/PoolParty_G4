@@ -245,6 +245,56 @@ function poolparty_g4_query_biens($query) {
         if (count($meta_query) > 1) {
             $query->set('meta_query', $meta_query);
         }
+
+        // Date choisie dans la barre de recherche : on écarte les biens
+        // fermés ce jour-là (jours d'accueil de l'hôte), bloqués à cette
+        // date ou déjà réservés en formule Journée. Un bien sans jours
+        // renseignés reste visible.
+        $date_brute = isset($_GET['date']) ? sanitize_text_field(wp_unslash($_GET['date'])) : '';
+        if (preg_match('/^(\d{2})\/(\d{2})\/(\d{4})/', $date_brute, $dm)) {
+            $date_jour  = $dm[1] . '/' . $dm[2] . '/' . $dm[3];
+            $noms_jours = array('Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi');
+            $jour_nom   = $noms_jours[(int) date('w', mktime(0, 0, 0, (int) $dm[2], (int) $dm[1], (int) $dm[3]))];
+            $exclus     = array();
+
+            $tous_biens = get_posts(array(
+                'post_type'      => 'bien',
+                'post_status'    => 'publish',
+                'posts_per_page' => -1,
+                'fields'         => 'ids',
+            ));
+            foreach ($tous_biens as $bid) {
+                $jours = array_filter(array_map('trim', explode(',', (string) get_post_meta($bid, 'pp_jours', true))));
+                $jours = array_map(function ($j) { return ucfirst(mb_strtolower($j)); }, $jours);
+                if (count(array_intersect($noms_jours, $jours)) > 0 && !in_array($jour_nom, $jours, true)) {
+                    $exclus[] = $bid;
+                    continue;
+                }
+                $indispos = array_map('trim', explode(',', (string) get_post_meta($bid, 'pp_indispos', true)));
+                if (in_array($date_jour, $indispos, true)) {
+                    $exclus[] = $bid;
+                }
+            }
+
+            $journees = get_posts(array(
+                'post_type'      => 'reservation',
+                'posts_per_page' => -1,
+                'fields'         => 'ids',
+                'meta_query'     => array(
+                    array('key' => 'pp_statut', 'value' => 'acceptee'),
+                    array('key' => 'pp_date', 'value' => $date_jour),
+                    array('key' => 'pp_creneau', 'value' => 'Journée', 'compare' => 'LIKE'),
+                ),
+            ));
+            foreach ($journees as $rid) {
+                $exclus[] = (int) get_post_meta($rid, 'pp_bien_id', true);
+            }
+
+            $exclus = array_values(array_unique(array_filter($exclus)));
+            if (!empty($exclus)) {
+                $query->set('post__not_in', array_merge((array) $query->get('post__not_in'), $exclus));
+            }
+        }
     }
 }
 add_action('pre_get_posts', 'poolparty_g4_query_biens');

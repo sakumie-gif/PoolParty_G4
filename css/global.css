@@ -871,6 +871,15 @@ a:hover {
     font-weight: var(--fw-semibold);
 }
 
+/* Créneau déjà réservé (page produit) : grisé, non cliquable */
+.dropdown-item:disabled,
+.dropdown-item.is-indispo {
+    color: var(--color-grey-font-2);
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: transparent;
+}
+
 /* =============================================================
    BANDEAU DE PAGE (hero commun)
    Panneau beige arrondi + titre Garamond vert bleuté, décliné sur
@@ -2805,6 +2814,11 @@ textarea.form-field__input {
     opacity: 0.6;
     cursor: not-allowed;
     background: none;
+}
+
+/* Jour fermé ou bloqué par l'hôte (page produit) : barré en plus du gris */
+.calendar__day.is-indispo {
+    text-decoration: line-through;
 }
 
 /* Jour sélectionné : cercle vert bleuté, chiffre blanc (Figma) */
