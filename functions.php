@@ -90,6 +90,10 @@ require get_template_directory() . '/inc/seed-incidents.php';
 // vrais commentaires pp_avis, modérables depuis Commentaires > Avis.
 require get_template_directory() . '/inc/seed-avis.php';
 
+// Jours d'accueil, dates bloquées et une réservation à venir sur une partie
+// des biens, pour montrer les disponibilités sur la fiche et le catalogue.
+require get_template_directory() . '/inc/seed-dispo.php';
+
 // Création d'annonces depuis le site (tunnel « Proposer votre espace ») :
 // le membre publie son bien, enregistré en attente de validation admin.
 require get_template_directory() . '/inc/proposer.php';
